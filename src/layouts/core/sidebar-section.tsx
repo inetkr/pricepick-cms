@@ -34,6 +34,9 @@ import {
   WithdrawIcon,
 } from './Icons';
 import { CalendarIcon } from '@mui/x-date-pickers/icons';
+import { signOut } from 'src/auth/context/authContext';
+import { authAPI } from 'src/api';
+import { useAuthContext } from 'src/auth/hooks';
 
 type MenuItem = {
   id: string;
@@ -154,6 +157,7 @@ const MENU_GROUPS: MenuGroup[] = [
 
 export default function SidebarSection() {
   const pathname = usePathname();
+  const { logout } = useAuthContext();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
@@ -175,10 +179,11 @@ export default function SidebarSection() {
   };
 
   // Xử lý đăng xuất
-  const handleLogout = () => {
-    // Clear auth state
-    localStorage.removeItem('auth');
-    router.push('/auth/login');
+  const handleLogout = async () => {
+    await authAPI.logout().finally(() => {
+      logout();
+      router.push('/auth/login');
+    });
   };
 
   // Chuyển theme

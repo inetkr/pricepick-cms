@@ -1,119 +1,81 @@
-// 'use client';
+'use client';
 
-// import { useMemo, useEffect, useCallback } from 'react';
-// import { useSetState } from 'src/hooks/use-set-state';
-// import axios, { endpoints } from 'src/utils/axios';
-// import { setAccessToken } from './utils';
-// import { STORAGE_KEY, USER_INFO_KEY } from './constant';
-// import { AuthContext } from '../auth-context';
-// import type { AuthState } from '../../types';
-// // import { IEmployee } from 'src/types/employee/get';
-// // import { authPages, IAuthPage } from 'src/assets/data';
-// // import { EMPLOYEE_ROLE } from 'src/assets/data/employee-role';
-// // ----------------------------------------------------------------------
+import { useMemo, useEffect, useCallback } from 'react';
+import { useSetState } from 'src/hooks/use-set-state';
+import { setAccessToken, setAdminInfo } from './utils';
+import { STORAGE_KEY } from './constant';
+import { AuthContext } from '../auth-context';
+import type { AuthState } from '../../types';
+import { employeeAPI } from 'src/api';
 
-// /**
-//  * NOTE:
-//  * We only build demo at basic level.
-//  * Customer will need to do some extra handling yourself if you want to extend the logic and other features...
-//  */
+type Props = {
+  children: React.ReactNode;
+};
 
-// type Props = {
-//   children: React.ReactNode;
-// };
+export function AuthProvider({ children }: Props) {
+  const { state, setState } = useSetState<AuthState>({
+    admin: null,
+    loading: true,
+  });
 
-// export function AuthProvider({ children }: Props) {
-//   const { state, setState } = useSetState<AuthState>({
-//     user: null,
-//     loading: true,
-//   });
+  const checkUserSession = useCallback(async () => {
+    try {
+      const accessToken = localStorage.getItem(STORAGE_KEY);
+      if (!accessToken) {
+        setState({ admin: null, loading: false });
+        return;
+      }
 
-//   // const getAcceptPage = (user: IEmployee) => {
-//   //   const filterAcceptPages = (pages: IAuthPage[], acceptPages: string[]): string[] => {
-//   //     const expandedPages = pages.flatMap((page) => {
-//   //       if (page.children && page.children.length > 0) {
-//   //         return [page.code, ...page.children.map((child) => child.code)];
-//   //       }
-//   //       return [page.code];
-//   //     });
+      setAccessToken(accessToken);
 
-//   //     return expandedPages.filter((page) => acceptPages.includes(page));
-//   //   };
-//   //   // Auth page list
-//   //   if (user?.role === EMPLOYEE_ROLE.SUPER_ADMIN)
-//   //     return authPages.flatMap((page) =>
-//   //       page.children && page.children.length > 0
-//   //         ? [page.code, ...page.children.map((child) => child.code)]
-//   //         : [page.code]
-//   //     );
-//   //   return filterAcceptPages(authPages, user.authPages || []);
-//   // };
+      try {
+        const responseData = await employeeAPI.getMe();
 
-//   const checkUserSession = useCallback(async () => {
-//     try {
-//       const accessToken = localStorage.getItem(STORAGE_KEY);
-//       if (!accessToken) {
-//         setState({ user: null, loading: false });
-//         return;
-//       }
+        if (!responseData.result || !responseData.result.object) {
+          setState({ admin: null, loading: false });
+          return;
+        }
+        setState({ admin: { ...state.admin, ...responseData.result.object }, loading: false });
+        setAdminInfo(responseData.result.object);
+      } catch (error: any) {
+        console.error('Error fetching user data:', error);
+        setAdminInfo(null);
+        setAccessToken(null);
+        setState({ admin: null, loading: false });
+      }
+    } catch (error) {
+      console.error('Error during user session check:', error);
+      setAdminInfo(null);
+      setAccessToken(null);
+      setState({ admin: null, loading: false });
+    }
+  }, [setState]);
 
-//       // TODO: Fake token validation. You should replace this with real API call to validate the token and fetch user data.
-//       setState({
-//         ...state,
-//         user: null,
-//         loading: false,
-//       });
-//       return;
+  useEffect(() => {
+    checkUserSession();
+  }, []);
 
-//       setAccessToken(accessToken);
+  // ----------------------------------------------------------------------
 
-//       try {
-//         const { data } = await axios.axiosInstanceWithLoading.get(`${endpoints.auth.me}`);
-//         const user = data.data as IEmployee;
+  const checkAuthenticated = state.admin ? 'authenticated' : 'unauthenticated';
 
-//         const updatedUser = {
-//           ...user,
-//           authPages: getAcceptPage(user),
-//           imageUrl: '/images/avatar/level1.svg',
-//         };
+  const status = state.loading ? 'loading' : checkAuthenticated;
 
-//         setState({ user: updatedUser, loading: false });
-//         localStorage.setItem(USER_INFO_KEY, JSON.stringify(updatedUser));
-//       } catch (error: any) {
-//         console.error('Error fetching user data:', error);
-//         localStorage.removeItem(USER_INFO_KEY);
-//         setAccessToken(null);
-//         setState({ user: null, loading: false });
-//       }
-//     } catch (error) {
-//       console.error('Error during user session check:', error);
-//       localStorage.removeItem(USER_INFO_KEY);
-//       setAccessToken(null);
-//       setState({ user: null, loading: false });
-//     }
-//   }, [setState]);
+  const memoizedValue = useMemo(
+    () => ({
+      admin: state.admin ?? null,
+      checkUserSession,
+      logout: async () => {
+        await setAccessToken(null);
+        await setAdminInfo(null);
+        setState({ admin: null, loading: false });
+      },
+      loading: status === 'loading',
+      authenticated: status === 'authenticated',
+      unauthenticated: status === 'unauthenticated',
+    }),
+    [checkUserSession, state.admin, status]
+  );
 
-//   useEffect(() => {
-//     checkUserSession();
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, []);
-
-//   // ----------------------------------------------------------------------
-
-//   const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
-
-//   const status = state.loading ? 'loading' : checkAuthenticated;
-
-//   const memoizedValue = useMemo(
-//     () => ({
-//       user: state.user ?? null,
-//       checkUserSession,
-//       loading: status === 'loading',
-//       authenticated: status === 'authenticated',
-//       unauthenticated: status === 'unauthenticated',
-//     }),
-//     [checkUserSession, state.user, status]
-//   );
-
-//   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;
-// }
+  return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;
+}

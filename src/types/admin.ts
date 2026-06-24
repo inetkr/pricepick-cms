@@ -1,11 +1,14 @@
-export type IAdmin = {
+import { IAdminRole } from "./admin_role";
+import { IBase } from "./base";
+
+export type IAdmin  = IBase & {
     id: string;
     username: string;
-    name: string;
-    role: string;
     email: string;
-    phoneNumber: string;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
+    role: IAdminRole;
+    status: boolean;
+    action: any;
+    refresh_token: string;
+    last_ip: string;
+    last_online: number;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-type TicketGrade = 'bronze' | 'silver' | 'gold' | 'event' | 'random';
+export type TicketGrade = 'bronze' | 'silver' | 'gold' | 'event' | 'random';
 
 interface TicketChipProps {
   grade: TicketGrade;

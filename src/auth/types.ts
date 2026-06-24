@@ -1,18 +1,15 @@
-// import { IEmployee } from "src/types/employee/get";
+import { IAdmin } from "src/types/admin";
 
-// export type AuthState = {
-//   user: IAdmin | null;
-//   loading: boolean;
-// };
+export type AuthState = {
+  admin: IAdmin | null;
+  loading: boolean;
+};
 
-// export type AuthContextValue = {
-//   user: IAdmin | null;
-//   loading: boolean;
-//   authenticated: boolean;
-//   unauthenticated: boolean;
-//   checkUserSession?: () => Promise<void>;
-// };
-
-// export type IAdmin  = IEmployee & {
-//   authPages: string[];
-// };
+export type AuthContextValue = {
+  admin: IAdmin | null;
+  loading: boolean;
+  authenticated: boolean;
+  unauthenticated: boolean;
+  checkUserSession: () => Promise<void>;
+  logout: () => Promise<void>;
+};

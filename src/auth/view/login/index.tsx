@@ -3,6 +3,8 @@
 import { z as zod } from 'zod';
 import { useState } from 'react';
 import { useRouter } from 'src/routes/hooks';
+import { signIn } from 'src/auth/context/authContext';
+import { useAuthContext } from 'src/auth/hooks';
 
 export type SignInSchemaType = zod.infer<typeof SignInSchema>;
 
@@ -15,16 +17,19 @@ export const SignInSchema = zod.object({
 
 export function LoginContainer() {
   const router = useRouter();
-  const [role, setRole] = useState<'superadmin' | 'operator' | 'cs'>('superadmin');
-  const [email, setEmail] = useState('admin@pricepick.co.kr');
-  const [password, setPassword] = useState('••••••••');
+  const { checkUserSession } = useAuthContext();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: call API authentication
-    console.log('Login with', { role, email, password });
-    // Redirect to dashboard after login
-    router.push('/');
+    try {
+      await signIn({ username, password });
+      await checkUserSession();
+      router.push('/');
+    } catch (error) {
+      console.error('Error during sign in:', error);
+    }
   };
 
   return (
@@ -54,11 +59,11 @@ export function LoginContainer() {
 
         <form onSubmit={handleLogin}>
           <input
-            type="email"
+            type="text"
             className="login-input"
             placeholder="이메일"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
           <input

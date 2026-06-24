@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Member } from 'src/types/members/member';
+import { Member } from 'src/types/users/user';
 
 interface MemberModalProps {
   isOpen: boolean;

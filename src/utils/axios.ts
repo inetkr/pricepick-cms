@@ -45,21 +45,3 @@ export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
   }
 };
 
-// ----------------------------------------------------------------------
-
-export const endpoints = {
-  chat: '/api/chat',
-  auth: {
-    me: '/admin/employee/me',
-    signIn: '/admin/auth/login',
-  },
-  manageUser: {
-    user: '/admin/user',
-  },
-  dashboard: {
-    getChartTotalV2: '/block/chart_total/v2',
-  },
-  statistics: {
-    salesHistory: '/sales_history',
-  },
-};

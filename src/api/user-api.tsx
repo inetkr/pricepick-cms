@@ -1,6 +1,8 @@
-import axios, { endpoints, fetcher } from 'src/utils/axios';
-import { convertParams } from 'src/utils/helper';
+import axios from 'src/utils/axios';
 import BaseAPI from './base-api';
+import { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
+import { IUserStat } from 'src/types/users/user_stat';
+import { IUser } from 'src/types/users/user';
 
 const tableName = 'user';
 export default class UserAPI extends BaseAPI {
@@ -8,43 +10,45 @@ export default class UserAPI extends BaseAPI {
     super(tableName);
   }
 
-  getUserProfile = async (userId: string) => {
-    const url = `/admin/user/profile/${userId}`;
+  getUserStat = async (): Promise<ApiResponse<IUserStat>> => {
     try {
-      const res = await axios.axiosInstance.get(url);
-      return res.data;
+      const response = await axios.axiosInstanceWithLoading.get(`/${tableName}/admin/stats`);
+      return response.data;
     } catch (error) {
-      console.error('Failed to fetch:', error);
+      console.error('Error fetching user statistics:', error);
       throw error;
     }
   };
 
-  updateUserInfo = async (
-    userId: string,
-    data: {
-      status?: number;
-      adminNote?: string;
+  getUserList = async (
+    page: number,
+    limit: number,
+    filter?: {
+      search?: string;
+      kakao_status?: string;
+      account_status?: string;
+      marketing_consent?: string;
     }
-  ) => {
-    const url = `/admin/user/update-info/${userId}`;
+  ): Promise<ApiPaginatedResponse<IUser>> => {
     try {
-      const res = await axios.axiosInstance.patch(url, data);
-      return res.data;
+      const requestParam: any = {
+        page,
+        limit,
+        order: JSON.stringify([['created_at', 'desc']]),
+      };
+      if (filter) {
+        requestParam.filter = JSON.stringify(filter);
+      }
+      const response = await axios.axiosInstanceWithLoading.get(
+        `/${tableName}/admin/get_list_cms`,
+        {
+          params: requestParam,
+        }
+      );
+      return response.data;
     } catch (error) {
-      console.error('Failed to update user info:', error);
+      console.error('Error fetching user list:', error);
       throw error;
     }
-  };
-
-  getUserUninstallAppHistory = async (params: Record<string, any>) => {
-    const query = new URLSearchParams(params).toString();
-    const url = `/admin/user/user-uninstall-history?${query}`;
-    return axios.axiosInstanceWithLoading
-      .get(url)
-      .then((response) => response.data)
-      .catch((error) => {
-        console.error('Failed to fetch:', error);
-        throw error;
-      });
   };
 }

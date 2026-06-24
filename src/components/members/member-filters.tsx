@@ -1,49 +1,37 @@
 import React from 'react';
 
-interface FilterOption {
-  value: string;
-  label: string;
-}
-
 interface MemberFiltersProps {
   onSearch?: (value: string) => void;
-  onJoinTypeChange?: (value: string) => void;
-  onStatusChange?: (value: string) => void;
-  onMarketingChange?: (value: string) => void;
-  joinTypeOptions?: FilterOption[];
-  statusOptions?: FilterOption[];
-  marketingOptions?: FilterOption[];
+  onKakaoStatusChange: (value: string) => void;
+  onAccountStatusChange: (value: string) => void;
+  onMarketingChange: (value: string) => void;
 }
 
-const defaultJoinTypes = [
-  { value: '', label: '전체 유형' },
-  { value: 'kakao', label: '카카오' },
-  { value: 'apple', label: 'Apple+카카오' },
-  { value: 'google', label: 'Google+카카오' },
+const kakaoStatusOptions = [
+  { value: '', label: '전체 연동상태' },
+  { value: 'NOT_LINKED', label: '게스트(미연동)' },
+  { value: 'LINKED', label: '카카오 연동' },
 ];
 
-const defaultStatuses = [
+const accountStatusOptions = [
   { value: '', label: '전체 상태' },
-  { value: '정상', label: '정상' },
-  { value: '정지', label: '정지' },
-  { value: '탈퇴', label: '탈퇴' },
+  { value: 'NORMAL', label: '정상' },
+  { value: 'BLOCK', label: '정지' },
+  { value: 'DELETE', label: '탈퇴' },
 ];
 
-const defaultMarketing = [
+const marketingOptions = [
   { value: '', label: '전체 마케팅' },
-  { value: 'all', label: '전체 동의' },
-  { value: 'sel', label: '선택 동의' },
-  { value: 'none', label: '전체 거부' },
+  { value: 'ALL', label: '전체 동의' },
+  { value: 'SELECTIVE', label: '선택 동의' },
+  { value: 'NONE', label: '전체 거부' },
 ];
 
 export const MemberFilters: React.FC<MemberFiltersProps> = ({
   onSearch,
-  onJoinTypeChange,
-  onStatusChange,
+  onKakaoStatusChange,
+  onAccountStatusChange,
   onMarketingChange,
-  joinTypeOptions = defaultJoinTypes,
-  statusOptions = defaultStatuses,
-  marketingOptions = defaultMarketing,
 }) => {
   return (
     <div className="toolbar">
@@ -52,15 +40,15 @@ export const MemberFilters: React.FC<MemberFiltersProps> = ({
         placeholder="닉네임 검색..."
         onChange={(e) => onSearch?.(e.target.value)}
       />
-      <select className="filter-sel" onChange={(e) => onJoinTypeChange?.(e.target.value)}>
-        {joinTypeOptions.map((opt) => (
+      <select className="filter-sel" onChange={(e) => onKakaoStatusChange?.(e.target.value)}>
+        {kakaoStatusOptions.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
         ))}
       </select>
-      <select className="filter-sel" onChange={(e) => onStatusChange?.(e.target.value)}>
-        {statusOptions.map((opt) => (
+      <select className="filter-sel" onChange={(e) => onAccountStatusChange?.(e.target.value)}>
+        {accountStatusOptions.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>

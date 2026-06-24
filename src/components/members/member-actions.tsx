@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import { IAccountStatus } from 'src/types/common';
 
 interface MemberActionsProps {
-  memberId: number;
-  status: '정상' | '정지' | '탈퇴';
-  onViewDetail: (id: number) => void;
-  onStatusChange: (id: number, newStatus: '정상' | '정지' | '탈퇴') => void;
+  memberId: string;
+  status: IAccountStatus;
+  onViewDetail: (id: string) => void;
+  onStatusChange: (id: string, newStatus: IAccountStatus) => void;
   isSuperAdmin?: boolean;
 }
 
@@ -20,10 +21,10 @@ export const MemberActions: React.FC<MemberActionsProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleStatusToggle = async () => {
-    if (status === '탈퇴') return;
-    const newStatus = status === '정상' ? '정지' : '정상';
+    if (status === 'DELETE') return;
+    const newStatus = status === 'NORMAL' ? 'BLOCK' : 'NORMAL';
     const confirmMessage =
-      newStatus === '정지'
+      newStatus === 'BLOCK'
         ? '이 회원을 정지 처리하시겠습니까?'
         : '이 회원의 정지를 해제하시겠습니까?';
 
@@ -34,7 +35,7 @@ export const MemberActions: React.FC<MemberActionsProps> = ({
       // TODO: Call API
       await new Promise((resolve) => setTimeout(resolve, 500));
       onStatusChange(memberId, newStatus);
-      (window as any).toast?.(`회원이 ${newStatus === '정지' ? '정지' : '활성화'}되었습니다.`);
+      (window as any).toast?.(`회원이 ${newStatus === 'BLOCK' ? '정지' : '활성화'}되었습니다.`);
     } catch (error) {
       (window as any).toast?.('처리 중 오류가 발생했습니다.');
     } finally {

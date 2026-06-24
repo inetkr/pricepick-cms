@@ -9,43 +9,43 @@ export default class BaseAPI {
 
   private buildUrl(endpoint: string, params: Record<string, any> = {}): string {
     const query = new URLSearchParams(params).toString();
-    return `/admin/${this.tableName}${endpoint}?${query}`;
+    return `/${this.tableName}/admin/${endpoint}?${query}`;
   }
 
-  filter(params: Record<string, any>) {
+  filter<T>(params: Record<string, any>) {
     return axios.axiosInstanceWithLoading
-      .get(this.buildUrl('/paged', params))
-      .then((response) => response.data)
+      .get(this.buildUrl('get_list_cmns', params))
+      .then((response) => response.data as T)
       .catch((error) => {
         console.error('Failed to fetch:', error);
         throw error;
       });
   }
 
-  getAllWithLoading(page: number, pageSize: number) {
+  getAllWithLoading<T>(page: number, pageSize: number) {
     const params = {
       page,
       pageSize,
     };
 
     return axios.axiosInstanceWithLoading
-      .get(this.buildUrl('/paged', params))
-      .then((response) => response.data)
+      .get(this.buildUrl('get_list_cmns', params))
+      .then((response) => response.data as T)
       .catch((error) => {
         console.error('Failed to fetch:', error);
         throw error;
       });
   }
 
-  getAll(page: number, pageSize: number) {
+  getAll<T>(page: number, pageSize: number) {
     const params = {
       page,
       pageSize,
     };
 
     return axios.axiosInstance
-      .get(this.buildUrl('/paged'))
-      .then((response) => response.data)
+      .get(this.buildUrl('get_list_cmns', params))
+      .then((response) => response.data as T)
       .catch((error) => {
         console.error('Failed to fetch:', error);
         throw error;

@@ -1,24 +1,62 @@
-// src/components/members/MemberTable.tsx
 import React from 'react';
-import { Member } from 'src/types/members/member';
+import { IUser } from 'src/types/users/user';
 import { MemberActions } from './member-actions';
-import { TicketChip, TicketChipGroup } from '../common/ticket-chip';
+import { TicketChip, TicketChipGroup, TicketGrade } from '../common/ticket-chip';
+import { formatDate } from 'src/utils/helper';
+import { IAccountStatus, IMarketingConsent } from 'src/types/common';
 
 interface MemberTableProps {
-  members: Member[];
-  onViewDetail: (id: number) => void;
-  onStatusChange: (id: number, newStatus: '정상' | '정지' | '탈퇴') => void;
+  members: IUser[];
+  onViewDetail: (id: string) => void;
+  onStatusChange: (id: string, newStatus: IAccountStatus) => void;
   isSuperAdmin?: boolean;
 }
 
-// Helper render join type
-const renderJoinType = (accounts: Member['accounts']) => {
-  if (accounts.length === 1 && accounts[0].type === 'kakao') {
+const renderMemberInfo: (member: IUser) => JSX.Element = (member) => {
+  if (member.kakao_id && member.kakao_info && member.kakao_info.length > 0) {
     return (
       <>
-        <span className="member-type-kakao">카카오</span>
+        <div style={{ fontWeight: 500 }}>{member.nickname}</div>
+        <div style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}>
+          {member.kakao_info[0].nickname}
+        </div>
+      </>
+    );
+  }
+  return (
+    <>
+      <div style={{ fontWeight: 500 }}>
+        {member.nickname}
+        <span
+          style={{
+            fontSize: '10px',
+            fontWeight: 700,
+            color: '#d97a17',
+            background: '#fdf1e3',
+            border: '1px solid #f3d2a0',
+            borderRadius: '10px',
+            padding: '1px 7px',
+            marginLeft: '3px',
+          }}
+        >
+          미연동
+        </span>
+      </div>
+      <div style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}>
+        app_uid: {member.username}
+      </div>
+    </>
+  );
+};
+
+// Helper render link status
+const renderLinkStatus = (member: IUser) => {
+  if (member.kakao_id) {
+    return (
+      <>
+        <span className="member-type-kakao">카카오 연동</span>
         <div style={{ fontSize: '10px', color: 'var(--text-3)', marginTop: '3px' }}>
-          연동 {accounts[0].joinDate}
+          연동 {formatDate(member.kakao_info[0]?.linked_at, 'YYYY/MM/DD')}
         </div>
       </>
     );
@@ -47,19 +85,112 @@ const renderJoinType = (accounts: Member['accounts']) => {
   );
 };
 
+const renderDateTime = (date: string) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const seconds = String(d.getSeconds()).padStart(2, '0');
+
+  return (
+    <>
+      <div style={{ fontWeight: 700, color: '#333333' }}>{`${year}/${month}/${day}`}</div>
+      <div style={{ color: 'var(--text-3)' }}>{`${hours}:${minutes}:${seconds}`}</div>
+    </>
+  );
+};
+
 // Helper render marketing badge
-const renderMarketing = (type: 'all' | 'sel' | 'none') => {
+const renderMarketing = (type: IMarketingConsent) => {
   const classes = {
-    all: 'mkt-badge all',
-    sel: 'mkt-badge sel',
-    none: 'mkt-badge none',
+    ALL: 'mkt-badge all',
+    SELECTIVE: 'mkt-badge sel',
+    NONE: 'mkt-badge none',
   };
   const labels = {
-    all: '전체 동의',
-    sel: '선택 동의',
-    none: '전체 거부',
+    ALL: '전체 동의',
+    SELECTIVE: '선택 동의',
+    NONE: '전체 거부',
   };
   return <span className={classes[type]}>{labels[type]}</span>;
+};
+
+const getPendingBadge = (user: IUser) => {
+  if (user.pending_gold > 0 || user.pending_bronze > 0 || user.pending_silver > 0) {
+    return (
+      <div className="conv-preview">
+        {user.pending_bronze > 0 && (
+          <TicketChip
+            grade="bronze"
+            quantity={user.pending_bronze}
+            size="small"
+            showName={false}
+            dim={user.pending_bronze === 0}
+          />
+        )}
+        {user.pending_silver > 0 && (
+          <TicketChip
+            grade="silver"
+            quantity={user.pending_silver}
+            size="small"
+            showName={false}
+            dim={user.pending_silver === 0}
+          />
+        )}
+        {user.pending_gold > 0 && (
+          <TicketChip
+            grade="gold"
+            quantity={user.pending_gold}
+            size="small"
+            showName={false}
+            dim={user.pending_gold === 0}
+          />
+        )}
+      </div>
+    );
+  }
+  return null;
+};
+
+const getActiveBadge = (user: IUser) => {
+  const objects: Array<{
+    grade: TicketGrade;
+    quantity: number;
+  }> = [
+    { grade: 'bronze', quantity: user.ticket_bronze_total },
+    { grade: 'silver', quantity: user.ticket_silver_total },
+    { grade: 'gold', quantity: user.ticket_gold_total },
+  ];
+
+  return (
+    <TicketChipGroup
+      tickets={objects}
+      showName={false}
+      showQuantity={true}
+      dim={
+        user.ticket_bronze_total === 0 &&
+        user.ticket_silver_total === 0 &&
+        user.ticket_gold_total === 0
+      }
+    />
+  );
+};
+
+const getMemberStatus: (accountStatus: IAccountStatus) => { label: string; className: string } = (
+  accountStatus
+) => {
+  switch (accountStatus) {
+    case 'NORMAL':
+      return { label: '정상', className: 'badge-green' };
+    case 'BLOCK':
+      return { label: '차단', className: 'badge-red' };
+    case 'DELETE':
+      return { label: '탈퇴', className: 'badge-gray' };
+    default:
+      return { label: '알 수 없음', className: 'badge-gray' };
+  }
 };
 
 export const MemberTable: React.FC<MemberTableProps> = ({
@@ -98,85 +229,42 @@ export const MemberTable: React.FC<MemberTableProps> = ({
           ) : (
             members.map((member) => (
               <tr key={member.id}>
-                <td>
-                  <div style={{ fontWeight: 500 }}>{member.nickname}</div>
-                  <div
-                    style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}
-                  >
-                    {member.kakaoId}
-                  </div>
-                </td>
-                <td>{renderJoinType(member.accounts)}</td>
-                <td style={{ textAlign: 'center' }}>
-                  <div style={{ fontWeight: 700, color: '#333333' }}>{member.joinDate}</div>
-                  <div style={{ color: 'var(--text-3)' }}>{member.joinTime}</div>
-                </td>
+                <td>{renderMemberInfo(member)}</td>
+                <td>{renderLinkStatus(member)}</td>
+                <td style={{ textAlign: 'center' }}>{renderDateTime(member.created_at)}</td>
                 <td>
                   <div className="rnd-chip-wrap">
                     <TicketChip
                       grade="random"
-                      quantity={member.randomTicket}
+                      quantity={member.pending_random_tickets}
                       size="small"
                       showName={false}
-                      dim={member.randomTicket === 0}
+                      dim={member.pending_random_tickets === 0}
                     />
-                    {member.randomTicket > 0 && <span className="conv-arrow">→</span>}
+                    {member.pending_random_tickets > 0 && <span className="conv-arrow">→</span>}
                   </div>
                 </td>
-                <td>
-                  {member.conversion.length > 0 ? (
-                    <div className="conv-preview">
-                      {member.conversion.map((c, idx) => (
-                        <TicketChip
-                          key={idx}
-                          grade={c.type}
-                          quantity={Number(c.n)}
-                          size="small"
-                          showName={false}
-                          dim={Number(c.n) === 0}
-                        />
-                      ))}
-                    </div>
-                  ) : null}
-                </td>
-                <td>
-                  {
-                    <TicketChipGroup
-                      tickets={Object.entries(member.tickets.grade).map(([grade, quantity]) => ({
-                        grade: grade as 'bronze' | 'silver' | 'gold',
-                        quantity,
-                      }))}
-                      showName={false}
-                      showQuantity={true}
-                      dim={
-                        member.tickets.grade.bronze === 0 &&
-                        member.tickets.grade.silver === 0 &&
-                        member.tickets.grade.gold === 0
-                      }
-                    />
-                  }
-                </td>
+                <td>{getPendingBadge(member)}</td>
+                <td>{getActiveBadge(member)}</td>
                 <td>
                   <TicketChip
                     grade="event"
-                    quantity={member.tickets.event}
+                    quantity={member.ticket_event_total}
                     size="small"
                     showName={false}
-                    dim={member.tickets.event === 0}
+                    dim={member.ticket_event_total === 0}
                   />
                 </td>
-                <td>{renderMarketing(member.marketing)}</td>
+                <td>{renderMarketing(member.user_setting.marketing_consent)}</td>
                 <td>
-                  <span
-                    className={`badge ${member.status === '정상' ? 'badge-green' : member.status === '정지' ? 'badge-red' : 'badge-gray'}`}
-                  >
-                    {member.status}
+                  <span className={`badge ${getMemberStatus(member.account_status).className}`}>
+                    {getMemberStatus(member.account_status).label}
                   </span>
                 </td>
                 <td>
                   <MemberActions
                     memberId={member.id}
-                    status={member.status}
+                    status={member.account_status}
                     onViewDetail={onViewDetail}
                     onStatusChange={onStatusChange}
                     isSuperAdmin={isSuperAdmin}

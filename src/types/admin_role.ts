@@ -1,0 +1,1 @@
+export type IAdminRole = 'SUPERADMIN' | 'OPERATOR' | 'CS';

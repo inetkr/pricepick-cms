@@ -1,31 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MemberFilters } from 'src/components/members/member-filters';
 import { MemberModal } from 'src/components/members/member-modal';
 import { MemberStats } from 'src/components/members/member-stats';
 import { MemberTable } from 'src/components/members/member-table';
+import { useDebounce } from 'src/hooks/use-debounce';
 import { useMembers } from 'src/hooks/use-member';
-import { Member } from 'src/types/members/member';
+import { IUser } from 'src/types/users/user';
 
 export const MembersSection: React.FC = () => {
-  const {
-    members,
-    stats,
-    isLoading,
-    searchTerm,
-    setSearchTerm,
-    filters,
-    setFilters,
-    updateMemberStatus,
-    updateMember,
-    grantTicket,
-  } = useMembers();
-
-  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const { members, stats, isLoading, filters, setFilters, totalPages, updateMember } = useMembers();
+  const [selectedMember, setSelectedMember] = useState<IUser | null>(null);
+  const [keyword, setKeyword] = useState<string>('');
+  const debouncedInput = useDebounce(keyword, 500);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleViewDetail = (id: number) => {
+  const handleViewDetail = (id: string) => {
     const member = members.find((m) => m.id === id);
     if (member) {
       setSelectedMember(member);
@@ -38,18 +29,21 @@ export const MembersSection: React.FC = () => {
     setSelectedMember(null);
   };
 
-  const handleSaveMember = (updatedMember: Member) => {
+  const handleSaveMember = (updatedMember: IUser) => {
     updateMember(updatedMember);
   };
 
-  const handleGrantTicket = (memberId: number, grade: string, quantity: number) => {
-    grantTicket(memberId, grade, quantity);
-    // Cập nhật lại selectedMember
-    const updated = members.find((m) => m.id === memberId);
-    if (updated) {
-      setSelectedMember(updated);
-    }
+  const handleGrantTicket = (memberId: string, grade: string, quantity: number) => {
+    // grantTicket(memberId, grade, quantity);
+    // const updated = members.find((m) => m.id === memberId);
+    // if (updated) {
+    //   setSelectedMember(updated);
+    // }
   };
+
+  useEffect(() => {
+    setFilters({ ...filters, search: debouncedInput });
+  }, [debouncedInput]);
 
   return (
     <div className="section active" id="sec-members">
@@ -73,10 +67,12 @@ export const MembersSection: React.FC = () => {
       </div> */}
 
       <MemberFilters
-        onSearch={setSearchTerm}
-        onJoinTypeChange={(value) => setFilters({ ...filters, joinType: value })}
-        onStatusChange={(value) => setFilters({ ...filters, status: value })}
-        onMarketingChange={(value) => setFilters({ ...filters, marketing: value })}
+        onSearch={(value) => {
+          setKeyword(value);
+        }}
+        onKakaoStatusChange={(value) => setFilters({ ...filters, kakao_status: value })}
+        onAccountStatusChange={(value) => setFilters({ ...filters, account_status: value })}
+        onMarketingChange={(value) => setFilters({ ...filters, marketing_consent: value })}
       />
 
       <MemberStats stats={stats} />
@@ -88,8 +84,8 @@ export const MembersSection: React.FC = () => {
       ) : (
         <MemberTable
           members={members}
-          onViewDetail={handleViewDetail}
-          onStatusChange={updateMemberStatus}
+          onViewDetail={() => {}}
+          onStatusChange={() => {}}
           isSuperAdmin={true}
         />
       )}
@@ -99,7 +95,7 @@ export const MembersSection: React.FC = () => {
         member={selectedMember}
         onClose={handleCloseModal}
         onSave={handleSaveMember}
-        onTicketGrant={handleGrantTicket}
+        onTicketGrant={() => {}}
         isEditable={true}
       />
     </div>

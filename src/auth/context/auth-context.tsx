@@ -2,10 +2,8 @@
 
 import { createContext } from 'react';
 
-// import type { AuthContextValue } from '../types';
+import type { AuthContextValue } from '../types';
 
-// ----------------------------------------------------------------------
-
-export const AuthContext = createContext<any | undefined>(undefined);
+export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthConsumer = AuthContext.Consumer;

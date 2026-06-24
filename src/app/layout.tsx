@@ -10,6 +10,7 @@ import { I18nProvider } from 'src/locales/i18n-provider';
 // import { AuthProvider } from 'src/auth/context/authContext';
 // import { ThemeProvider } from 'src/context/theme-context';
 import { AppThemeProvider } from 'src/theme/theme-provider';
+import { AuthProvider } from 'src/auth/context/authContext/auth-provider';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -37,9 +38,9 @@ export default async function RootLayout({ children }: Props) {
       <body>
         <I18nProvider lang={CONFIG.isStaticExport ? undefined : lang}>
           <LocalizationProvider>
-            {/* <AuthProvider> */}
-            <AppThemeProvider>{children}</AppThemeProvider>
-            {/* </AuthProvider> */}
+            <AuthProvider>
+              <AppThemeProvider>{children}</AppThemeProvider>
+            </AuthProvider>
           </LocalizationProvider>
         </I18nProvider>
       </body>
