@@ -26,7 +26,7 @@ export function AuthProvider({ children }: Props) {
         return;
       }
 
-      setAccessToken(accessToken);
+      await setAccessToken(accessToken);
 
       try {
         const responseData = await employeeAPI.getMe();
@@ -53,7 +53,8 @@ export function AuthProvider({ children }: Props) {
 
   useEffect(() => {
     checkUserSession();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checkUserSession]);
 
   // ----------------------------------------------------------------------
 

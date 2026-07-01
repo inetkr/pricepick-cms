@@ -1,1 +1,1 @@
-"# pointshub-cms"
+"# pricepick-cms"

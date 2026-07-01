@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import { useAuthContext } from '../hooks';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'src/routes/hooks/use-pathname';
+import { useRouter } from 'next/navigation';
 
 // ----------------------------------------------------------------------
 
@@ -26,29 +27,27 @@ export function RoleBasedGuard({ sx, children }: RoleBasedGuardProp) {
   const [isAcceptPage, setIsAcceptPage] = useState<boolean>(false);
   const { admin, authenticated, loading } = useAuthContext();
   const pathname = usePathname();
-
-  console.log('RoleBasedGuard', { admin, authenticated, loading, pathname });
+  const router = useRouter();
 
   useEffect(() => {
-    console.log('RoleBasedGuard useEffect', { admin, authenticated, loading, pathname });
     if (admin && authenticated && !loading) {
       const acceptPages = acceptPagesByRole();
-      if (
+      const hasAccess =
         typeof acceptPages[admin.role] !== 'undefined' &&
-        acceptPages[admin.role].includes(pathname.split('/')[1] || '')
-      ) {
-        setIsAcceptPage(true);
-      }
+        acceptPages[admin.role].includes(pathname.split('/')[1] || '');
+      setIsAcceptPage(hasAccess);
+    } else {
+      setIsAcceptPage(false);
     }
   }, [admin, pathname, loading, authenticated]);
 
-  console.log('RoleBasedGuard', { admin, authenticated, loading, isAcceptPage });
-
-  if (!admin || !authenticated || loading) {
+  if (loading) {
     return <></>;
   }
 
-  console.log('RoleBasedGuard', { admin, authenticated, loading, isAcceptPage });
+  if (!loading && !authenticated) {
+    return null;
+  }
 
   if (!isAcceptPage) {
     return (

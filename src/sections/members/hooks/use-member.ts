@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { userAPI } from 'src/api';
+import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 import { IUser } from 'src/types/users/user';
 import { IUserStat } from 'src/types/users/user_stat';
 
@@ -12,6 +13,7 @@ type IFilters = {
 
 export const useMembers = () => {
   const [members, setMembers] = useState<IUser[]>([]);
+  const { showMessageIcon } = useDialogMessage();
   const [stats, setStats] = useState<IUserStat>({
     total_users: 0,
     total_kakao_linked: 0,
@@ -28,6 +30,7 @@ export const useMembers = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
 
   const loadMembers = async () => {
     setIsLoading(true);
@@ -45,6 +48,7 @@ export const useMembers = () => {
 
       if (responseData && responseData.result && responseData.result.object) {
         setMembers(responseData.result.object.rows);
+        setTotalItems(responseData.result.object.count);
         setTotalPages(Math.ceil(responseData.result.object.count / limit));
       }
 
@@ -68,9 +72,29 @@ export const useMembers = () => {
 
   const updateMember = async (updatedMember: IUser) => {
     try {
+      const responseData = await userAPI.update(updatedMember.id, {
+        nickname: updatedMember.nickname,
+        account_status: updatedMember.account_status,
+      });
+      if (responseData && responseData.result && responseData.result.object) {
+        showMessageIcon('회원 정보가 업데이트되었습니다.', DialogMessageIcon.success, () => {
+          loadMembers();
+        });
+      }
     } catch (error) {
       console.error('Failed to update member:', error);
+      showMessageIcon('회원 업데이트에 실패했습니다.', DialogMessageIcon.alert);
     }
+  };
+
+  const handleSetFilters = (newFilters: IFilters) => {
+    setPage(1);
+    setFilters(newFilters);
+  };
+
+  const handleSetLimit = (newLimit: number) => {
+    setPage(1);
+    setLimit(newLimit);
   };
 
   // Load members
@@ -107,13 +131,14 @@ export const useMembers = () => {
     stats,
     isLoading,
     filters,
-    setFilters,
+    setFilters: handleSetFilters,
     // grantTicket,
     page,
     setPage,
     limit,
-    setLimit,
+    setLimit: handleSetLimit,
     totalPages,
+    totalItems,
     updateMember
   };
 };

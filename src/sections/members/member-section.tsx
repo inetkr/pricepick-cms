@@ -1,16 +1,30 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { PaginationProps } from 'src/components/common/pagination';
 import { MemberFilters } from 'src/components/members/member-filters';
 import { MemberModal } from 'src/components/members/member-modal';
 import { MemberStats } from 'src/components/members/member-stats';
 import { MemberTable } from 'src/components/members/member-table';
 import { useDebounce } from 'src/hooks/use-debounce';
-import { useMembers } from 'src/hooks/use-member';
+import { useMembers } from 'src/sections/members/hooks/use-member';
 import { IUser } from 'src/types/users/user';
 
 export const MembersSection: React.FC = () => {
-  const { members, stats, isLoading, filters, setFilters, totalPages, updateMember } = useMembers();
+  const {
+    members,
+    stats,
+    isLoading,
+    filters,
+    setFilters,
+    page,
+    setPage,
+    limit,
+    setLimit,
+    totalPages,
+    totalItems,
+    updateMember,
+  } = useMembers();
   const [selectedMember, setSelectedMember] = useState<IUser | null>(null);
   const [keyword, setKeyword] = useState<string>('');
   const debouncedInput = useDebounce(keyword, 500);
@@ -44,6 +58,17 @@ export const MembersSection: React.FC = () => {
   useEffect(() => {
     setFilters({ ...filters, search: debouncedInput });
   }, [debouncedInput]);
+
+  const paginationProps: PaginationProps = {
+    currentPage: page,
+    totalPages,
+    onPageChange: setPage,
+    onItemsPerPageChange: setLimit,
+    showSizeChanger: true,
+    showTotal: true,
+    totalItems,
+    itemsPerPage: limit,
+  };
 
   return (
     <div className="section active" id="sec-members">
@@ -84,7 +109,8 @@ export const MembersSection: React.FC = () => {
       ) : (
         <MemberTable
           members={members}
-          onViewDetail={() => {}}
+          pagination={paginationProps}
+          onViewDetail={handleViewDetail}
           onStatusChange={() => {}}
           isSuperAdmin={true}
         />

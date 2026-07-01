@@ -9,34 +9,34 @@ interface PointsToolbarProps {
   onSearch?: (value: string) => void;
   onTypeChange?: (value: string) => void;
   onPeriodChange?: (value: string) => void;
-  onExport?: () => void;
-  onManual?: () => void;
   searchPlaceholder?: string;
   typeOptions?: Option[];
   periodOptions?: Option[];
 }
 
+const typeOptions: Option[] = [
+  { value: '', label: '전체 유형' },
+  { value: 'ATTENDANCE', label: '출석 적립' },
+  { value: 'EXCHANGE', label: '티켓 교환' },
+  { value: 'ADMIN_GRANT', label: '관리자 지급' },
+  { value: 'USED', label: '사용 차감' },
+  { value: 'EXPIRED', label: '만료 소멸' },
+];
+
+const periodOptions: Option[] = [
+  { value: '', label: '전체 기간' },
+  { value: '7', label: '최근 7일' },
+  { value: '30', label: '최근 30일' },
+  { value: '90', label: '최근 90일' },
+];
+
 export const PointsToolbar: React.FC<PointsToolbarProps> = ({
   onSearch,
   onTypeChange,
   onPeriodChange,
-  onExport,
-  onManual,
-  searchPlaceholder = '회원명, 카카오 ID 검색',
-  typeOptions = [
-    { value: '', label: '전체 유형' },
-    { value: 'attendance', label: '출석 적립' },
-    { value: 'exchange', label: '티켓 교환' },
-    { value: 'admin', label: '관리자 지급' },
-    { value: 'used', label: '사용 차감' },
-    { value: 'expire', label: '만료 소멸' },
-  ],
-  periodOptions = [
-    { value: '30', label: '최근 30일' },
-    { value: '7', label: '최근 7일' },
-    { value: '90', label: '최근 90일' },
-    { value: 'custom', label: '기간 직접 입력' },
-  ],
+  searchPlaceholder = '닉네임, 카카오 ID 검색',
+  typeOptions: typeOptionsProp = typeOptions,
+  periodOptions: periodOptionsProp = periodOptions,
 }) => {
   return (
     <div className="toolbar">
@@ -46,27 +46,19 @@ export const PointsToolbar: React.FC<PointsToolbarProps> = ({
         onChange={(e) => onSearch?.(e.target.value)}
       />
       <select className="filter-sel" onChange={(e) => onTypeChange?.(e.target.value)}>
-        {typeOptions.map((opt) => (
+        {typeOptionsProp.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
         ))}
       </select>
       <select className="filter-sel" onChange={(e) => onPeriodChange?.(e.target.value)}>
-        {periodOptions.map((opt) => (
+        {periodOptionsProp.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
         ))}
       </select>
-      <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
-        <button className="btn btn-ghost btn-sm" onClick={onExport}>
-          내보내기
-        </button>
-        <button className="btn btn-ghost btn-sm" onClick={onManual}>
-          수동 지급 / 회수
-        </button>
-      </div>
     </div>
   );
 };

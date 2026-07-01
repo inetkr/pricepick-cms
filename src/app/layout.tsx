@@ -7,10 +7,10 @@ import { CONFIG } from 'src/config-global';
 import { LocalizationProvider } from 'src/locales';
 import { detectLanguage } from 'src/locales/server';
 import { I18nProvider } from 'src/locales/i18n-provider';
-// import { AuthProvider } from 'src/auth/context/authContext';
-// import { ThemeProvider } from 'src/context/theme-context';
 import { AppThemeProvider } from 'src/theme/theme-provider';
 import { AuthProvider } from 'src/auth/context/authContext/auth-provider';
+import { LoadingWrapper } from 'src/context/loading-context';
+import { DialogMessageProvider } from 'src/context/dialog-message-context';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -38,9 +38,13 @@ export default async function RootLayout({ children }: Props) {
       <body>
         <I18nProvider lang={CONFIG.isStaticExport ? undefined : lang}>
           <LocalizationProvider>
-            <AuthProvider>
-              <AppThemeProvider>{children}</AppThemeProvider>
-            </AuthProvider>
+            <LoadingWrapper>
+              <DialogMessageProvider>
+                <AuthProvider>
+                  <AppThemeProvider>{children}</AppThemeProvider>
+                </AuthProvider>
+              </DialogMessageProvider>
+            </LoadingWrapper>
           </LocalizationProvider>
         </I18nProvider>
       </body>

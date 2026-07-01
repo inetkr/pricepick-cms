@@ -2,26 +2,26 @@
 
 import { useEffect } from "react";
 import axios from "./axios";
-// import { useLoadingContext } from "src/context/loading-context";
+import { useLoadingContext } from "src/context/loading-context";
 
 export const useAxiosWithLoading = () => {
-  // const { onLoading, onStopLoading } = useLoadingContext();
+  const { onLoading, onStopLoading } = useLoadingContext();
 
   useEffect(() => {
     // request interceptor
     const reqInterceptor = axios.axiosInstanceWithLoading.interceptors.request.use((config) => {
-      // onLoading();
+      onLoading();
       return config;
     });
 
     // response interceptor
     const resInterceptor = axios.axiosInstanceWithLoading.interceptors.response.use(
       (response) => {
-        // onStopLoading();
+        onStopLoading();
         return response;
       },
       (error) => {
-        // onStopLoading();
+        onStopLoading();
         return Promise.reject(error);
       }
     );
@@ -31,6 +31,5 @@ export const useAxiosWithLoading = () => {
       axios.axiosInstanceWithLoading.interceptors.request.eject(reqInterceptor);
       axios.axiosInstanceWithLoading.interceptors.response.eject(resInterceptor);
     };
-  // }, [onLoading, onStopLoading]);
-  }, []);
+  }, [onLoading, onStopLoading]);
 };

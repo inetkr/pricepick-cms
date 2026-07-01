@@ -1,16 +1,23 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Member } from 'src/types/users/user';
+import { IAccountStatus } from 'src/types/common';
+import { IUser } from 'src/types/users/user';
 
 interface MemberModalProps {
   isOpen: boolean;
-  member: Member | null;
+  member: IUser | null;
   onClose: () => void;
-  onSave?: (member: Member) => void;
-  onTicketGrant?: (memberId: number, grade: string, quantity: number) => void;
+  onSave?: (member: IUser) => void;
+  onTicketGrant?: (memberId: string, grade: string, quantity: number) => void;
   isEditable?: boolean;
 }
+
+const MEMBER_STATUS_OPTIONS = [
+  { value: 'NORMAL', label: '정상' },
+  { value: 'BLOCK', label: '차단' },
+  { value: 'DELETE', label: '탈퇴' },
+];
 
 export const MemberModal: React.FC<MemberModalProps> = ({
   isOpen,
@@ -20,7 +27,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
   onTicketGrant,
   isEditable = true,
 }) => {
-  const [formData, setFormData] = useState<Partial<Member>>({});
+  const [formData, setFormData] = useState<Partial<IUser>>({});
   const [ticketGrade, setTicketGrade] = useState('bronze');
   const [ticketQty, setTicketQty] = useState(1);
 
@@ -32,29 +39,26 @@ export const MemberModal: React.FC<MemberModalProps> = ({
 
   if (!isOpen || !member) return null;
 
-  const handleStatusChange = (newStatus: '정상' | '정지' | '탈퇴') => {
-    setFormData({ ...formData, status: newStatus });
+  const handleStatusChange = (newStatus: IAccountStatus) => {
+    setFormData({ ...formData, account_status: newStatus });
   };
 
   const handleSave = () => {
     if (onSave && formData) {
-      onSave(formData as Member);
+      onSave(formData as IUser);
     }
     onClose();
   };
 
   const handleTicketGrant = () => {
-    if (onTicketGrant) {
+    if (onTicketGrant && member) {
       onTicketGrant(member.id, ticketGrade, ticketQty);
     }
     onClose();
   };
 
   return (
-    <div
-      className={`modal-overlay ${isOpen ? 'open' : ''}`}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
+    <div className={`modal-overlay ${isOpen ? 'open' : ''}`}>
       <div className="modal">
         <div className="modal-header">
           <div className="modal-title">회원 상세</div>
@@ -88,40 +92,56 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               <div
                 style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '4px' }}
               >
-                {member.accounts.map((acc, idx) => {
-                  const typeClass = {
-                    kakao: 'member-type-kakao',
-                    apple: 'member-type-apple',
-                    google: 'member-type-google',
-                  }[acc.type];
-                  return (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span className={typeClass}>{acc.label}</span>
-                      <span style={{ fontSize: '12px', color: 'var(--text2)' }}>{acc.email}</span>
-                    </div>
-                  );
-                })}
+                {member.kakao_info ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span className="member-type-kakao">카카오</span>
+                    <span style={{ fontSize: '12px', color: 'var(--text2)' }}>
+                      {member.username}
+                    </span>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span
+                      style={{
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        color: '#d97a17',
+                        background: '#fdf1e3',
+                        border: '1px solid #f3d2a0',
+                        borderRadius: '10px',
+                        padding: '1px 7px',
+                      }}
+                    >
+                      게스트(미연동)
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
             <div className="form-group">
               <label className="form-label">상태</label>
               <select
                 className="form-select"
-                value={formData.status || '정상'}
-                onChange={(e) => handleStatusChange(e.target.value as any)}
+                value={formData.account_status || 'NORMAL'}
+                onChange={(e) => handleStatusChange(e.target.value as IAccountStatus)}
                 disabled={!isEditable}
               >
-                <option value="정상">정상</option>
-                <option value="정지">정지</option>
-                <option value="탈퇴">탈퇴</option>
+                {MEMBER_STATUS_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="form-group">
               <label className="form-label">가입 유형</label>
-              <input className="form-input" value={member.joinType || ''} disabled />
+              <input
+                className="form-input"
+                value={member.kakao_id ? '카카오 연동' : '게스트 (미연동)'}
+                disabled
+              />
             </div>
           </div>
-
           <div className="form-group">
             <label className="form-label">티켓 보유 현황</label>
             <div
@@ -148,7 +168,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                     id="m-random-count"
                     style={{ fontSize: '15px', fontWeight: 800, color: '#C8200A' }}
                   >
-                    {member.randomTicket}
+                    {member.pending_random_tickets}
                   </span>
                 </div>
                 <div
@@ -205,7 +225,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   id="m-bronze-count"
                   style={{ fontSize: '15px', fontWeight: 800, color: 'var(--bronze)' }}
                 >
-                  {member.tickets.grade.bronze}
+                  {member.pending_bronze}
                 </span>
               </div>
 
@@ -229,7 +249,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   id="m-silver-count"
                   style={{ fontSize: '15px', fontWeight: 800, color: 'var(--silver)' }}
                 >
-                  {member.tickets.grade.silver}
+                  {member.pending_silver}
                 </span>
               </div>
               <div
@@ -252,7 +272,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   id="m-gold-count"
                   style={{ fontSize: '15px', fontWeight: 800, color: 'var(--gold)' }}
                 >
-                  {member.tickets.grade.gold}
+                  {member.pending_gold}
                 </span>
               </div>
               <div
@@ -273,7 +293,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   id="m-event-count"
                   style={{ fontSize: '15px', fontWeight: 800, color: '#c084fc' }}
                 >
-                  {member.tickets.event}
+                  {member.pending_event_tickets}
                 </span>
               </div>
             </div>

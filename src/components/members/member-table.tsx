@@ -4,21 +4,23 @@ import { MemberActions } from './member-actions';
 import { TicketChip, TicketChipGroup, TicketGrade } from '../common/ticket-chip';
 import { formatDate } from 'src/utils/helper';
 import { IAccountStatus, IMarketingConsent } from 'src/types/common';
+import { Pagination, PaginationProps } from '../common/pagination';
 
 interface MemberTableProps {
   members: IUser[];
+  pagination?: PaginationProps;
   onViewDetail: (id: string) => void;
   onStatusChange: (id: string, newStatus: IAccountStatus) => void;
   isSuperAdmin?: boolean;
 }
 
 const renderMemberInfo: (member: IUser) => JSX.Element = (member) => {
-  if (member.kakao_id && member.kakao_info && member.kakao_info.length > 0) {
+  if (member.kakao_id && member.kakao_info) {
     return (
       <>
         <div style={{ fontWeight: 500 }}>{member.nickname}</div>
         <div style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}>
-          {member.kakao_info[0].nickname}
+          {member.username}
         </div>
       </>
     );
@@ -56,7 +58,7 @@ const renderLinkStatus = (member: IUser) => {
       <>
         <span className="member-type-kakao">카카오 연동</span>
         <div style={{ fontSize: '10px', color: 'var(--text-3)', marginTop: '3px' }}>
-          연동 {formatDate(member.kakao_info[0]?.linked_at, 'YYYY/MM/DD')}
+          연동 {formatDate(member.kakao_info?.linked_at, 'YYYY/MM/DD')}
         </div>
       </>
     );
@@ -195,6 +197,7 @@ const getMemberStatus: (accountStatus: IAccountStatus) => { label: string; class
 
 export const MemberTable: React.FC<MemberTableProps> = ({
   members,
+  pagination,
   onViewDetail,
   onStatusChange,
   isSuperAdmin = true,
@@ -275,6 +278,7 @@ export const MemberTable: React.FC<MemberTableProps> = ({
           )}
         </tbody>
       </table>
+      {pagination && <Pagination {...pagination} />}
     </div>
   );
 };

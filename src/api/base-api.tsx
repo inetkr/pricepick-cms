@@ -54,7 +54,7 @@ export default class BaseAPI {
 
   getById(id: string) {
     return axios.axiosInstance
-      .get(`/admin/${this.tableName}/${id}`)
+      .get(`/${this.tableName}/admin/${id}`)
       .then((response) => response.data)
       .catch((error) => {
         console.error('Failed to fetch by ID:', error);
@@ -64,7 +64,7 @@ export default class BaseAPI {
 
   add(body: any) {
     return axios.axiosInstanceWithLoading
-      .post(`/admin/${this.tableName}`, body)
+      .post(`/${this.tableName}/admin`, body)
       .then((response) => response.data)
       .catch((error) => {
         console.error('Failed to add:', error);
@@ -74,7 +74,7 @@ export default class BaseAPI {
 
   update(id: string, body: any) {
     return axios.axiosInstanceWithLoading
-      .put(`/admin/${this.tableName}/${id}`, body)
+      .put(`/${this.tableName}/admin/update/${id}`, body)
       .then((response) => response.data)
       .catch((error) => {
         console.error('Failed to update:', error);
@@ -84,7 +84,7 @@ export default class BaseAPI {
 
   delete(id: string) {
     return axios.axiosInstanceWithLoading
-      .delete(`/admin/${this.tableName}/${id}`)
+      .delete(`/${this.tableName}/admin/delete/${id}`)
       .then((res) => {
         return res.data;
       })
