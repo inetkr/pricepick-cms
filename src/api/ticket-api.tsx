@@ -51,18 +51,16 @@ export default class TicketAPI extends BaseAPI {
     }
   };
 
-  addSubTicket = async (
-    userId: string,
-    subTicketData: {
-      action: 'ADMIN_ADD' | 'ADMIN_SUB';
-      ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
-      amount: number;
-      description: string;
-    }
-  ): Promise<ApiResponse<any>> => {
+  addSubTicket = async (subTicketData: {
+    user_identifier: string; // 닉네임 또는 UID
+    action: 'ADMIN_ADD' | 'ADMIN_SUB';
+    ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+    amount: number;
+    description: string;
+  }): Promise<ApiResponse<any>> => {
     try {
       const response = await axios.axiosInstanceWithLoading.post(
-        `/${tableName}/admin/add_sub_ticket/${userId}`,
+        `/${tableName}/admin/add_sub_ticket/`,
         subTicketData
       );
       return response.data;

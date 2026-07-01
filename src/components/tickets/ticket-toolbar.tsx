@@ -9,6 +9,7 @@ interface TicketToolbarProps {
   onSearch?: (value: string) => void;
   onTransactionTypeGroupChange?: (value: string) => void;
   onUsageStatusChange?: (value: string) => void;
+  onViewModalOpen?: () => void;
   searchPlaceholder?: string;
   transactionTypeGroupOptions?: Option[];
   usageStatusOptions?: Option[];
@@ -16,24 +17,28 @@ interface TicketToolbarProps {
 
 const transactionTypeGroupOptions: Option[] = [
   { value: '', label: '전체 발행유형' },
-  { value: '', label: '구매 적립' },
-  { value: '', label: '출석 체크' },
-  { value: '', label: '광고 시청' },
-  { value: '', label: '친구 초대' },
-  { value: '', label: '주간 미션' },
-  { value: '', label: '관리자 지급' },
+  { value: 'COUPANG_PURCHASE', label: '구매 적립' },
+  { value: 'ATTENDANCE', label: '출석 체크' },
+  { value: 'AD_WATCH', label: '광고 시청' },
+  { value: 'FRIEND_INVITE', label: '친구 초대' },
+  { value: 'WEEKLY_TASK', label: '주간 미션' },
+  { value: 'ADMIN_ADD', label: '관리자 지급' },
 ];
 
 const usageStatusOptions: Option[] = [
   { value: '', label: '전체 사용상태' },
-  { value: 'USED', label: '사용됨' },
-  { value: 'UNUSED', label: '사용되지 않음' },
+  { value: 'USED', label: '사용 완료' },
+  { value: 'PENDING', label: '가지급(대기)' },
+  { value: 'HOLDING', label: '보유 중' },
+  { value: 'ADMIN_SUB', label: '회수' },
+  { value: 'REJECTED', label: '거절' },
 ];
 
 export const TicketToolbar: React.FC<TicketToolbarProps> = ({
   onSearch,
   onTransactionTypeGroupChange,
   onUsageStatusChange,
+  onViewModalOpen,
   searchPlaceholder = '닉네임, 카카오 ID 검색',
   transactionTypeGroupOptions: transactionTypeGroupOptionsProp = transactionTypeGroupOptions,
   usageStatusOptions: usageStatusOptionsProp = usageStatusOptions,
@@ -62,6 +67,11 @@ export const TicketToolbar: React.FC<TicketToolbarProps> = ({
           </option>
         ))}
       </select>
+      <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }} id="ticket-hdr-actions">
+        <button className="btn btn-ghost btn-sm" onClick={onViewModalOpen}>
+          수동 지급 / 회수
+        </button>
+      </div>
     </div>
   );
 };

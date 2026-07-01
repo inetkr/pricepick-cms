@@ -48,17 +48,15 @@ export const MembersSection: React.FC = () => {
     updateMember(updatedMember);
   };
 
-  const handleGrantTicket = (
-    memberId: string,
-    data: {
-      action: 'ADMIN_ADD' | 'ADMIN_SUB';
-      ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
-      amount: number;
-      description: string;
-    }
-  ) => {
-    grantTicket(memberId, data);
-    const updated = members.find((m) => m.id === memberId);
+  const handleGrantTicket = (data: {
+    user_identifier: string; // 닉네임 또는 UID
+    action: 'ADMIN_ADD' | 'ADMIN_SUB';
+    ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+    amount: number;
+    description: string;
+  }) => {
+    grantTicket(data);
+    const updated = members.find((m) => m.id === data.user_identifier);
     if (updated) {
       setSelectedMember(updated);
     }

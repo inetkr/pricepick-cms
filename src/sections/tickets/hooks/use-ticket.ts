@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { ticketAPI } from 'src/api';
+import { useState, useEffect, useCallback } from 'react';
+import { ticketAPI, userAPI } from 'src/api';
+import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 import { ITicket } from 'src/types/tickets/ticket';
 import { ITicketStat } from 'src/types/tickets/ticket_stat';
 
@@ -10,6 +11,7 @@ type IFilters = {
 }
 
 export const useTickets = () => {
+  const { showMessageIcon } = useDialogMessage();
   const [tickets, setTickets] = useState<ITicket[]>([]);
   const [stats, setStats] = useState<ITicketStat>({
     total_issued: {
@@ -69,6 +71,37 @@ export const useTickets = () => {
     }
   };
 
+  const manualTicketAction = useCallback(
+    async (data: {
+      user_identifier: string; // 닉네임 또는 UID
+      action: 'ADMIN_ADD' | 'ADMIN_SUB';
+      ticket_type: 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT';
+      amount: number;
+      description: string;
+    }) => {
+      try {
+        const responseData = await ticketAPI.addSubTicket({
+          user_identifier: data.user_identifier,
+          action: data.action,
+          ticket_type: data.ticket_type,
+          amount: data.amount,
+          description: data.description,
+        });
+
+        if (responseData && responseData.result && responseData.result.object) {
+          showMessageIcon('티켓이 성공적으로 처리되었습니다.', DialogMessageIcon.success, () => {
+            loadTickets();
+            loadStats();
+          });
+        }
+      } catch (error) {
+        console.error('Failed to process manual ticket action:', error);
+        showMessageIcon('티켓 처리에 실패했습니다.', DialogMessageIcon.alert);
+      }
+    },
+    []
+  );
+
   const handleSetFilters = (newFilters: IFilters) => {
     setPage(1);
     setFilters(newFilters);
@@ -99,5 +132,6 @@ export const useTickets = () => {
     setLimit: handleSetLimit,
     totalPages,
     totalItems,
+    manualTicketAction,
   };
 };

@@ -9,15 +9,13 @@ interface MemberModalProps {
   member: IUser | null;
   onClose: () => void;
   onSave?: (member: IUser) => void;
-  onTicketGrant?: (
-    memberId: string,
-    data: {
-      action: 'ADMIN_ADD' | 'ADMIN_SUB';
-      ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
-      amount: number;
-      description: string;
-    }
-  ) => void;
+  onTicketGrant?: (data: {
+    user_identifier: string; // 닉네임 또는 UID
+    action: 'ADMIN_ADD' | 'ADMIN_SUB';
+    ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+    amount: number;
+    description: string;
+  }) => void;
   isEditable?: boolean;
 }
 
@@ -67,7 +65,8 @@ export const MemberModal: React.FC<MemberModalProps> = ({
 
   const handleTicketGrant = () => {
     if (onTicketGrant && member) {
-      onTicketGrant(member.id, {
+      onTicketGrant({
+        user_identifier: member.id,
         action: 'ADMIN_ADD',
         ticket_type: ticketGrade as 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD',
         amount: ticketQty,

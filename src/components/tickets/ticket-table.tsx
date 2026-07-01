@@ -1,29 +1,67 @@
 import React from 'react';
-import { ITicket, ITicketReason } from 'src/types/tickets/ticket';
+import { ITicket } from 'src/types/tickets/ticket';
 import { Pagination, PaginationProps } from '../common/pagination';
-import { TicketChip } from '../common/ticket-chip';
+import { TicketChip, TicketChipGroup, TicketGrade } from '../common/ticket-chip';
+import { ITransactionTypeGroup, IUsageStatus } from 'src/types/common';
 
 interface TicketTableProps {
   tickets: ITicket[];
   pagination?: PaginationProps;
 }
 
-const reasonBadgeMap: Record<ITicketReason, { color: string; label: string }> = {
-  PURCHASE_CONFIRM: { color: 'var(--success)', label: '구매확정 전환' },
-  PURCHASE_PENDING: { color: 'var(--text-2)', label: '구매 대기 (가지급)' },
-  MISSION: { color: '#c084fc', label: '주간 미션 완료' },
+const reasonBadgeMap: Record<ITransactionTypeGroup, { color: string; label: string }> = {
+  ADMIN_ADD: { color: 'var(--success)', label: '구매확정 전환' },
+  COUPANG_PURCHASE: { color: 'var(--text-2)', label: '구매 대기 (가지급)' },
+  WEEKLY_TASK: { color: '#c084fc', label: '주간 미션 완료' },
   ATTENDANCE: { color: '#c084fc', label: '출석 체크' },
-  AD_VIEW: { color: '#c084fc', label: '광고 시청' },
-  INVITE: { color: '#c084fc', label: '친구초대 보상' },
-  GIFTICON_EXCHANGE: { color: 'var(--danger)', label: '기프티콘 교환 소모' },
-  PRIZE_ENTRY: { color: 'var(--danger)', label: '경품 응모 소모' },
-  CLAWBACK: { color: 'var(--danger)', label: '부정행위 회수' },
-  ADMIN_GRANT: { color: 'var(--main)', label: '관리자 지급' },
+  AD_WATCH: { color: '#c084fc', label: '광고 시청' },
+  FRIEND_INVITE: { color: '#c084fc', label: '친구초대 보상' },
+  // GIFTICON_EXCHANGE: { color: 'var(--danger)', label: '기프티콘 교환 소모' },
+  // PRIZE_ENTRY: { color: 'var(--danger)', label: '경품 응모 소모' },
+  // CLAWBACK: { color: 'var(--danger)', label: '부정행위 회수' },
+  // ADMIN_GRANT: { color: 'var(--main)', label: '관리자 지급' },
 };
 
-const renderReasonBadge = (reason: ITicketReason) => {
+const renderReasonBadge = (reason: ITransactionTypeGroup) => {
   const config = reasonBadgeMap[reason] || { color: 'var(--text-2)', label: reason };
   return <span style={{ color: config.color }}>{config.label}</span>;
+};
+
+const usageStatusBadgeMap: Record<
+  IUsageStatus,
+  { color: string; background: string; border: string; label: string }
+> = {
+  HOLDING: { color: '#1f9d57', background: '#e6f7ec', border: '#b6e6c8', label: '보유 중' },
+  PENDING: { color: '#d97a17', background: '#fdf1e3', border: '#f3d2a0', label: '가지급(대기)' },
+  USED: { color: '#6b7280', background: '#f3f4f6', border: '#e5e7eb', label: '사용 완료' },
+  ADMIN_SUB: { color: '#dc2626', background: '#fef2f2', border: '#fecaca', label: '회수' },
+  REJECTED: { color: '#dc2626', background: '#fef2f2', border: '#fecaca', label: '거절' },
+};
+
+const renderStatusBadge = (status: IUsageStatus) => {
+  const config = usageStatusBadgeMap[status] || {
+    color: 'var(--text-2)',
+    background: '#f3f4f6',
+    border: '#e5e7eb',
+    label: status,
+  };
+  return (
+    <span
+      style={{
+        display: 'inline-block',
+        fontSize: '11px',
+        fontWeight: 700,
+        color: config.color,
+        background: config.background,
+        border: `1px solid ${config.border}`,
+        borderRadius: '20px',
+        padding: '3px 10px',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {config.label}
+    </span>
+  );
 };
 
 const renderDateTime = (date: string) => {
@@ -55,7 +93,7 @@ export const TicketTable: React.FC<TicketTableProps> = ({ tickets, pagination })
             <th>닉네임(카카오톡 ID)</th>
             <th>사유</th>
             <th>티켓</th>
-            <th>잔여 수량</th>
+            <th>상태</th>
             <th>일시</th>
           </tr>
         </thead>
@@ -77,21 +115,25 @@ export const TicketTable: React.FC<TicketTableProps> = ({ tickets, pagination })
                   <div
                     style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}
                   >
-                    ({ticket.kakao_id ?? '-'})
+                    ({ticket.username ?? '-'})
                   </div>
                 </td>
-                <td style={{ textAlign: 'center' }}>{renderReasonBadge(ticket.reason)}</td>
+                <td style={{ textAlign: 'center' }}>{ticket.description}</td>
                 <td style={{ textAlign: 'center' }}>
-                  <TicketChip grade={ticket.grade} quantity={Math.abs(ticket.quantity)} bare />
-                  {ticket.quantity < 0 && (
-                    <span style={{ color: 'var(--danger)', marginLeft: 4 }}>(회수)</span>
-                  )}
+                  <TicketChipGroup
+                    tickets={Object.entries(ticket.ticket_breakdown)
+                      .filter(([, quantity]) => quantity !== 0)
+                      .map(([grade, quantity]) => ({ grade: grade as TicketGrade, quantity }))}
+                    bare
+                    showQuantity
+                    showName
+                  />
                 </td>
                 <td style={{ textAlign: 'center', fontWeight: 600 }}>
-                  {ticket.balance.toLocaleString()}장
+                  {renderStatusBadge(ticket.usage_status)}
                 </td>
                 <td style={{ textAlign: 'center', fontSize: '12px', whiteSpace: 'nowrap' }}>
-                  {renderDateTime(ticket.created_at)}
+                  {renderDateTime(ticket.updated_at)}
                 </td>
               </tr>
             ))

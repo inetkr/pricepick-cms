@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { PaginationProps } from 'src/components/common/pagination';
+import { TicketManualModal } from 'src/components/tickets/ticket-manual-modal';
 import { TicketStats } from 'src/components/tickets/ticket-stats';
 import { TicketTable } from 'src/components/tickets/ticket-table';
 import { TicketToolbar } from 'src/components/tickets/ticket-toolbar';
@@ -21,9 +22,11 @@ export const TicketsSection: React.FC = () => {
     setLimit,
     totalPages,
     totalItems,
+    manualTicketAction,
   } = useTickets();
   const [keyword, setKeyword] = useState<string>('');
   const debouncedInput = useDebounce(keyword, 500);
+  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
 
   useEffect(() => {
     setFilters({ ...filters, search: debouncedInput });
@@ -55,6 +58,7 @@ export const TicketsSection: React.FC = () => {
           setFilters({ ...filters, transaction_type_group: value })
         }
         onUsageStatusChange={(value) => setFilters({ ...filters, usage_status: value })}
+        onViewModalOpen={() => setIsManualModalOpen(true)}
       />
 
       {isLoading ? (
@@ -64,6 +68,20 @@ export const TicketsSection: React.FC = () => {
       ) : (
         <TicketTable tickets={tickets} pagination={paginationProps} />
       )}
+
+      <TicketManualModal
+        open={isManualModalOpen}
+        onClose={() => setIsManualModalOpen(false)}
+        onSubmit={(data) =>
+          manualTicketAction({
+            user_identifier: data.user_identifier,
+            action: data.action,
+            ticket_type: data.ticket_type,
+            amount: data.amount,
+            description: data.description,
+          })
+        }
+      />
     </div>
   );
 };

@@ -107,14 +107,15 @@ export const useMembers = () => {
     loadMembers();
   }, [filters, page, limit]);
 
-  const grantTicket = useCallback(async (memberId: string, data: {
+  const grantTicket = useCallback(async (data: {
+    user_identifier: string; // 닉네임 또는 UID
     action: 'ADMIN_ADD' | 'ADMIN_SUB';
     ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
     amount: number;
     description: string;
   }) => {
     try {
-      const responseData = await ticketAPI.addSubTicket(memberId.toString(), data);
+      const responseData = await ticketAPI.addSubTicket(data);
       if (responseData && responseData.result && responseData.result.object) {
         showMessageIcon('티켓이 성공적으로 부여되었습니다.', DialogMessageIcon.success, () => {
           loadMembers();
