@@ -50,4 +50,25 @@ export default class TicketAPI extends BaseAPI {
       throw error;
     }
   };
+
+  addSubTicket = async (
+    userId: string,
+    subTicketData: {
+      action: 'ADMIN_ADD' | 'ADMIN_SUB';
+      ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+      amount: number;
+      description: string;
+    }
+  ): Promise<ApiResponse<any>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.post(
+        `/${tableName}/admin/add_sub_ticket/${userId}`,
+        subTicketData
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error adding sub-ticket:', error);
+      throw error;
+    }
+  };
 }

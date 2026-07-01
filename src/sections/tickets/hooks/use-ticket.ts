@@ -12,11 +12,23 @@ type IFilters = {
 export const useTickets = () => {
   const [tickets, setTickets] = useState<ITicket[]>([]);
   const [stats, setStats] = useState<ITicketStat>({
-    total_issued: 0,
-    today_issued: 0,
-    gifticon_exchanged: 0,
-    prize_used: 0,
-    clawback: 0,
+    total_issued: {
+      all: 0,
+      bronze: 0,
+      event: 0,
+      gold: 0,
+      silver: 0,
+    },
+    today_issued: {
+      all: 0,
+      bronze: 0,
+      event: 0,
+      gold: 0,
+      silver: 0,
+    },
+    gifticon_purchases_this_month: 0,
+    event_ticket_prize_entries: 0,
+    fraud_revoked: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState<IFilters>({

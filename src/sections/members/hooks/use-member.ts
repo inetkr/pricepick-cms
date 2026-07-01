@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { userAPI } from 'src/api';
+import { useState, useEffect, useCallback } from 'react';
+import { ticketAPI, userAPI } from 'src/api';
 import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 import { IUser } from 'src/types/users/user';
 import { IUserStat } from 'src/types/users/user_stat';
@@ -107,24 +107,24 @@ export const useMembers = () => {
     loadMembers();
   }, [filters, page, limit]);
 
-    // const grantTicket = useCallback((memberId: number, grade: string, quantity: number) => {
-    //   setMembers(prev =>
-    //     prev.map(m => {
-    //       if (m.id !== memberId) return m;
-    //       const key = grade as keyof typeof m.tickets.grade;
-    //       return {
-    //         ...m,
-    //         tickets: {
-    //           ...m.tickets,
-    //           grade: {
-    //             ...m.tickets.grade,
-    //             [key]: m.tickets.grade[key] + quantity,
-    //           },
-    //         },
-    //       };
-    //     })
-    //   );
-    // }, []);
+  const grantTicket = useCallback(async (memberId: string, data: {
+    action: 'ADMIN_ADD' | 'ADMIN_SUB';
+    ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+    amount: number;
+    description: string;
+  }) => {
+    try {
+      const responseData = await ticketAPI.addSubTicket(memberId.toString(), data);
+      if (responseData && responseData.result && responseData.result.object) {
+        showMessageIcon('티켓이 성공적으로 부여되었습니다.', DialogMessageIcon.success, () => {
+          loadMembers();
+        });
+      }
+    } catch (error) {
+      console.error('Failed to grant ticket:', error);
+      showMessageIcon('티켓 부여에 실패했습니다.', DialogMessageIcon.alert);
+    }
+  }, []);
 
   return {
     members,
@@ -132,7 +132,7 @@ export const useMembers = () => {
     isLoading,
     filters,
     setFilters: handleSetFilters,
-    // grantTicket,
+    grantTicket,
     page,
     setPage,
     limit,

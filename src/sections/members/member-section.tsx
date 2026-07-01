@@ -24,6 +24,7 @@ export const MembersSection: React.FC = () => {
     totalPages,
     totalItems,
     updateMember,
+    grantTicket,
   } = useMembers();
   const [selectedMember, setSelectedMember] = useState<IUser | null>(null);
   const [keyword, setKeyword] = useState<string>('');
@@ -47,12 +48,20 @@ export const MembersSection: React.FC = () => {
     updateMember(updatedMember);
   };
 
-  const handleGrantTicket = (memberId: string, grade: string, quantity: number) => {
-    // grantTicket(memberId, grade, quantity);
-    // const updated = members.find((m) => m.id === memberId);
-    // if (updated) {
-    //   setSelectedMember(updated);
-    // }
+  const handleGrantTicket = (
+    memberId: string,
+    data: {
+      action: 'ADMIN_ADD' | 'ADMIN_SUB';
+      ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+      amount: number;
+      description: string;
+    }
+  ) => {
+    grantTicket(memberId, data);
+    const updated = members.find((m) => m.id === memberId);
+    if (updated) {
+      setSelectedMember(updated);
+    }
   };
 
   useEffect(() => {
@@ -121,7 +130,7 @@ export const MembersSection: React.FC = () => {
         member={selectedMember}
         onClose={handleCloseModal}
         onSave={handleSaveMember}
-        onTicketGrant={() => {}}
+        onTicketGrant={handleGrantTicket}
         isEditable={true}
       />
     </div>

@@ -9,7 +9,15 @@ interface MemberModalProps {
   member: IUser | null;
   onClose: () => void;
   onSave?: (member: IUser) => void;
-  onTicketGrant?: (memberId: string, grade: string, quantity: number) => void;
+  onTicketGrant?: (
+    memberId: string,
+    data: {
+      action: 'ADMIN_ADD' | 'ADMIN_SUB';
+      ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+      amount: number;
+      description: string;
+    }
+  ) => void;
   isEditable?: boolean;
 }
 
@@ -17,6 +25,13 @@ const MEMBER_STATUS_OPTIONS = [
   { value: 'NORMAL', label: '정상' },
   { value: 'BLOCK', label: '차단' },
   { value: 'DELETE', label: '탈퇴' },
+];
+
+const TICKET_GRADE_OPTIONS = [
+  { value: 'BRONZE', label: '브론즈' },
+  { value: 'SILVER', label: '실버' },
+  { value: 'GOLD', label: '골드' },
+  { value: 'EVENT', label: '이벤트' },
 ];
 
 export const MemberModal: React.FC<MemberModalProps> = ({
@@ -28,7 +43,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
   isEditable = true,
 }) => {
   const [formData, setFormData] = useState<Partial<IUser>>({});
-  const [ticketGrade, setTicketGrade] = useState('bronze');
+  const [ticketGrade, setTicketGrade] = useState<'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD'>('BRONZE');
   const [ticketQty, setTicketQty] = useState(1);
 
   useEffect(() => {
@@ -52,7 +67,12 @@ export const MemberModal: React.FC<MemberModalProps> = ({
 
   const handleTicketGrant = () => {
     if (onTicketGrant && member) {
-      onTicketGrant(member.id, ticketGrade, ticketQty);
+      onTicketGrant(member.id, {
+        action: 'ADMIN_ADD',
+        ticket_type: ticketGrade as 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD',
+        amount: ticketQty,
+        description: '티켓 부여',
+      });
     }
     onClose();
   };
@@ -311,12 +331,15 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   className="form-select"
                   style={{ width: '120px' }}
                   value={ticketGrade}
-                  onChange={(e) => setTicketGrade(e.target.value)}
+                  onChange={(e) =>
+                    setTicketGrade(e.target.value as 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD')
+                  }
                 >
-                  <option value="bronze">브론즈</option>
-                  <option value="silver">실버</option>
-                  <option value="gold">골드</option>
-                  <option value="event">이벤트</option>
+                  {TICKET_GRADE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
                 </select>
                 <input
                   className="form-input"
