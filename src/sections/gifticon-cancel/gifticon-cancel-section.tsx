@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import { InfoBox } from 'src/components/common/info-box';
-import { PaginationProps } from 'src/components/common/pagination';
+import type { PaginationProps } from 'src/components/common/pagination';
+import type {
+  GifticonCancelItem} from 'src/components/gifticon-cancel/gifticon-cancel-table';
 import {
-  GifticonCancelItem,
   GifticonCancelTable,
 } from 'src/components/gifticon-cancel/gifticon-cancel-table';
 import { GifticonCancelToolbar } from 'src/components/gifticon-cancel/gifticon-cancel-toolbar';

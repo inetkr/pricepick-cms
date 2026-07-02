@@ -51,12 +51,10 @@ export const MemberTypeBadge: React.FC<MemberTypeBadgeProps> = ({
           </span>
         )}
       </span>
-      <>
-        <span className="member-type-kakao">카카오</span>
+      <span className="member-type-kakao">카카오</span>
         <div style={{ fontSize: '10px', color: 'var(--text3)', marginTop: '2px' }}>
           {email ? email.replace(/@.*$/, '_kakao') : 'kakao_id'}
         </div>
-      </>
     </div>
   );
 };

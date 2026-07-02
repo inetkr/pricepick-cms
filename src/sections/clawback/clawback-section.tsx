@@ -1,10 +1,13 @@
 // src/sections/clawback/ClawbackSection.tsx
+
 'use client';
 
 import React, { useState } from 'react';
-import { ClawbackDebtTable, DebtItem } from 'src/components/clawback/clawback-debt-table';
+import type { DebtItem } from 'src/components/clawback/clawback-debt-table';
+import { ClawbackDebtTable } from 'src/components/clawback/clawback-debt-table';
 import { ClawbackStats } from 'src/components/clawback/clawback-stats';
-import { ClawbackItem, ClawbackTable } from 'src/components/clawback/clawback-table';
+import type { ClawbackItem} from 'src/components/clawback/clawback-table';
+import { ClawbackTable } from 'src/components/clawback/clawback-table';
 import { ClawbackToolbar } from 'src/components/clawback/clawback-toolbar';
 import { InfoBox } from 'src/components/common/info-box';
 
@@ -96,9 +99,9 @@ const debtData: DebtItem[] = [
 
 export const ClawbackSection: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedGrade, setSelectedGrade] = useState('');
+  const [, setSelectedGrade] = useState('');
   const [selectedReason, setSelectedReason] = useState('');
-  const [selectedPeriod, setSelectedPeriod] = useState('30');
+  const [, setSelectedPeriod] = useState('30');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -138,7 +141,8 @@ export const ClawbackSection: React.FC = () => {
     <div className="section active">
       <InfoBox>
         <strong>티켓 회수·소멸 이력</strong>은 구매 취소·반품에 의한 회수 및 등급 티켓 유효기간 만료
-        소멸 내역입니다. TicketTransaction 테이블의 type='CLAWBACK'·'EXPIRE' 레코드를 조회합니다.
+        소멸 내역입니다. TicketTransaction 테이블의 type=&apos;CLAWBACK&apos;·&apos;EXPIRE&apos; 레코드를
+        조회합니다.
       </InfoBox>
 
       <ClawbackStats

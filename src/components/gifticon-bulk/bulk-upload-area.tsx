@@ -32,14 +32,14 @@ export const BulkUploadArea: React.FC<BulkUploadAreaProps> = ({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    const files = e.dataTransfer.files;
+    const {files} = e.dataTransfer;
     if (files.length > 0) {
       validateAndUpload(files[0]);
     }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+    const {files} = e.target;
     if (files && files.length > 0) {
       validateAndUpload(files[0]);
     }
@@ -85,6 +85,13 @@ export const BulkUploadArea: React.FC<BulkUploadAreaProps> = ({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          handleClick();
+        }
+      }}
     >
       <div style={{ fontSize: '32px', marginBottom: '12px', color: 'var(--text-3)' }}>↑</div>
       <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '6px' }}>
@@ -94,6 +101,7 @@ export const BulkUploadArea: React.FC<BulkUploadAreaProps> = ({
         지원 형식: .csv, .xlsx (최대 10MB)
       </div>
       <button
+        type="button"
         className="btn btn-primary"
         onClick={(e) => {
           e.stopPropagation();

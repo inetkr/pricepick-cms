@@ -25,7 +25,7 @@ export const ExchangeRateCard: React.FC<ExchangeRateCardProps> = ({ data, onEdit
       <div className="card-header">
         <div className="card-title">포인트 ↔ 티켓 교환 비율</div>
         {onEdit && (
-          <button className="btn btn-ghost btn-sm" onClick={onEdit}>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={onEdit}>
             수정
           </button>
         )}

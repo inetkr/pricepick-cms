@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { SettlementDiffBox } from 'src/components/settlement/settlement-diff-box';
 import { SettlementStats } from 'src/components/settlement/settlement-stats';
-import { SettlementColumn, SettlementTable } from 'src/components/settlement/settlement-table';
+import type { SettlementColumn} from 'src/components/settlement/settlement-table';
+import { SettlementTable } from 'src/components/settlement/settlement-table';
 
 // Định nghĩa kiểu dữ liệu
 interface AffiliateSettlement {
@@ -181,8 +182,6 @@ const diffReasons = [
 ];
 
 export const SettlementSection: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-
   const handleExport = () => {
     console.log('Export CSV');
     // TODO: implement export

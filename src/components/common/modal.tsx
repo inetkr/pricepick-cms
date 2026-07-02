@@ -43,11 +43,18 @@ export const Modal: React.FC<ModalProps> = ({
   if (!open) return null;
 
   return (
-    <div className="modal-overlay open" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="modal" style={{ width }}>
+    <div
+      className="modal-overlay open"
+      role="presentation"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onKeyDown={(e) => {
+        if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) onClose();
+      }}
+    >
+      <div className="modal" ref={modalRef} style={{ width }}>
         <div className="modal-header">
           <div className="modal-title">{title}</div>
-          <button className="modal-close" onClick={onClose}>
+          <button type="button" className="modal-close" onClick={onClose}>
             <svg
               viewBox="0 0 24 24"
               width="16"

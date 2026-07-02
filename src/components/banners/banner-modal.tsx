@@ -72,23 +72,34 @@ export const BannerModal: React.FC<BannerModalProps> = ({
     onClose();
   };
 
+  const handleStatusToggle = () => {
+    handleChange('status', formData.status === 'active' ? 'inactive' : 'active');
+  };
+
   return (
     <div
       className="modal-overlay open"
+      role="presentation"
       onClick={(e) => e.target === e.currentTarget && handleClose()}
+      onKeyDown={(e) => {
+        if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) handleClose();
+      }}
     >
       <div className="modal">
         <div className="modal-header">
           <div className="modal-title">{title}</div>
-          <button className="modal-close" onClick={handleClose}>
+          <button type="button" className="modal-close" onClick={handleClose}>
             ✕
           </button>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="modal-body">
             <div className="form-group">
-              <label className="form-label">배너 제목</label>
+              <label className="form-label" htmlFor="banner-title">
+                배너 제목
+              </label>
               <input
+                id="banner-title"
                 className="form-input"
                 placeholder="배너 제목"
                 value={formData.title}
@@ -98,22 +109,31 @@ export const BannerModal: React.FC<BannerModalProps> = ({
             </div>
 
             <div className="form-group">
-              <label className="form-label">배경 컬러</label>
+              <div className="form-label">배경 컬러</div>
               <div className="color-presets">
                 {COLOR_PRESETS.map((color) => (
                   <div
                     key={color}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`색상 선택 ${color}`}
                     className={`color-dot ${formData.background === color ? 'sel' : ''}`}
                     style={{ background: color }}
                     onClick={() => handleColorSelect(color)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') handleColorSelect(color);
+                    }}
                   />
                 ))}
               </div>
             </div>
 
             <div className="form-group">
-              <label className="form-label">랜딩 링크</label>
+              <label className="form-label" htmlFor="banner-link">
+                랜딩 링크
+              </label>
               <input
+                id="banner-link"
                 className="form-input"
                 placeholder="/benefits/draw"
                 value={formData.link}
@@ -124,8 +144,11 @@ export const BannerModal: React.FC<BannerModalProps> = ({
 
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">시작일</label>
+                <label className="form-label" htmlFor="banner-start-date">
+                  시작일
+                </label>
                 <input
+                  id="banner-start-date"
                   className="form-input"
                   type="date"
                   value={formData.startDate}
@@ -134,8 +157,11 @@ export const BannerModal: React.FC<BannerModalProps> = ({
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">종료일</label>
+                <label className="form-label" htmlFor="banner-end-date">
+                  종료일
+                </label>
                 <input
+                  id="banner-end-date"
                   className="form-input"
                   type="date"
                   value={formData.endDate}
@@ -146,13 +172,17 @@ export const BannerModal: React.FC<BannerModalProps> = ({
             </div>
 
             <div className="form-group">
-              <label className="form-label">노출 상태</label>
+              <div className="form-label">노출 상태</div>
               <div className="toggle-row" style={{ marginTop: '6px' }}>
                 <div
+                  role="button"
+                  tabIndex={0}
+                  aria-label="노출 상태 전환"
                   className={`toggle ${formData.status === 'active' ? 'on' : ''}`}
-                  onClick={() =>
-                    handleChange('status', formData.status === 'active' ? 'inactive' : 'active')
-                  }
+                  onClick={handleStatusToggle}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') handleStatusToggle();
+                  }}
                 />
                 <span className="toggle-label">
                   {formData.status === 'active' ? '노출 중' : '비노출'}

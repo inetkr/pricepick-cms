@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { AttendanceEditModal } from 'src/components/attendance/attendance-edit-modal';
+import type {
+  AttendanceResultItem} from 'src/components/attendance/attendance-result-table';
 import {
-  AttendanceResultItem,
   AttendanceResultTable,
 } from 'src/components/attendance/attendance-result-table';
 import { AttendanceSettingCard } from 'src/components/attendance/attendance-setting-card';
@@ -78,12 +79,6 @@ export const AttendanceSection: React.FC = () => {
     console.log('Save settings:', data);
     // TODO: call API to save
     // Sau khi lưu, có thể refresh data hoặc show toast
-  };
-
-  const handleEditSettings = () => {
-    // TODO: Open modal to edit settings
-    console.log('Edit settings clicked');
-    // You can open a modal here
   };
 
   const handleRowClick = (item: AttendanceResultItem) => {

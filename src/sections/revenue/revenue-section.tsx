@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import { RevenueStats } from 'src/components/revenue/revenue-stats';
-import {
+import type {
   FeeRevenueItem,
-  GifticonRevenueItem,
+  GifticonRevenueItem} from 'src/components/revenue/revenue-table';
+import {
   RevenueTable,
 } from 'src/components/revenue/revenue-table';
 import { RevenueTabs } from 'src/components/revenue/revenue-tabs';
@@ -76,9 +77,9 @@ const gifticonColumns = [
 ];
 
 export const RevenueSection: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedMall, setSelectedMall] = useState('');
-  const [selectedPeriod, setSelectedPeriod] = useState('today');
+  const [, setSearchTerm] = useState('');
+  const [, setSelectedMall] = useState('');
+  const [, setSelectedPeriod] = useState('today');
 
   // Filter logic có thể thêm sau
 

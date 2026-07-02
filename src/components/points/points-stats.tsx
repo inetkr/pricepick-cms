@@ -1,5 +1,5 @@
 import React from 'react';
-import { IPointStat } from 'src/types/points/point_stat';
+import type { IPointStat } from 'src/types/points/point_stat';
 import { StatCard } from '../common/stat-card';
 
 interface PointsStatsProps {

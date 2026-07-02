@@ -1,10 +1,12 @@
 import React from 'react';
-import { IUser } from 'src/types/users/user';
+import type { IUser } from 'src/types/users/user';
 import { MemberActions } from './member-actions';
-import { TicketChip, TicketChipGroup, TicketGrade } from '../common/ticket-chip';
+import type { TicketGrade } from '../common/ticket-chip';
+import { TicketChip, TicketChipGroup } from '../common/ticket-chip';
 import { formatDate } from 'src/utils/helper';
-import { IAccountStatus, IMarketingConsent } from 'src/types/common';
-import { Pagination, PaginationProps } from '../common/pagination';
+import type { IAccountStatus, IMarketingConsent } from 'src/types/common';
+import type { PaginationProps } from '../common/pagination';
+import { Pagination } from '../common/pagination';
 
 interface MemberTableProps {
   members: IUser[];
@@ -170,7 +172,7 @@ const getActiveBadge = (user: IUser) => {
     <TicketChipGroup
       tickets={objects}
       showName={false}
-      showQuantity={true}
+      showQuantity
       dim={
         user.ticket_bronze_total === 0 &&
         user.ticket_silver_total === 0 &&

@@ -1,8 +1,8 @@
 import axios from 'src/utils/axios';
 import BaseAPI from './base-api';
-import { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
-import { ITicketStat } from 'src/types/tickets/ticket_stat';
-import { ITicket } from 'src/types/tickets/ticket';
+import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
+import type { ITicketStat } from 'src/types/tickets/ticket_stat';
+import type { ITicket } from 'src/types/tickets/ticket';
 
 const tableName = 'ticket';
 export default class TicketAPI extends BaseAPI {

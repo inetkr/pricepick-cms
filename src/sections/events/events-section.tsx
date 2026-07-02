@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { InfoBox } from 'src/components/common/info-box';
-import { EventCard, EventData } from 'src/components/events/event-card';
-import { EventFormData, EventModal } from 'src/components/events/event-modal';
+import type { EventData } from 'src/components/events/event-card';
+import { EventCard } from 'src/components/events/event-card';
 
 // Mock data (từ file gốc)
 const mockEvents: EventData[] = [
@@ -37,8 +37,8 @@ const mockEvents: EventData[] = [
 
 export const EventsSection: React.FC = () => {
   const [events, setEvents] = useState<EventData[]>(mockEvents);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<EventData | null>(null);
+  const [, setIsModalOpen] = useState(false);
+  const [, setEditingEvent] = useState<EventData | null>(null);
 
   const handleAddEvent = () => {
     setEditingEvent(null);
@@ -55,47 +55,6 @@ export const EventsSection: React.FC = () => {
       setEvents((prev) => prev.filter((e) => e.id !== event.id));
       toast.success('이벤트가 삭제되었습니다.');
     }
-  };
-
-  const handleSaveEvent = (data: EventFormData) => {
-    if (editingEvent) {
-      // Edit existing event
-      setEvents((prev) =>
-        prev.map((e) =>
-          e.id === editingEvent.id
-            ? {
-                ...e,
-                title: data.title,
-                period: `${data.startDate} ~ ${data.endDate}`,
-                target: targetLabels[data.target] || '전체 회원',
-                status: data.isActive ? 'active' : 'inactive',
-              }
-            : e
-        )
-      );
-      toast.success('이벤트가 수정되었습니다.');
-    } else {
-      // Add new event
-      const newEvent: EventData = {
-        id: Date.now().toString(),
-        title: data.title,
-        period: `${data.startDate} ~ ${data.endDate}`,
-        target: targetLabels[data.target] || '전체 회원',
-        description: `${data.ticketCount}장 지급 이벤트`,
-        status: data.isActive ? 'active' : 'inactive',
-      };
-      setEvents((prev) => [...prev, newEvent]);
-      toast.success('이벤트가 추가되었습니다.');
-    }
-    setIsModalOpen(false);
-  };
-
-  const targetLabels: Record<string, string> = {
-    all: '전체 회원',
-    new: '신규 가입자',
-    bronze: '브론즈',
-    silver: '실버',
-    gold: '골드',
   };
 
   return (

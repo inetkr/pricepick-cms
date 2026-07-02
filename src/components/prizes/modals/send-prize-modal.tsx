@@ -42,10 +42,10 @@ export const SendPrizeModal: React.FC<SendPrizeModalProps> = ({
       width="440px"
       footer={
         <>
-          <button className="btn btn-ghost" onClick={onClose}>
+          <button type="button" className="btn btn-ghost" onClick={onClose}>
             취소
           </button>
-          <button className="btn btn-primary" onClick={handleSend}>
+          <button type="button" className="btn btn-primary" onClick={handleSend}>
             발송하기
           </button>
         </>
@@ -53,18 +53,29 @@ export const SendPrizeModal: React.FC<SendPrizeModalProps> = ({
     >
       <div className="modal-body">
         <div className="form-group">
-          <label className="form-label">수신자</label>
-          <input className="form-input" value={recipientName} readOnly />
+          <label className="form-label" htmlFor="prize-recipient">
+            수신자
+          </label>
+          <input id="prize-recipient" className="form-input" value={recipientName} readOnly />
         </div>
 
         <div className="form-group">
-          <label className="form-label">경품</label>
-          <input className="form-input" value={prizeName} readOnly />
+          <label className="form-label" htmlFor="prize-name">
+            경품
+          </label>
+          <input id="prize-name" className="form-input" value={prizeName} readOnly />
         </div>
 
         <div className="form-group">
-          <label className="form-label">발송 방법</label>
-          <select className="form-select" value={method} onChange={handleMethodChange}>
+          <label className="form-label" htmlFor="prize-send-method">
+            발송 방법
+          </label>
+          <select
+            id="prize-send-method"
+            className="form-select"
+            value={method}
+            onChange={handleMethodChange}
+          >
             <option value="kakao">카카오 알림톡</option>
             <option value="push">앱 푸시</option>
             <option value="manual">수동 처리</option>
@@ -72,14 +83,24 @@ export const SendPrizeModal: React.FC<SendPrizeModalProps> = ({
         </div>
 
         <div className="form-group">
-          <label className="form-label">기프티콘 코드 (수동 시)</label>
-          <input className="form-input" value={code} placeholder="코드 입력" />
+          <label className="form-label" htmlFor="prize-code-readonly">
+            기프티콘 코드 (수동 시)
+          </label>
+          <input
+            id="prize-code-readonly"
+            className="form-input"
+            value={code}
+            placeholder="코드 입력"
+          />
         </div>
 
         {method === 'manual' && (
           <div className="form-group">
-            <label className="form-label">기프티콘 코드 (수동 시)</label>
+            <label className="form-label" htmlFor="prize-code">
+              기프티콘 코드 (수동 시)
+            </label>
             <input
+              id="prize-code"
               className="form-input"
               type="text"
               placeholder="코드 입력"

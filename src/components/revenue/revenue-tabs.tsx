@@ -25,13 +25,23 @@ export const RevenueTabs: React.FC<RevenueTabsProps> = ({
       <div className="terms-nav">
         <div
           className={`terms-tab ${activeTab === 'fee' ? 'active' : ''}`}
+          role="button"
+          tabIndex={0}
           onClick={() => handleTabClick('fee')}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') handleTabClick('fee');
+          }}
         >
           제휴 수수료 매출
         </div>
         <div
           className={`terms-tab ${activeTab === 'gifticon' ? 'active' : ''}`}
+          role="button"
+          tabIndex={0}
           onClick={() => handleTabClick('gifticon')}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') handleTabClick('gifticon');
+          }}
         >
           기프티콘 판매 매출
         </div>

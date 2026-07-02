@@ -1,5 +1,5 @@
 import React from 'react';
-import { ITicketStat } from 'src/types/tickets/ticket_stat';
+import type { ITicketStat } from 'src/types/tickets/ticket_stat';
 import { StatCard } from '../common/stat-card';
 
 interface TicketStatsProps {

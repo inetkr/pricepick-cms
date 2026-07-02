@@ -1,6 +1,7 @@
 import React from 'react';
-import { IPoint } from 'src/types/points/point';
-import { Pagination, PaginationProps } from '../common/pagination';
+import type { IPoint } from 'src/types/points/point';
+import type { PaginationProps } from '../common/pagination';
+import { Pagination } from '../common/pagination';
 
 interface PointsTableProps {
   points: IPoint[];

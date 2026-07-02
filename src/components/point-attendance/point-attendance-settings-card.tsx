@@ -62,7 +62,7 @@ export const AttendanceSettingsCard: React.FC<AttendanceSettingsCardProps> = ({
     <div className="card">
       <div className="card-header">
         <div className="card-title">지급 설정</div>
-        <button className="btn btn-primary btn-sm" onClick={handleSubmit}>
+        <button type="button" className="btn btn-primary btn-sm" onClick={handleSubmit}>
           저장
         </button>
       </div>
@@ -73,7 +73,7 @@ export const AttendanceSettingsCard: React.FC<AttendanceSettingsCardProps> = ({
               label="일일 지급 포인트"
               type="number"
               value={settings.dailyPoints}
-              onChange={(e) => handleChange('dailyPoints', parseInt(e.target.value) || 0)}
+              onChange={(e) => handleChange('dailyPoints', parseInt(e.target.value, 10) || 0)}
               style={{ maxWidth: '140px' }}
             />
             <span style={{ color: 'var(--text-2)', fontSize: '13px' }}>P / 1일 1회</span>

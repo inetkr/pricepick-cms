@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useTheme } from 'next-themes';
 
 // Map đường dẫn đến breadcrumb và title
 const PAGE_META: Record<string, { title: string; bc: string }> = {
@@ -41,9 +40,8 @@ const PAGE_META: Record<string, { title: string; bc: string }> = {
 
 export default function HeaderSection() {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
-  const [currentTime, setCurrentTime] = useState('');
-  const [role, setRole] = useState('슈퍼어드민'); // sẽ lấy từ context/auth
+  const [, setCurrentTime] = useState('');
+  const [role] = useState('슈퍼어드민'); // sẽ lấy từ context/auth
 
   useEffect(() => {
     const updateClock = () => {
@@ -62,11 +60,6 @@ export default function HeaderSection() {
   }, []);
 
   const meta = PAGE_META[pathname.replace(/\/$/, '')] || { title: '대시보드', bc: '개요' };
-
-  const handleLanguageToggle = () => {
-    // TODO: implement i18n toggle
-    console.log('Toggle language');
-  };
 
   const handleNotificationClick = () => {
     // TODO: navigate to notifications
@@ -100,7 +93,17 @@ export default function HeaderSection() {
           <span data-l="vi">VI</span>
         </button> */}
 
-        <div className="topbar-icon" onClick={handleNotificationClick}>
+        <div
+          className="topbar-icon"
+          role="button"
+          tabIndex={0}
+          onClick={handleNotificationClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              handleNotificationClick();
+            }
+          }}
+        >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
             <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />

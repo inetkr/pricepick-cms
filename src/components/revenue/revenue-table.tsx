@@ -72,10 +72,18 @@ export function RevenueTable<T extends Record<string, any>>({
         </tbody>
       </table>
       <div className="pagination">
-        <button className="page-btn active">1</button>
-        <button className="page-btn">2</button>
-        <button className="page-btn">···</button>
-        <button className="page-btn">›</button>
+        <button type="button" className="page-btn active">
+          1
+        </button>
+        <button type="button" className="page-btn">
+          2
+        </button>
+        <button type="button" className="page-btn">
+          ···
+        </button>
+        <button type="button" className="page-btn">
+          ›
+        </button>
       </div>
     </div>
   );

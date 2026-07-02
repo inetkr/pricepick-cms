@@ -76,7 +76,7 @@ export const ClawbackToolbar: React.FC<ClawbackToolbarProps> = ({
         </select>
       )}
       <div style={{ marginLeft: 'auto' }}>
-        <button className="btn btn-ghost btn-sm" onClick={onExport}>
+        <button type="button" className="btn btn-ghost btn-sm" onClick={onExport}>
           내보내기
         </button>
       </div>

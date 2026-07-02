@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -11,12 +11,21 @@ export const FormInput: React.FC<FormInputProps> = ({
   error,
   hint,
   className = '',
+  id,
   ...props
 }) => {
+  const generatedId = useId();
+  const inputId = id || generatedId;
   return (
     <div className="form-group">
-      <label className="form-label">{label}</label>
-      <input className={`form-input ${error ? 'error' : ''} ${className}`} {...props} />
+      <label className="form-label" htmlFor={inputId}>
+        {label}
+      </label>
+      <input
+        id={inputId}
+        className={`form-input ${error ? 'error' : ''} ${className}`}
+        {...props}
+      />
       {hint && <div className="form-hint">{hint}</div>}
       {error && <div className="form-error">{error}</div>}
     </div>

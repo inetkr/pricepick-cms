@@ -17,7 +17,7 @@ export const PrizeSettingsCard: React.FC<PrizeSettingsCardProps> = ({ prizes, on
     <div className="card">
       <div className="card-header">
         <div className="card-title">현재 경품 설정</div>
-        <button className="btn btn-ghost btn-sm" onClick={onEdit}>
+        <button type="button" className="btn btn-ghost btn-sm" onClick={onEdit}>
           수정
         </button>
       </div>

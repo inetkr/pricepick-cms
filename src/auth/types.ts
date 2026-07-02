@@ -1,4 +1,4 @@
-import { IAdmin } from "src/types/admin";
+import type { IAdmin } from "src/types/admin";
 
 export type AuthState = {
   admin: IAdmin | null;

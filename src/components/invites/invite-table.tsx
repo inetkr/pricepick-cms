@@ -1,6 +1,7 @@
 // src/components/invite/InviteTable.tsx
 import React from 'react';
-import { Column, Table } from '../common/table';
+import type { Column} from '../common/table';
+import { Table } from '../common/table';
 
 export interface InviteItem {
   rank: number;

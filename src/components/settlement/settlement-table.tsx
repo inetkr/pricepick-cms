@@ -37,7 +37,7 @@ export function SettlementTable<T extends Record<string, any>>({
             <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>{totalLabel}</span>
           )}
           {onExport && (
-            <button className="btn btn-ghost btn-sm" onClick={onExport}>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={onExport}>
               내보내기
             </button>
           )}

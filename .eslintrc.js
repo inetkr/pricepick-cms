@@ -58,6 +58,9 @@ module.exports = {
     // jsx-a11y
     'jsx-a11y/anchor-is-valid': 0,
     'jsx-a11y/control-has-associated-label': 0,
+    // This codebase consistently uses `<label htmlFor>` paired with a sibling
+    // control rather than nesting the control inside the label; accept either.
+    'jsx-a11y/label-has-associated-control': [2, { assert: 'either' }],
     // unused imports
     'unused-imports/no-unused-imports': 1,
     'unused-imports/no-unused-vars': 'off',

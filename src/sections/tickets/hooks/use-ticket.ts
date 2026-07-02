@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ticketAPI, userAPI } from 'src/api';
+import { ticketAPI } from 'src/api';
 import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
-import { ITicket } from 'src/types/tickets/ticket';
-import { ITicketStat } from 'src/types/tickets/ticket_stat';
+import type { ITicket } from 'src/types/tickets/ticket';
+import type { ITicketStat } from 'src/types/tickets/ticket_stat';
 
 type IFilters = {
   search: string;

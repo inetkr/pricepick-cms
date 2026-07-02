@@ -1,6 +1,7 @@
 // src/components/prizes/UnsentPrizesTable.tsx
 import React from 'react';
-import { Column, Table } from '../common/table';
+import type { Column} from '../common/table';
+import { Table } from '../common/table';
 
 interface UnsentPrize {
   nickname: string;
@@ -47,7 +48,7 @@ export const UnsentPrizesTable: React.FC<UnsentPrizesTableProps> = ({ data, onSe
       key: 'actions',
       label: '처리',
       render: (item) => (
-        <button className="btn btn-primary btn-sm" onClick={() => onSendPrize(item)}>
+        <button type="button" className="btn btn-primary btn-sm" onClick={() => onSendPrize(item)}>
           발송
         </button>
       ),

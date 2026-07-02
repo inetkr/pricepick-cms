@@ -1,5 +1,6 @@
 import React from 'react';
-import { Column, PaginationProps, Table } from '../common/table';
+import type { Column, PaginationProps} from '../common/table';
+import { Table } from '../common/table';
 
 export interface NoticeItem {
   id: number;
@@ -76,6 +77,7 @@ const columns: Column<NoticeItem>[] = [
     render: (item) => (
       <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
         <button
+          type="button"
           className="btn btn-ghost btn-sm"
           onClick={(e) => {
             e.stopPropagation();
@@ -84,6 +86,7 @@ const columns: Column<NoticeItem>[] = [
           수정
         </button>
         <button
+          type="button"
           className="btn btn-danger btn-sm"
           onClick={(e) => {
             e.stopPropagation();
@@ -112,13 +115,14 @@ export const NoticeTable: React.FC<NoticeTableProps> = ({
         ...col,
         render: (item: NoticeItem) => (
           <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
-            <button className="btn btn-ghost btn-sm" onClick={() => onEdit?.(item)}>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => onEdit?.(item)}>
               수정
             </button>
             <button
+              type="button"
               className="btn btn-danger btn-sm"
               onClick={() => {
-                if (confirm('이 공지를 삭제하시겠습니까?')) {
+                if (window.confirm('이 공지를 삭제하시겠습니까?')) {
                   onDelete?.(item);
                 }
               }}
@@ -135,7 +139,14 @@ export const NoticeTable: React.FC<NoticeTableProps> = ({
         render: (item: NoticeItem) => (
           <div
             className={`toggle ${item.isPublished ? 'on' : ''}`}
+            role="button"
+            tabIndex={0}
             onClick={() => onToggleStatus?.(item)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                onToggleStatus?.(item);
+              }
+            }}
             style={{ cursor: 'pointer', display: 'inline-block' }}
           />
         ),

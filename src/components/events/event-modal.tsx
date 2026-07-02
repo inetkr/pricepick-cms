@@ -72,19 +72,29 @@ export const EventModal: React.FC<EventModalProps> = ({
   if (!open) return null;
 
   return (
-    <div className="modal-overlay open" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div
+      className="modal-overlay open"
+      role="presentation"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onKeyDown={(e) =>
+        e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ') && onClose()
+      }
+    >
       <div className="modal">
         <div className="modal-header">
           <div className="modal-title">{title}</div>
-          <button className="modal-close" onClick={onClose}>
+          <button type="button" className="modal-close" onClick={onClose}>
             ✕
           </button>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="modal-body">
             <div className="form-group">
-              <label className="form-label">이벤트명</label>
+              <label className="form-label" htmlFor="event-title">
+                이벤트명
+              </label>
               <input
+                id="event-title"
                 className="form-input"
                 placeholder="이벤트명"
                 value={formData.title}
@@ -94,8 +104,11 @@ export const EventModal: React.FC<EventModalProps> = ({
             </div>
 
             <div className="form-group">
-              <label className="form-label">유형</label>
+              <label className="form-label" htmlFor="event-type">
+                유형
+              </label>
               <select
+                id="event-type"
                 className="form-select"
                 value={formData.type}
                 onChange={(e) => handleChange('type', e.target.value)}
@@ -110,20 +123,26 @@ export const EventModal: React.FC<EventModalProps> = ({
 
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">지급 티켓 수</label>
+                <label className="form-label" htmlFor="event-ticket-count">
+                  지급 티켓 수
+                </label>
                 <input
+                  id="event-ticket-count"
                   className="form-input"
                   type="number"
                   placeholder="3"
                   value={formData.ticketCount}
-                  onChange={(e) => handleChange('ticketCount', parseInt(e.target.value) || 0)}
+                  onChange={(e) => handleChange('ticketCount', parseInt(e.target.value, 10) || 0)}
                   min={1}
                   required
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">대상</label>
+                <label className="form-label" htmlFor="event-target">
+                  대상
+                </label>
                 <select
+                  id="event-target"
                   className="form-select"
                   value={formData.target}
                   onChange={(e) => handleChange('target', e.target.value)}
@@ -139,8 +158,11 @@ export const EventModal: React.FC<EventModalProps> = ({
 
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">시작일</label>
+                <label className="form-label" htmlFor="event-start-date">
+                  시작일
+                </label>
                 <input
+                  id="event-start-date"
                   className="form-input"
                   type="date"
                   value={formData.startDate}
@@ -149,8 +171,11 @@ export const EventModal: React.FC<EventModalProps> = ({
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">종료일</label>
+                <label className="form-label" htmlFor="event-end-date">
+                  종료일
+                </label>
                 <input
+                  id="event-end-date"
                   className="form-input"
                   type="date"
                   value={formData.endDate}
@@ -161,11 +186,18 @@ export const EventModal: React.FC<EventModalProps> = ({
             </div>
 
             <div className="form-group">
-              <label className="form-label">활성화</label>
+              <div className="form-label">활성화</div>
               <div className="toggle-row" style={{ marginTop: '6px' }}>
                 <div
                   className={`toggle ${formData.isActive ? 'on' : ''}`}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => handleChange('isActive', !formData.isActive)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      handleChange('isActive', !formData.isActive);
+                    }
+                  }}
                 />
                 <span className="toggle-label">{formData.isActive ? '활성' : '비활성'}</span>
               </div>

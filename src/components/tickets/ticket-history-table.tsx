@@ -1,6 +1,5 @@
 // src/components/tickets/TicketHistoryTable.tsx
 import React from 'react';
-import { RevenueTable } from '../revenue/revenue-table';
 
 interface TicketHistoryItem {
   nickname: string;
@@ -149,7 +148,9 @@ export const TicketHistoryTable: React.FC<TicketHistoryTableProps> = ({
         </tbody>
       </table>
       <div className="pagination">
-        <button className="page-btn active">1</button>
+        <button type="button" className="page-btn active">
+          1
+        </button>
         <button type="button" className="page-btn">
           2
         </button>

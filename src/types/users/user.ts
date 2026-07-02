@@ -1,5 +1,5 @@
-import { IBase } from "../base";
-import { IAccountStatus, ILoginType, IMarketingConsent } from "../common";
+import type { IBase } from "../base";
+import type { IAccountStatus, ILoginType, IMarketingConsent } from "../common";
 
 export type IUser = IBase & {
   id: string;

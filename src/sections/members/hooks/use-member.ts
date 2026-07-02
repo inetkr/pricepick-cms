@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ticketAPI, userAPI } from 'src/api';
 import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
-import { IUser } from 'src/types/users/user';
-import { IUserStat } from 'src/types/users/user_stat';
+import type { IUser } from 'src/types/users/user';
+import type { IUserStat } from 'src/types/users/user_stat';
 
 type IFilters = {
   search: string;

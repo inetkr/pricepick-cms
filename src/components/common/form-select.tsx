@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 interface Option {
   value: string;
@@ -18,12 +18,21 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   error,
   hint,
   className = '',
+  id,
   ...props
 }) => {
+  const generatedId = useId();
+  const selectId = id || generatedId;
   return (
     <div className="form-group">
-      <label className="form-label">{label}</label>
-      <select className={`form-select ${error ? 'error' : ''} ${className}`} {...props}>
+      <label className="form-label" htmlFor={selectId}>
+        {label}
+      </label>
+      <select
+        id={selectId}
+        className={`form-select ${error ? 'error' : ''} ${className}`}
+        {...props}
+      >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}

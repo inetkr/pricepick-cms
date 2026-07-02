@@ -1,8 +1,9 @@
 // src/components/gifticon/GifticonCancelTable.tsx
 import React from 'react';
-import { Column, TablePaginationRowPerPage } from '../common/table-pagination-row-per-page';
+import type { Column} from '../common/table-pagination-row-per-page';
+import { TablePaginationRowPerPage } from '../common/table-pagination-row-per-page';
 import { TicketChipGroup } from '../common/ticket-chip';
-import { PaginationProps } from '../common/pagination';
+import type { PaginationProps } from '../common/pagination';
 
 export interface GifticonCancelItem {
   id: number;

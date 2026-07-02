@@ -56,10 +56,10 @@ export const EditPrizeModal: React.FC<EditPrizeModalProps> = ({
       width="500px"
       footer={
         <>
-          <button className="btn btn-ghost" onClick={onClose}>
+          <button type="button" className="btn btn-ghost" onClick={onClose}>
             취소
           </button>
-          <button className="btn btn-primary" onClick={handleSave}>
+          <button type="button" className="btn btn-primary" onClick={handleSave}>
             저장
           </button>
         </>
@@ -77,8 +77,11 @@ export const EditPrizeModal: React.FC<EditPrizeModalProps> = ({
         {/* 1등 */}
         <div style={{ marginBottom: '14px' }}>
           <div className="form-group">
-            <label className="form-label">1등 경품</label>
+            <label className="form-label" htmlFor="prize-level1-name">
+              1등 경품
+            </label>
             <input
+              id="prize-level1-name"
               className="form-input"
               type="text"
               value={formData.level1Name}
@@ -87,24 +90,30 @@ export const EditPrizeModal: React.FC<EditPrizeModalProps> = ({
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">1등 확률 (%)</label>
+              <label className="form-label" htmlFor="prize-level1-prob">
+                1등 확률 (%)
+              </label>
               <input
+                id="prize-level1-prob"
                 className="form-input"
                 type="number"
                 min="0"
                 max="100"
                 value={formData.level1Prob}
-                onChange={(e) => handleChange('level1Prob', parseInt(e.target.value) || 0)}
+                onChange={(e) => handleChange('level1Prob', parseInt(e.target.value, 10) || 0)}
               />
             </div>
             <div className="form-group">
-              <label className="form-label">1일 최대</label>
+              <label className="form-label" htmlFor="prize-level1-daily">
+                1일 최대
+              </label>
               <input
+                id="prize-level1-daily"
                 className="form-input"
                 type="number"
                 min="0"
                 value={formData.level1Daily}
-                onChange={(e) => handleChange('level1Daily', parseInt(e.target.value) || 0)}
+                onChange={(e) => handleChange('level1Daily', parseInt(e.target.value, 10) || 0)}
               />
             </div>
           </div>
@@ -113,8 +122,11 @@ export const EditPrizeModal: React.FC<EditPrizeModalProps> = ({
         {/* 2등 */}
         <div style={{ marginBottom: '14px' }}>
           <div className="form-group">
-            <label className="form-label">2등 경품</label>
+            <label className="form-label" htmlFor="prize-level2-name">
+              2등 경품
+            </label>
             <input
+              id="prize-level2-name"
               className="form-input"
               type="text"
               value={formData.level2Name}
@@ -123,24 +135,30 @@ export const EditPrizeModal: React.FC<EditPrizeModalProps> = ({
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">2등 확률 (%)</label>
+              <label className="form-label" htmlFor="prize-level2-prob">
+                2등 확률 (%)
+              </label>
               <input
+                id="prize-level2-prob"
                 className="form-input"
                 type="number"
                 min="0"
                 max="100"
                 value={formData.level2Prob}
-                onChange={(e) => handleChange('level2Prob', parseInt(e.target.value) || 0)}
+                onChange={(e) => handleChange('level2Prob', parseInt(e.target.value, 10) || 0)}
               />
             </div>
             <div className="form-group">
-              <label className="form-label">1일 최대</label>
+              <label className="form-label" htmlFor="prize-level2-daily">
+                1일 최대
+              </label>
               <input
+                id="prize-level2-daily"
                 className="form-input"
                 type="number"
                 min="0"
                 value={formData.level2Daily}
-                onChange={(e) => handleChange('level2Daily', parseInt(e.target.value) || 0)}
+                onChange={(e) => handleChange('level2Daily', parseInt(e.target.value, 10) || 0)}
               />
             </div>
           </div>
@@ -148,8 +166,11 @@ export const EditPrizeModal: React.FC<EditPrizeModalProps> = ({
 
         {/* 3등 */}
         <div className="form-group">
-          <label className="form-label">3등 경품</label>
+          <label className="form-label" htmlFor="prize-level3-name">
+            3등 경품
+          </label>
           <input
+            id="prize-level3-name"
             className="form-input"
             type="text"
             value={formData.level3Name}

@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography';
 import { useAuthContext } from '../hooks';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'src/routes/hooks/use-pathname';
-import { useRouter } from 'next/navigation';
 
 // ----------------------------------------------------------------------
 
@@ -27,7 +26,6 @@ export function RoleBasedGuard({ sx, children }: RoleBasedGuardProp) {
   const [isAcceptPage, setIsAcceptPage] = useState<boolean>(false);
   const { admin, authenticated, loading } = useAuthContext();
   const pathname = usePathname();
-  const router = useRouter();
 
   useEffect(() => {
     if (admin && authenticated && !loading) {
@@ -42,7 +40,7 @@ export function RoleBasedGuard({ sx, children }: RoleBasedGuardProp) {
   }, [admin, pathname, loading, authenticated]);
 
   if (loading) {
-    return <></>;
+    return null;
   }
 
   if (!loading && !authenticated) {
@@ -58,5 +56,5 @@ export function RoleBasedGuard({ sx, children }: RoleBasedGuardProp) {
       </Container>
     );
   }
-  return <> {children} </>;
+  return <>{children}</>;
 }

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Banner, BannerCard } from './banner-card';
+import type { Banner} from './banner-card';
+import { BannerCard } from './banner-card';
 
 interface BannerGridProps {
   banners: Banner[];

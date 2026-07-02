@@ -1,8 +1,9 @@
 // src/components/gifticons/GifticonTable.tsx
 import React from 'react';
 import { TicketChip } from '../common/ticket-chip';
-import { Column, TablePaginationRowPerPage } from '../common/table-pagination-row-per-page';
-import { PaginationProps } from '../common/pagination';
+import type { Column} from '../common/table-pagination-row-per-page';
+import { TablePaginationRowPerPage } from '../common/table-pagination-row-per-page';
+import type { PaginationProps } from '../common/pagination';
 
 export interface GifticonItem {
   id: number;

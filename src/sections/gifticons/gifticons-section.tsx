@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { InfoBox } from 'src/components/common/info-box';
-import { PaginationProps } from 'src/components/common/pagination';
-import { GifticonStats } from 'src/components/gifticons/gifticon-stats';
-import { GifticonItem, GifticonTable } from 'src/components/gifticons/gifticon-table';
+import type { PaginationProps } from 'src/components/common/pagination';
+import type { GifticonItem} from 'src/components/gifticons/gifticon-table';
+import { GifticonTable } from 'src/components/gifticons/gifticon-table';
 import { GifticonToolbar } from 'src/components/gifticons/gifticon-toolbar';
 
 // Mock data
@@ -111,7 +111,7 @@ const gifticonData: GifticonItem[] = [
 export const GifticonSection: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [dateFilter, setDateFilter] = useState('');
+  const [, setDateFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   // FAKE:
@@ -126,7 +126,6 @@ export const GifticonSection: React.FC = () => {
   });
 
   // Pagination
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage

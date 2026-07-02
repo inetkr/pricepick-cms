@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { EditPrizeModal } from 'src/components/prizes/modals/edit-prize-modal';
-import { SendPrizeData, SendPrizeModal } from 'src/components/prizes/modals/send-prize-modal';
+import type { SendPrizeData} from 'src/components/prizes/modals/send-prize-modal';
+import { SendPrizeModal } from 'src/components/prizes/modals/send-prize-modal';
 import { PrizeSettingsCard } from 'src/components/prizes/prize-settings-card';
 import { PrizeStats } from 'src/components/prizes/prize-stats';
 import { UnsentPrizesTable } from 'src/components/prizes/unsent-prizes-table';

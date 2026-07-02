@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { IAccountStatus } from 'src/types/common';
-import { IUser } from 'src/types/users/user';
+import type { IAccountStatus } from 'src/types/common';
+import type { IUser } from 'src/types/users/user';
 
 interface MemberModalProps {
   isOpen: boolean;
@@ -81,7 +81,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
       <div className="modal">
         <div className="modal-header">
           <div className="modal-title">회원 상세</div>
-          <button className="modal-close" onClick={onClose}>
+          <button type="button" className="modal-close" onClick={onClose}>
             <svg
               viewBox="0 0 24 24"
               width="16"
@@ -98,8 +98,11 @@ export const MemberModal: React.FC<MemberModalProps> = ({
         <div className="modal-body">
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">닉네임</label>
+              <label className="form-label" htmlFor="member-nickname">
+                닉네임
+              </label>
               <input
+                id="member-nickname"
                 className="form-input"
                 value={formData.nickname || ''}
                 onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
@@ -107,7 +110,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               />
             </div>
             <div className="form-group">
-              <label className="form-label">연동 계정</label>
+              <div className="form-label">연동 계정</div>
               <div
                 style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '4px' }}
               >
@@ -138,8 +141,11 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               </div>
             </div>
             <div className="form-group">
-              <label className="form-label">상태</label>
+              <label className="form-label" htmlFor="member-status">
+                상태
+              </label>
               <select
+                id="member-status"
                 className="form-select"
                 value={formData.account_status || 'NORMAL'}
                 onChange={(e) => handleStatusChange(e.target.value as IAccountStatus)}
@@ -153,8 +159,11 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               </select>
             </div>
             <div className="form-group">
-              <label className="form-label">가입 유형</label>
+              <label className="form-label" htmlFor="member-join-type">
+                가입 유형
+              </label>
               <input
+                id="member-join-type"
                 className="form-input"
                 value={member.kakao_id ? '카카오 연동' : '게스트 (미연동)'}
                 disabled
@@ -162,7 +171,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
             </div>
           </div>
           <div className="form-group">
-            <label className="form-label">티켓 보유 현황</label>
+            <div className="form-label">티켓 보유 현황</div>
             <div
               style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'flex-start' }}
             >
@@ -324,9 +333,12 @@ export const MemberModal: React.FC<MemberModalProps> = ({
 
           {isEditable && (
             <div className="form-group">
-              <label className="form-label">티켓 수동 지급</label>
+              <label className="form-label" htmlFor="member-ticket-grade">
+                티켓 수동 지급
+              </label>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <select
+                  id="member-ticket-grade"
                   className="form-select"
                   style={{ width: '120px' }}
                   value={ticketGrade}
@@ -349,20 +361,22 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   onChange={(e) => setTicketQty(Number(e.target.value))}
                   min={1}
                 />
-                <button className="btn btn-success" onClick={handleTicketGrant}>
+                <button type="button" className="btn btn-success" onClick={handleTicketGrant}>
                   지급
                 </button>
               </div>
-              <div className="form-hint">지급 이력은 티켓 내역에 '관리자 지급'으로 기록됩니다.</div>
+              <div className="form-hint">
+                지급 이력은 티켓 내역에 &apos;관리자 지급&apos;으로 기록됩니다.
+              </div>
             </div>
           )}
         </div>
         <div className="modal-footer">
-          <button className="btn btn-ghost" onClick={onClose}>
+          <button type="button" className="btn btn-ghost" onClick={onClose}>
             닫기
           </button>
           {isEditable && (
-            <button className="btn btn-primary" onClick={handleSave}>
+            <button type="button" className="btn btn-primary" onClick={handleSave}>
               저장
             </button>
           )}

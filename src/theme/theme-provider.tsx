@@ -2,7 +2,8 @@
 
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material';
 import { ThemeProvider as NextThemeProvider, useTheme as useNextTheme } from 'next-themes';
-import { ReactNode, useEffect, useState } from 'react';
+import type { ReactNode} from 'react';
+import { useEffect, useState } from 'react';
 import { MuiGlobalStyles } from './mui-global-styles';
 
 const getMuiTheme = (mode: 'light' | 'dark') =>

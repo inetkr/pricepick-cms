@@ -1,6 +1,6 @@
-import { IBase } from '../base';
-import { ITicketStatus, ITicketType, ITransactionTypeGroup, IUsageStatus } from '../common';
-import { IKakaoUserInfo } from '../users/user';
+import type { IBase } from '../base';
+import type { ITicketStatus, ITicketType, ITransactionTypeGroup, IUsageStatus } from '../common';
+import type { IKakaoUserInfo } from '../users/user';
 
 export type ITicket = IBase & {
   id: string;

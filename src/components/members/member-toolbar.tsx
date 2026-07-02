@@ -85,7 +85,7 @@ export const MemberToolbar: React.FC<MemberToolbarProps> = ({
       )}
       {showExport && (
         <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
-          <button className="btn btn-ghost btn-sm" onClick={() => {}}>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => {}}>
             내보내기
           </button>
         </div>

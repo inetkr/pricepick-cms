@@ -50,10 +50,15 @@ export const GifticonCancelToolbar: React.FC<GifticonCancelToolbarProps> = ({
         <option value="customer">고객 요청</option>
         <option value="expire">유효기간 만료</option>
       </select>
-      <button className="btn btn-primary btn-sm" onClick={() => console.log('Search')}>
+      <button type="button" className="btn btn-primary btn-sm" onClick={() => console.log('Search')}>
         검색
       </button>
-      <button className="btn btn-ghost btn-sm" style={{ marginLeft: 'auto' }} onClick={onExport}>
+      <button
+        type="button"
+        className="btn btn-ghost btn-sm"
+        style={{ marginLeft: 'auto' }}
+        onClick={onExport}
+      >
         CSV 내보내기
       </button>
     </div>

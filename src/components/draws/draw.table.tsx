@@ -1,6 +1,7 @@
 // src/components/draws/DrawTable.tsx
 import React from 'react';
-import { Column, Table } from '../common/table';
+import type { Column} from '../common/table';
+import { Table } from '../common/table';
 import { DrawStatusBadge } from './draw-status-badge';
 
 export interface DrawItem {
@@ -71,7 +72,7 @@ export const DrawTable: React.FC<DrawTableProps> = ({
     {
       key: 'ticketCount',
       label: '참여 티켓',
-      render: (item) => item.ticketCount.toLocaleString() + '장',
+      render: (item) => `${item.ticketCount.toLocaleString()  }장`,
     },
     {
       key: 'winners',
@@ -97,14 +98,18 @@ export const DrawTable: React.FC<DrawTableProps> = ({
       render: (item) => {
         if (item.status === '진행 중') {
           return (
-            <button className="btn btn-primary btn-sm" onClick={() => onDraw(item.id)}>
+            <button type="button" className="btn btn-primary btn-sm" onClick={() => onDraw(item.id)}>
               당첨 처리
             </button>
           );
         }
         if (item.status === '완료') {
           return (
-            <button className="btn btn-ghost btn-sm" onClick={() => onViewResult(item.id)}>
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={() => onViewResult(item.id)}
+            >
               결과 보기
             </button>
           );

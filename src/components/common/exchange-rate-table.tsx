@@ -29,7 +29,7 @@ export const ExchangeRateTable: React.FC<ExchangeRateTableProps> = ({
       <div className="card-header">
         <div className="card-title">{title}</div>
         {onEdit && (
-          <button className="btn btn-ghost btn-sm" onClick={onEdit}>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={onEdit}>
             수정
           </button>
         )}

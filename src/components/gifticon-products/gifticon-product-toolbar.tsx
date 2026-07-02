@@ -56,7 +56,7 @@ export const GifticonProductToolbar: React.FC<GifticonProductToolbarProps> = ({
         style={{ width: '160px' }}
         onChange={(e) => onSearch?.(e.target.value)}
       />
-      <button className="btn btn-primary btn-sm" onClick={() => {}}>
+      <button type="button" className="btn btn-primary btn-sm" onClick={() => {}}>
         검색
       </button>
     </div>

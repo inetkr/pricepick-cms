@@ -12,7 +12,7 @@ export const BulkTemplateDownload: React.FC<BulkTemplateDownloadProps> = ({
   return (
     <div className={className}>
       <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>템플릿 다운로드</div>
-      <button className="btn btn-ghost btn-sm" onClick={onDownload}>
+      <button type="button" className="btn btn-ghost btn-sm" onClick={onDownload}>
         샘플 CSV 다운로드
       </button>
     </div>

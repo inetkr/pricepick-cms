@@ -1,8 +1,8 @@
 import axios from 'src/utils/axios';
 import BaseAPI from './base-api';
-import { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
-import { IPointStat } from 'src/types/points/point_stat';
-import { IPoint } from 'src/types/points/point';
+import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
+import type { IPointStat } from 'src/types/points/point_stat';
+import type { IPoint } from 'src/types/points/point';
 
 const tableName = 'point';
 export default class PointAPI extends BaseAPI {

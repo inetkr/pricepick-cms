@@ -43,10 +43,15 @@ export const GifticonToolbar: React.FC<GifticonToolbarProps> = ({
       <input className="form-input" type="date" style={{ width: '130px', fontSize: '12px' }} />
       <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>~</span>
       <input className="form-input" type="date" style={{ width: '130px', fontSize: '12px' }} />
-      <button className="btn btn-primary btn-sm" onClick={() => console.log('Search')}>
+      <button type="button" className="btn btn-primary btn-sm" onClick={() => console.log('Search')}>
         검색
       </button>
-      <button className="btn btn-ghost btn-sm" style={{ marginLeft: 'auto' }} onClick={onExport}>
+      <button
+        type="button"
+        className="btn btn-ghost btn-sm"
+        style={{ marginLeft: 'auto' }}
+        onClick={onExport}
+      >
         CSV 내보내기
       </button>
     </div>

@@ -1,6 +1,7 @@
 // src/components/clawback/ClawbackTable.tsx
 import React from 'react';
-import { Column, PaginationProps, Table } from '../common/table';
+import type { Column, PaginationProps} from '../common/table';
+import { Table } from '../common/table';
 import { TicketChipGroup } from '../common/ticket-chip';
 
 export interface ClawbackItem {
@@ -101,6 +102,7 @@ const columns: Column<ClawbackItem>[] = [
     label: '상세',
     render: (item) => (
       <button
+        type="button"
         className="btn btn-ghost btn-sm"
         onClick={(e) => {
           e.stopPropagation();

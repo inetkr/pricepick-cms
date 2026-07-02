@@ -41,11 +41,18 @@ export const TicketEditModal: React.FC<TicketEditModalProps> = ({
   const isManual = qty !== autoQty;
 
   return (
-    <div className="modal-overlay open" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div
+      className="modal-overlay open"
+      role="presentation"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onKeyDown={(e) =>
+        e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ') && onClose()
+      }
+    >
       <div className="modal" style={{ width: '440px' }}>
         <div className="modal-header">
           <div className="modal-title">교환 티켓 수정</div>
-          <button className="modal-close" onClick={onClose}>
+          <button type="button" className="modal-close" onClick={onClose}>
             ✕
           </button>
         </div>
@@ -112,6 +119,7 @@ export const TicketEditModal: React.FC<TicketEditModalProps> = ({
           </div>
           <div>
             <label
+              htmlFor="ticket-edit-qty"
               style={{
                 fontSize: '12px',
                 color: 'var(--text-2)',
@@ -124,9 +132,10 @@ export const TicketEditModal: React.FC<TicketEditModalProps> = ({
             </label>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <input
+                id="ticket-edit-qty"
                 type="number"
                 value={qty}
-                onChange={(e) => setQty(parseInt(e.target.value) || 0)}
+                onChange={(e) => setQty(parseInt(e.target.value, 10) || 0)}
                 min={1}
                 max={999}
                 style={{
@@ -162,10 +171,10 @@ export const TicketEditModal: React.FC<TicketEditModalProps> = ({
           </div>
         </div>
         <div className="modal-footer">
-          <button className="btn btn-ghost" onClick={onClose}>
+          <button type="button" className="btn btn-ghost" onClick={onClose}>
             취소
           </button>
-          <button className="btn btn-primary" onClick={handleSave}>
+          <button type="button" className="btn btn-primary" onClick={handleSave}>
             저장
           </button>
         </div>

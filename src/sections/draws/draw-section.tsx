@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { DrawItem, DrawTable } from 'src/components/draws/draw.table';
+import type { DrawItem} from 'src/components/draws/draw.table';
+import { DrawTable } from 'src/components/draws/draw.table';
 import { DrawForm } from 'src/components/draws/draw-form';
 
 // Mock data
@@ -60,7 +60,6 @@ const mockDraws: DrawItem[] = [
 ];
 
 export const DrawsSection: React.FC = () => {
-  const router = useRouter();
   const [draws, setDraws] = useState<DrawItem[]>(mockDraws);
   const [currentPage, setCurrentPage] = useState(1);
   const [showForm, setShowForm] = useState(false);

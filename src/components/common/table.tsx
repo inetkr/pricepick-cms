@@ -60,7 +60,6 @@ export function Table<T extends Record<string, any>>({
 
     if (totalPages <= 1) return null;
 
-    const pages = [];
     const half = Math.floor(maxVisiblePages / 2);
     let start = Math.max(1, currentPage - half);
     let end = Math.min(totalPages, currentPage + half);
@@ -79,6 +78,7 @@ export function Table<T extends Record<string, any>>({
     return (
       <div className="pagination">
         <button
+          type="button"
           className="page-btn"
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
@@ -88,10 +88,10 @@ export function Table<T extends Record<string, any>>({
 
         {showStartEllipsis && (
           <>
-            <button className="page-btn" onClick={() => onPageChange(1)}>
+            <button type="button" className="page-btn" onClick={() => onPageChange(1)}>
               1
             </button>
-            <button className="page-btn" disabled>
+            <button type="button" className="page-btn" disabled>
               ···
             </button>
           </>
@@ -99,6 +99,7 @@ export function Table<T extends Record<string, any>>({
 
         {Array.from({ length: end - start + 1 }, (_, i) => start + i).map((page) => (
           <button
+            type="button"
             key={page}
             className={`page-btn ${page === currentPage ? 'active' : ''}`}
             onClick={() => onPageChange(page)}
@@ -109,16 +110,17 @@ export function Table<T extends Record<string, any>>({
 
         {showEndEllipsis && (
           <>
-            <button className="page-btn" disabled>
+            <button type="button" className="page-btn" disabled>
               ···
             </button>
-            <button className="page-btn" onClick={() => onPageChange(totalPages)}>
+            <button type="button" className="page-btn" onClick={() => onPageChange(totalPages)}>
               {totalPages}
             </button>
           </>
         )}
 
         <button
+          type="button"
           className="page-btn"
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}

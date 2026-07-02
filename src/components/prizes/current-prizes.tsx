@@ -26,7 +26,7 @@ export const CurrentPrizes: React.FC<CurrentPrizesProps> = ({ prizes, onEdit }) 
       <div className="card-header">
         <div className="card-title">현재 경품 설정</div>
         {onEdit && (
-          <button className="btn btn-ghost btn-sm" onClick={onEdit}>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={onEdit}>
             수정
           </button>
         )}

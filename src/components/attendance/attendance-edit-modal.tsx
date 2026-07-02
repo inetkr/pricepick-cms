@@ -55,7 +55,7 @@ export const AttendanceEditModal: React.FC<EditAttendanceModalProps> = ({
 
   const handleChange =
     (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const value = e.target.value;
+      const {value} = e.target;
       setFormData((prev) => ({
         ...prev,
         [field]: field === 'description' ? value : parseFloat(value) || 0,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import {
@@ -34,7 +34,6 @@ import {
   WithdrawIcon,
 } from './Icons';
 import { CalendarIcon } from '@mui/x-date-pickers/icons';
-import { signOut } from 'src/auth/context/authContext';
 import { authAPI } from 'src/api';
 import { useAuthContext } from 'src/auth/hooks';
 
@@ -162,7 +161,7 @@ export default function SidebarSection() {
   const { theme, setTheme } = useTheme();
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   const [isMini, setIsMini] = useState(false);
-  const [user, setUser] = useState({
+  const [user] = useState({
     name: '슈퍼어드민',
     email: 'admin@pricepick.co.kr',
     avatar: 'S',
@@ -224,7 +223,17 @@ export default function SidebarSection() {
       <div className="sb-nav">
         {MENU_GROUPS.map((group) => (
           <div key={group.id} className={`sb-grp ${collapsedGroups[group.id] ? 'collapsed' : ''}`}>
-            <div className="sb-grp-hd" onClick={() => toggleGroup(group.id)}>
+            <div
+              className="sb-grp-hd"
+              role="button"
+              tabIndex={0}
+              onClick={() => toggleGroup(group.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  toggleGroup(group.id);
+                }
+              }}
+            >
               <span className="sb-grp-lbl">{group.label}</span>
               <span className="sb-chev">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

@@ -1,4 +1,4 @@
-import { IconButton, styled } from '@mui/material';
+import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 type IRemoveIconProps = {

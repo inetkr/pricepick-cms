@@ -46,12 +46,16 @@ export const EventCard: React.FC<EventCardProps> = ({
       {showActions && (
         <div className="event-actions">
           {onEdit && (
-            <button className="btn btn-ghost btn-sm" onClick={() => onEdit(event)}>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => onEdit(event)}>
               수정
             </button>
           )}
           {onDelete && (
-            <button className="btn btn-danger btn-sm" onClick={() => onDelete(event)}>
+            <button
+              type="button"
+              className="btn btn-danger btn-sm"
+              onClick={() => onDelete(event)}
+            >
               삭제
             </button>
           )}

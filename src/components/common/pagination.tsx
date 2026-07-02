@@ -35,11 +35,6 @@ export const Pagination: React.FC<PaginationProps> = ({
   const startIndex = (currentPage - 1) * itemsPerPage + 1;
   const endIndex = Math.min(currentPage * itemsPerPage, totalItems || 0);
 
-  const handlePageClick = (page: number) => {
-    if (page === currentPage || page < 1 || page > totalPages) return;
-    onPageChange(page);
-  };
-
   const handlePrev = () => {
     if (currentPage > 1) onPageChange(currentPage - 1);
   };
@@ -47,49 +42,6 @@ export const Pagination: React.FC<PaginationProps> = ({
   const handleNext = () => {
     if (currentPage < totalPages) onPageChange(currentPage + 1);
   };
-
-  // Tạo danh sách các trang hiển thị
-  const getVisiblePages = () => {
-    const pages: (number | 'ellipsis')[] = [];
-    const half = Math.floor(maxVisiblePages / 2);
-
-    let start = Math.max(1, currentPage - half);
-    let end = Math.min(totalPages, currentPage + half);
-
-    // Điều chỉnh nếu gần đầu hoặc cuối
-    if (currentPage - start < half) {
-      end = Math.min(totalPages, end + (half - (currentPage - start)));
-    }
-    if (end - currentPage < half) {
-      start = Math.max(1, start - (half - (end - currentPage)));
-    }
-
-    // Luôn hiển thị trang đầu và cuối nếu có nhiều trang
-    const showStartEllipsis = start > 2;
-    const showEndEllipsis = end < totalPages - 1;
-
-    if (showStartEllipsis) {
-      pages.push(1);
-      pages.push('ellipsis');
-      // Thêm các trang từ start đến end
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
-    } else {
-      for (let i = 1; i <= end; i++) {
-        pages.push(i);
-      }
-    }
-
-    if (showEndEllipsis) {
-      pages.push('ellipsis');
-      pages.push(totalPages);
-    }
-
-    return pages;
-  };
-
-  const visiblePages = getVisiblePages();
 
   return (
     <div className={`pagination-wrapper ${className}`}>
@@ -116,6 +68,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
         <button
+          type="button"
           className="page-btn"
           disabled={currentPage === 1}
           onClick={handlePrev}
@@ -124,25 +77,6 @@ export const Pagination: React.FC<PaginationProps> = ({
           이전
         </button>
 
-        {/* {visiblePages.map((page, index) => {
-          if (page === 'ellipsis') {
-            return (
-              <button key={`ellipsis-${index}`} className="page-btn" disabled>
-                ···
-              </button>
-            );
-          }
-          return (
-            <button
-              key={page}
-              className={`page-btn ${page === currentPage ? 'active' : ''}`}
-              onClick={() => handlePageClick(page as number)}
-            >
-              {page}
-            </button>
-          );
-        })} */}
-
         {showTotal && totalItems !== undefined && (
           <span style={{ fontSize: '12px', padding: '0 8px' }}>
             {startIndex}–{endIndex} / {totalItems.toLocaleString()}
@@ -150,6 +84,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         )}
 
         <button
+          type="button"
           className="page-btn"
           disabled={currentPage === totalPages}
           onClick={handleNext}

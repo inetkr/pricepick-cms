@@ -1,5 +1,6 @@
 import React from 'react';
-import { Pagination, PaginationProps } from './pagination';
+import type { PaginationProps } from './pagination';
+import { Pagination } from './pagination';
 
 export interface Column<T> {
   key: keyof T | string;

@@ -3,9 +3,10 @@
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { InfoBox } from 'src/components/common/info-box';
-import { PaginationProps } from 'src/components/common/pagination';
+import type { PaginationProps } from 'src/components/common/pagination';
+import type {
+  GifticonProduct} from 'src/components/gifticon-products/gifticon-product-table';
 import {
-  GifticonProduct,
   GifticonProductTable,
 } from 'src/components/gifticon-products/gifticon-product-table';
 import { GifticonProductToolbar } from 'src/components/gifticon-products/gifticon-product-toolbar';

@@ -63,11 +63,20 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
   };
 
   return (
-    <div className="modal-overlay open" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div
+      className="modal-overlay open"
+      role="presentation"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onKeyDown={(e) =>
+        e.target === e.currentTarget &&
+        (e.key === 'Enter' || e.key === ' ') &&
+        onClose()
+      }
+    >
       <div className="modal">
         <div className="modal-header">
           <div className="modal-title">수동 티켓 지급 / 회수</div>
-          <button className="modal-close" onClick={onClose}>
+          <button type="button" className="modal-close" onClick={onClose}>
             <svg
               viewBox="0 0 24 24"
               width="16"
@@ -86,8 +95,11 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
             <strong>주의:</strong> 수동 처리는 로그에 기록되며 되돌릴 수 없습니다.
           </div>
           <div className="form-group">
-            <label className="form-label">닉네임</label>
+            <label className="form-label" htmlFor="ticket-manual-user-identifier">
+              닉네임
+            </label>
             <input
+              id="ticket-manual-user-identifier"
               className="form-input"
               placeholder="대상 회원 닉네임 또는 UID"
               value={formData.user_identifier}
@@ -96,8 +108,11 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">처리 유형</label>
+              <label className="form-label" htmlFor="ticket-manual-action">
+                처리 유형
+              </label>
               <select
+                id="ticket-manual-action"
                 className="form-select"
                 value={formData.action}
                 onChange={(e) =>
@@ -112,8 +127,11 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
               </select>
             </div>
             <div className="form-group">
-              <label className="form-label">티켓 등급</label>
+              <label className="form-label" htmlFor="ticket-manual-ticket-type">
+                티켓 등급
+              </label>
               <select
+                id="ticket-manual-ticket-type"
                 className="form-select"
                 value={formData.ticket_type}
                 onChange={(e) =>
@@ -133,8 +151,11 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">수량</label>
+              <label className="form-label" htmlFor="ticket-manual-amount">
+                수량
+              </label>
               <input
+                id="ticket-manual-amount"
                 className="form-input"
                 type="number"
                 placeholder="0"
@@ -144,8 +165,11 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
               />
             </div>
             <div className="form-group">
-              <label className="form-label">사유</label>
+              <label className="form-label" htmlFor="ticket-manual-description">
+                사유
+              </label>
               <input
+                id="ticket-manual-description"
                 className="form-input"
                 placeholder="처리 사유 (필수)"
                 value={formData.description}
@@ -155,10 +179,15 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
           </div>
         </div>
         <div className="modal-footer">
-          <button className="btn btn-ghost" onClick={onClose}>
+          <button type="button" className="btn btn-ghost" onClick={onClose}>
             취소
           </button>
-          <button className="btn btn-primary" onClick={handleSubmit} disabled={!isValid}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleSubmit}
+            disabled={!isValid}
+          >
             처리하기
           </button>
         </div>

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Column, TablePaginationRowPerPage } from '../common/table-pagination-row-per-page';
-import { PaginationProps } from '../common/pagination';
+import type { Column} from '../common/table-pagination-row-per-page';
+import { TablePaginationRowPerPage } from '../common/table-pagination-row-per-page';
+import type { PaginationProps } from '../common/pagination';
 
 export interface GifticonProduct {
   id: number;
@@ -25,12 +26,6 @@ interface GifticonProductTableProps {
   onToggleStatus?: (product: GifticonProduct) => void;
   className?: string;
 }
-
-const statusMap = {
-  active: { label: '판매중', className: 'badge-green' },
-  soldout: { label: '품절', className: 'badge-amber' },
-  inactive: { label: '판매중지', className: 'badge-red' },
-};
 
 const columns: Column<GifticonProduct>[] = [
   {
@@ -108,9 +103,17 @@ const columns: Column<GifticonProduct>[] = [
         <span
           className={`tk-chip ${item.ticketGrade} bare`}
           style={{ cursor: 'pointer' }}
+          role="button"
+          tabIndex={0}
           onClick={(e) => {
             e.stopPropagation();
             // open ticket edit
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+              // open ticket edit
+            }
           }}
         >
           {item.ticketGrade === 'bronze'
@@ -128,13 +131,20 @@ const columns: Column<GifticonProduct>[] = [
     key: 'status',
     label: '상태',
     render: (item) => {
-      const status = statusMap[item.status];
       return (
         <div
           className={`toggle ${item.status === 'active' ? 'on' : ''}`}
+          role="button"
+          tabIndex={0}
           onClick={(e) => {
             e.stopPropagation();
             // toggle status
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+              // toggle status
+            }
           }}
         />
       );
@@ -170,7 +180,14 @@ export const GifticonProductTable: React.FC<GifticonProductTableProps> = ({
             <span
               className={`tk-chip ${item.ticketGrade} bare`}
               style={{ cursor: 'pointer' }}
+              role="button"
+              tabIndex={0}
               onClick={() => onTicketEdit?.(item)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  onTicketEdit?.(item);
+                }
+              }}
             >
               {item.ticketGrade === 'bronze'
                 ? '브론즈'
@@ -189,7 +206,14 @@ export const GifticonProductTable: React.FC<GifticonProductTableProps> = ({
         render: (item: GifticonProduct) => (
           <div
             className={`toggle ${item.status === 'active' ? 'on' : ''}`}
+            role="button"
+            tabIndex={0}
             onClick={() => onToggleStatus?.(item)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                onToggleStatus?.(item);
+              }
+            }}
           />
         ),
       };

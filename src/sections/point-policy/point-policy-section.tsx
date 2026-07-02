@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { toast } from 'sonner';
-import { ExchangeRate, ExchangeRateCard } from 'src/components/point-policy/exchange-rate-card';
+import type { ExchangeRate} from 'src/components/point-policy/exchange-rate-card';
+import { ExchangeRateCard } from 'src/components/point-policy/exchange-rate-card';
 import { PointPolicyCard } from 'src/components/point-policy/point-policy-card';
 
 // Mock data cho tỷ lệ quy đổi

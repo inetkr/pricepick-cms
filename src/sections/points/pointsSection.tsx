@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { PaginationProps } from 'src/components/common/pagination';
+import type { PaginationProps } from 'src/components/common/pagination';
 import { PointsStats } from 'src/components/points/points-stats';
 import { PointsTable } from 'src/components/points/points-table';
 import { PointsToolbar } from 'src/components/points/points-toolbar';

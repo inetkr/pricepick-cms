@@ -1,31 +1,15 @@
 import React from 'react';
-import { ITicket } from 'src/types/tickets/ticket';
-import { Pagination, PaginationProps } from '../common/pagination';
-import { TicketChip, TicketChipGroup, TicketGrade } from '../common/ticket-chip';
-import { ITransactionTypeGroup, IUsageStatus } from 'src/types/common';
+import type { ITicket } from 'src/types/tickets/ticket';
+import type { PaginationProps } from '../common/pagination';
+import { Pagination } from '../common/pagination';
+import type { TicketGrade } from '../common/ticket-chip';
+import { TicketChipGroup } from '../common/ticket-chip';
+import type { IUsageStatus } from 'src/types/common';
 
 interface TicketTableProps {
   tickets: ITicket[];
   pagination?: PaginationProps;
 }
-
-const reasonBadgeMap: Record<ITransactionTypeGroup, { color: string; label: string }> = {
-  ADMIN_ADD: { color: 'var(--success)', label: '구매확정 전환' },
-  COUPANG_PURCHASE: { color: 'var(--text-2)', label: '구매 대기 (가지급)' },
-  WEEKLY_TASK: { color: '#c084fc', label: '주간 미션 완료' },
-  ATTENDANCE: { color: '#c084fc', label: '출석 체크' },
-  AD_WATCH: { color: '#c084fc', label: '광고 시청' },
-  FRIEND_INVITE: { color: '#c084fc', label: '친구초대 보상' },
-  // GIFTICON_EXCHANGE: { color: 'var(--danger)', label: '기프티콘 교환 소모' },
-  // PRIZE_ENTRY: { color: 'var(--danger)', label: '경품 응모 소모' },
-  // CLAWBACK: { color: 'var(--danger)', label: '부정행위 회수' },
-  // ADMIN_GRANT: { color: 'var(--main)', label: '관리자 지급' },
-};
-
-const renderReasonBadge = (reason: ITransactionTypeGroup) => {
-  const config = reasonBadgeMap[reason] || { color: 'var(--text-2)', label: reason };
-  return <span style={{ color: config.color }}>{config.label}</span>;
-};
 
 const usageStatusBadgeMap: Record<
   IUsageStatus,

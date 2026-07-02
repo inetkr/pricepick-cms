@@ -1,5 +1,5 @@
-import { IAdminRole } from "./admin_role";
-import { IBase } from "./base";
+import type { IAdminRole } from "./admin_role";
+import type { IBase } from "./base";
 
 export type IAdmin  = IBase & {
     id: string;

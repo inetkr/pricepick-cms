@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { PaginationProps } from 'src/components/common/pagination';
+import type { PaginationProps } from 'src/components/common/pagination';
 import { TicketManualModal } from 'src/components/tickets/ticket-manual-modal';
 import { TicketStats } from 'src/components/tickets/ticket-stats';
 import { TicketTable } from 'src/components/tickets/ticket-table';

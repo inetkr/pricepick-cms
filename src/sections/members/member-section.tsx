@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { PaginationProps } from 'src/components/common/pagination';
+import type { PaginationProps } from 'src/components/common/pagination';
 import { MemberFilters } from 'src/components/members/member-filters';
 import { MemberModal } from 'src/components/members/member-modal';
 import { MemberStats } from 'src/components/members/member-stats';
 import { MemberTable } from 'src/components/members/member-table';
 import { useDebounce } from 'src/hooks/use-debounce';
 import { useMembers } from 'src/sections/members/hooks/use-member';
-import { IUser } from 'src/types/users/user';
+import type { IUser } from 'src/types/users/user';
 
 export const MembersSection: React.FC = () => {
   const {
@@ -119,7 +119,7 @@ export const MembersSection: React.FC = () => {
           pagination={paginationProps}
           onViewDetail={handleViewDetail}
           onStatusChange={() => {}}
-          isSuperAdmin={true}
+          isSuperAdmin
         />
       )}
 
@@ -129,7 +129,7 @@ export const MembersSection: React.FC = () => {
         onClose={handleCloseModal}
         onSave={handleSaveMember}
         onTicketGrant={handleGrantTicket}
-        isEditable={true}
+        isEditable
       />
     </div>
   );

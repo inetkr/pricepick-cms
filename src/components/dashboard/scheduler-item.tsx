@@ -42,12 +42,12 @@ export const SchedulerItem: React.FC<SchedulerItemProps> = ({
       {showActions && (
         <div style={{ display: 'flex', gap: '8px' }}>
           {onPause && (
-            <button className="btn btn-ghost btn-sm" onClick={onPause}>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={onPause}>
               일시정지
             </button>
           )}
           {onRunNow && (
-            <button className="btn btn-success btn-sm" onClick={onRunNow}>
+            <button type="button" className="btn btn-success btn-sm" onClick={onRunNow}>
               즉시 실행
             </button>
           )}

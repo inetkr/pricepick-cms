@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import { toast } from 'sonner';
-import { Banner } from 'src/components/banners/banner-card';
+import type { Banner } from 'src/components/banners/banner-card';
 import { BannerGrid } from 'src/components/banners/banner-grid';
-import { BannerFormData, BannerModal } from 'src/components/banners/banner-modal';
+import type { BannerFormData} from 'src/components/banners/banner-modal';
+import { BannerModal } from 'src/components/banners/banner-modal';
 
 // Mock data từ file gốc
 const mockBanners: Banner[] = [
@@ -50,7 +51,7 @@ export const BannersSection: React.FC = () => {
   };
 
   const handleDeleteBanner = (banner: Banner) => {
-    if (confirm(`${banner.title} 배너를 삭제하시겠습니까?`)) {
+    if (window.confirm(`${banner.title} 배너를 삭제하시겠습니까?`)) {
       setBanners((prev) => prev.filter((b) => b.id !== banner.id));
       toast.success('배너가 삭제되었습니다.');
     }

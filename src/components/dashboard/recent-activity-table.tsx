@@ -19,7 +19,7 @@ export const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data, 
       <div className="card-header">
         <div className="card-title">최근 픽구매 현황 TOP 3</div>
         {onViewLogs && (
-          <button className="btn btn-ghost btn-sm" onClick={onViewLogs}>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={onViewLogs}>
             포스트백 로그로
           </button>
         )}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { pointAPI } from 'src/api';
-import { IPoint } from 'src/types/points/point';
-import { IPointStat } from 'src/types/points/point_stat';
+import type { IPoint } from 'src/types/points/point';
+import type { IPointStat } from 'src/types/points/point_stat';
 
 type IFilters = {
   search: string;

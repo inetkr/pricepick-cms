@@ -1,7 +1,7 @@
 import axios from 'src/utils/axios';
 import BaseAPI from './base-api';
-import { ApiResponse } from 'src/types/api_response';
-import { IAdmin } from 'src/types/admin';
+import type { ApiResponse } from 'src/types/api_response';
+import type { IAdmin } from 'src/types/admin';
 
 const tableName = 'employee';
 

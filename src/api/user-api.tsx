@@ -1,8 +1,8 @@
 import axios from 'src/utils/axios';
 import BaseAPI from './base-api';
-import { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
-import { IUserStat } from 'src/types/users/user_stat';
-import { IUser } from 'src/types/users/user';
+import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
+import type { IUserStat } from 'src/types/users/user_stat';
+import type { IUser } from 'src/types/users/user';
 
 const tableName = 'user';
 export default class UserAPI extends BaseAPI {

@@ -57,8 +57,11 @@ export const DrawForm: React.FC<DrawFormProps> = ({ onSubmit, onCancel }) => {
       <form onSubmit={handleSubmit} style={{ padding: '18px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           <div className="form-group">
-            <label className="form-label">회차명</label>
+            <label className="form-label" htmlFor="draw-round-name">
+              회차명
+            </label>
             <input
+              id="draw-round-name"
               className="form-input"
               placeholder="예: 13회차 경품 추첨"
               value={roundName}
@@ -67,8 +70,11 @@ export const DrawForm: React.FC<DrawFormProps> = ({ onSubmit, onCancel }) => {
             />
           </div>
           <div className="form-group">
-            <label className="form-label">총 참여 티켓 소모</label>
+            <label className="form-label" htmlFor="draw-total-tickets">
+              총 참여 티켓 소모
+            </label>
             <input
+              id="draw-total-tickets"
               className="form-input"
               placeholder="자동 계산"
               readOnly
@@ -76,8 +82,11 @@ export const DrawForm: React.FC<DrawFormProps> = ({ onSubmit, onCancel }) => {
             />
           </div>
           <div className="form-group">
-            <label className="form-label">시작일</label>
+            <label className="form-label" htmlFor="draw-start-date">
+              시작일
+            </label>
             <input
+              id="draw-start-date"
               className="form-input"
               type="date"
               value={startDate}
@@ -86,8 +95,11 @@ export const DrawForm: React.FC<DrawFormProps> = ({ onSubmit, onCancel }) => {
             />
           </div>
           <div className="form-group">
-            <label className="form-label">마감일</label>
+            <label className="form-label" htmlFor="draw-end-date">
+              마감일
+            </label>
             <input
+              id="draw-end-date"
               className="form-input"
               type="date"
               value={endDate}
@@ -107,9 +119,9 @@ export const DrawForm: React.FC<DrawFormProps> = ({ onSubmit, onCancel }) => {
               marginBottom: '10px',
             }}
           >
-            <label className="form-label" style={{ margin: 0 }}>
+            <div className="form-label" style={{ margin: 0 }}>
               등수별 경품 구성
-            </label>
+            </div>
             <button type="button" className="btn btn-ghost btn-sm" onClick={addPrizeRow}>
               + 등수 추가
             </button>
@@ -126,7 +138,7 @@ export const DrawForm: React.FC<DrawFormProps> = ({ onSubmit, onCancel }) => {
             <span style={{ fontSize: '11px', color: 'var(--text-sub)' }}>등수</span>
             <span style={{ fontSize: '11px', color: 'var(--text-sub)' }}>경품명</span>
             <span style={{ fontSize: '11px', color: 'var(--text-sub)' }}>당첨자 수</span>
-            <span></span>
+            <span />
           </div>
           {prizes.map((prize, index) => (
             <div
@@ -164,7 +176,9 @@ export const DrawForm: React.FC<DrawFormProps> = ({ onSubmit, onCancel }) => {
                 type="number"
                 value={prize.winnerCount}
                 min={1}
-                onChange={(e) => updatePrize(index, 'winnerCount', parseInt(e.target.value) || 1)}
+                onChange={(e) =>
+                  updatePrize(index, 'winnerCount', parseInt(e.target.value, 10) || 1)
+                }
                 required
               />
               <button

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Column, Table } from '../common/table';
+import type { Column} from '../common/table';
+import { Table } from '../common/table';
 import { InfoBox } from '../stats/info-box';
 import { TicketChipGroup } from '../common/ticket-chip';
 
@@ -43,14 +44,12 @@ const columns: Column<DebtItem>[] = [
     key: 'debtTickets',
     label: '부채 티켓',
     render: (item) => (
-      <>
-        <TicketChipGroup
+      <TicketChipGroup
           tickets={item.debtTicket.map((t) => ({ ...t, grade: t.type }))}
           bare
           showName
           showQuantity
         />
-      </>
     ),
     align: 'center',
   },

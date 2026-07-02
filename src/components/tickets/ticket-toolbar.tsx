@@ -68,7 +68,7 @@ export const TicketToolbar: React.FC<TicketToolbarProps> = ({
         ))}
       </select>
       <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }} id="ticket-hdr-actions">
-        <button className="btn btn-ghost btn-sm" onClick={onViewModalOpen}>
+        <button type="button" className="btn btn-ghost btn-sm" onClick={onViewModalOpen}>
           수동 지급 / 회수
         </button>
       </div>

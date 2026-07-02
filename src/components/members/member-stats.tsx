@@ -1,5 +1,5 @@
 import React from 'react';
-import { IUserStat } from 'src/types/users/user_stat';
+import type { IUserStat } from 'src/types/users/user_stat';
 
 interface MemberStatsProps {
   stats: IUserStat;
@@ -26,7 +26,7 @@ export const MemberStats: React.FC<MemberStatsProps> = ({ stats }) => {
             marginRight: '5px',
             verticalAlign: 'middle',
           }}
-        ></span>
+         />
       )}
       <span style={{ color: labelColor }}>
         {label} <strong style={{ color }}>{value.toLocaleString()}명</strong>

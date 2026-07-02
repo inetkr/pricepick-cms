@@ -1,9 +1,9 @@
 'use client';
 
 import { setAccessToken, setAdminInfo } from './utils';
-import { ApiAuthResponse } from 'src/types/api_response';
+import type { ApiAuthResponse } from 'src/types/api_response';
 import { authAPI } from 'src/api';
-import { IAdmin } from 'src/types/admin';
+import type { IAdmin } from 'src/types/admin';
 
 // ----------------------------------------------------------------------
 

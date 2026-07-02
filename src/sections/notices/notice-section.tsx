@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { PaginationProps } from 'src/components/common/table';
+import type { PaginationProps } from 'src/components/common/table';
 import { NoticeFilter } from 'src/components/notices/notice-filter';
-import { NoticeForm, NoticeFormData } from 'src/components/notices/notice-form';
+import type { NoticeFormData } from 'src/components/notices/notice-form';
+import { NoticeForm } from 'src/components/notices/notice-form';
 import { NoticeStats } from 'src/components/notices/notice-stats';
-import { NoticeItem, NoticeTable } from 'src/components/notices/notice-table';
+import type { NoticeItem} from 'src/components/notices/notice-table';
+import { NoticeTable } from 'src/components/notices/notice-table';
 
 // Mock data
 const mockNotices: NoticeItem[] = [

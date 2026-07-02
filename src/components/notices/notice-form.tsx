@@ -84,6 +84,7 @@ export const NoticeForm: React.FC<NoticeFormProps> = ({
           >
             <div>
               <label
+                htmlFor="notice-title"
                 style={{
                   fontSize: '11px',
                   color: 'var(--text-2)',
@@ -97,6 +98,7 @@ export const NoticeForm: React.FC<NoticeFormProps> = ({
                 제목
               </label>
               <input
+                id="notice-title"
                 className="search-box"
                 style={{ width: '100%' }}
                 placeholder="공지 제목"
@@ -107,6 +109,7 @@ export const NoticeForm: React.FC<NoticeFormProps> = ({
             </div>
             <div>
               <label
+                htmlFor="notice-category"
                 style={{
                   fontSize: '11px',
                   color: 'var(--text-2)',
@@ -120,6 +123,7 @@ export const NoticeForm: React.FC<NoticeFormProps> = ({
                 분류
               </label>
               <select
+                id="notice-category"
                 className="filter-sel"
                 style={{ width: '100%' }}
                 value={formData.category}
@@ -136,6 +140,7 @@ export const NoticeForm: React.FC<NoticeFormProps> = ({
 
           <div style={{ marginBottom: '14px' }}>
             <label
+              htmlFor="notice-content"
               style={{
                 fontSize: '11px',
                 color: 'var(--text-2)',
@@ -149,6 +154,7 @@ export const NoticeForm: React.FC<NoticeFormProps> = ({
               내용
             </label>
             <textarea
+              id="notice-content"
               className="terms-editor"
               style={{ minHeight: '110px' }}
               placeholder="공지 본문 (앱 마이 > 공지사항에 게시됩니다)"
