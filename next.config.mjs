@@ -5,6 +5,7 @@
 const isStaticExport = 'false';
 
 const nextConfig = {
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   trailingSlash: true,
   reactStrictMode: false,
   images: {
