@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "ponhub-cms-dev-6001",
+      name: "pricepick-cms-dev-6001",
       script: "node_modules/.bin/next",
       args: "start -p 6001",
       cwd: "/home/sindykorea/pricepick/pricepick-cms",
