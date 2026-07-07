@@ -15,6 +15,7 @@ coverage
 
 # production
 .next
+.next-build
 .swc
 _static
 out
@@ -36,3 +37,4 @@ build
 .eslintcache
 .unimportedrc.json
 tsconfig.tsbuildinfo
+public/firebase-messaging-sw.js

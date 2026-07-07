@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'src/routes/hooks';
 import { signIn } from 'src/auth/context/authContext';
 import { useAuthContext } from 'src/auth/hooks';
+import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 
 export type SignInSchemaType = zod.infer<typeof SignInSchema>;
 
@@ -20,6 +21,7 @@ export function LoginContainer() {
   const { checkUserSession } = useAuthContext();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const { showMessageIcon } = useDialogMessage();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +31,7 @@ export function LoginContainer() {
       router.push('/');
     } catch (error) {
       console.error('Error during sign in:', error);
+      showMessageIcon('로그인에 실패했습니다. 다시 시도해주세요.', DialogMessageIcon.alert);
     }
   };
 
