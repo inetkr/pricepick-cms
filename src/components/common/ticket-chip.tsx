@@ -11,6 +11,7 @@ interface TicketChipProps {
   size?: 'small' | 'large';
   dim?: boolean;
   bare?: boolean;
+  prefix?: string;
 }
 
 // SVG paths từ file gốc
@@ -40,6 +41,7 @@ export const TicketChip: React.FC<TicketChipProps> = ({
   size = 'small',
   dim = false,
   bare = false,
+  prefix = '',
 }) => {
   const colors = GRADE_COLORS[grade];
   const uid = React.useId();
@@ -108,7 +110,7 @@ export const TicketChip: React.FC<TicketChipProps> = ({
               {renderNameByGrade[grade]} {quantity}장
             </span>
           ) : (
-            <span>{quantity}</span>
+            <span>{prefix}{quantity}</span>
           ))}
       </span>
     );
@@ -125,7 +127,7 @@ export const TicketChip: React.FC<TicketChipProps> = ({
             {renderNameByGrade[grade]} {quantity}장
           </span>
         ) : (
-          <span>{quantity}</span>
+          <span>{prefix}{quantity}</span>
         ))}
     </span>
   );

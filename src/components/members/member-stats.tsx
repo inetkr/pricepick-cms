@@ -26,12 +26,23 @@ export const MemberStats: React.FC<MemberStatsProps> = ({ stats }) => {
             marginRight: '5px',
             verticalAlign: 'middle',
           }}
-         />
+        />
       )}
-      <span style={{ color: labelColor }}>
-        {label} <strong style={{ color }}>{value.toLocaleString()}명</strong>
-        {percentage && percentage > 0 && ` (${percentage}%)`}
-      </span>
+      {percentage !== undefined && percentage > 0 ? (
+        <span style={{ color: labelColor }}>
+          {label}
+          <strong style={{ color, paddingLeft: '4px' }}>
+            {value.toLocaleString()}명 {percentage && percentage > 0 && ` (${percentage}%)`}
+          </strong>
+        </span>
+      ) : (
+        <span style={{ color: labelColor }}>
+          {label}
+          <strong style={{ color: color, paddingLeft: '4px' }} id="mem-mkt">
+            운영 데이터 없음
+          </strong>
+        </span>
+      )}
     </span>
   );
 

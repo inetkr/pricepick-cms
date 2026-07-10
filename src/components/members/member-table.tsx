@@ -2,8 +2,7 @@ import React from 'react';
 import type { IUser } from 'src/types/users/user';
 import { MemberActions } from './member-actions';
 import type { TicketGrade } from '../common/ticket-chip';
-import { TicketChip, TicketChipGroup } from '../common/ticket-chip';
-import { formatDate } from 'src/utils/helper';
+import { TicketChip } from '../common/ticket-chip';
 import type { IAccountStatus, IMarketingConsent } from 'src/types/common';
 import type { PaginationProps } from '../common/pagination';
 import { Pagination } from '../common/pagination';
@@ -29,25 +28,9 @@ const renderMemberInfo: (member: IUser) => JSX.Element = (member) => {
   }
   return (
     <>
-      <div style={{ fontWeight: 500 }}>
-        {member.nickname}
-        <span
-          style={{
-            fontSize: '10px',
-            fontWeight: 700,
-            color: '#d97a17',
-            background: '#fdf1e3',
-            border: '1px solid #f3d2a0',
-            borderRadius: '10px',
-            padding: '1px 7px',
-            marginLeft: '3px',
-          }}
-        >
-          미연동
-        </span>
-      </div>
+      <div style={{ fontWeight: 500 }}>{member.nickname}</div>
       <div style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}>
-        app_uid: {member.username}
+        미연동
       </div>
     </>
   );
@@ -56,36 +39,22 @@ const renderMemberInfo: (member: IUser) => JSX.Element = (member) => {
 // Helper render link status
 const renderLinkStatus = (member: IUser) => {
   if (member.kakao_id) {
-    return (
-      <>
-        <span className="member-type-kakao">카카오 연동</span>
-        <div style={{ fontSize: '10px', color: 'var(--text-3)', marginTop: '3px' }}>
-          연동 {formatDate(member.kakao_info?.linked_at, 'YYYY/MM/DD')}
-        </div>
-      </>
-    );
+    return <span className="member-type-kakao">카카오 연동</span>;
   }
 
   return (
-    <>
-      <span
-        style={{
-          display: 'inline-block',
-          fontSize: '11px',
-          fontWeight: 700,
-          color: '#d97a17',
-          background: '#fdf1e3',
-          border: '1px solid #f3d2a0',
-          borderRadius: '20px',
-          padding: '3px 10px',
-        }}
-      >
-        게스트(미연동)
-      </span>
-      <div style={{ fontSize: '10px', color: 'var(--text-3)', marginTop: '3px' }}>
-        적립만 누적 · 사용 불가
-      </div>
-    </>
+    <span
+      style={{
+        background: 'var(--warning-soft)',
+        color: 'var(--warning)',
+        padding: '2px 8px',
+        borderRadius: '99px',
+        fontSize: '11px',
+        fontWeight: 600,
+      }}
+    >
+      게스트
+    </span>
   );
 };
 
@@ -107,7 +76,8 @@ const renderDateTime = (date: string) => {
 };
 
 // Helper render marketing badge
-const renderMarketing = (type: IMarketingConsent) => {
+const renderMarketing = (type?: IMarketingConsent) => {
+  if (!type) return '-';
   const classes = {
     ALL: 'mkt-badge all',
     SELECTIVE: 'mkt-badge sel',
@@ -131,7 +101,7 @@ const getPendingBadge = (user: IUser) => {
             quantity={user.pending_bronze}
             size="small"
             showName={false}
-            dim={user.pending_bronze === 0}
+            prefix="+"
           />
         )}
         {user.pending_silver > 0 && (
@@ -140,7 +110,7 @@ const getPendingBadge = (user: IUser) => {
             quantity={user.pending_silver}
             size="small"
             showName={false}
-            dim={user.pending_silver === 0}
+            prefix="+"
           />
         )}
         {user.pending_gold > 0 && (
@@ -149,7 +119,7 @@ const getPendingBadge = (user: IUser) => {
             quantity={user.pending_gold}
             size="small"
             showName={false}
-            dim={user.pending_gold === 0}
+            prefix="+"
           />
         )}
       </div>
@@ -159,26 +129,30 @@ const getPendingBadge = (user: IUser) => {
 };
 
 const getActiveBadge = (user: IUser) => {
-  const objects: Array<{
-    grade: TicketGrade;
-    quantity: number;
-  }> = [
+  const tickets: Array<{ grade: TicketGrade; quantity: number }> = [
     { grade: 'bronze', quantity: user.ticket_bronze_total },
     { grade: 'silver', quantity: user.ticket_silver_total },
     { grade: 'gold', quantity: user.ticket_gold_total },
   ];
+  const dim =
+    user.ticket_bronze_total === 0 &&
+    user.ticket_silver_total === 0 &&
+    user.ticket_gold_total === 0;
 
   return (
-    <TicketChipGroup
-      tickets={objects}
-      showName={false}
-      showQuantity
-      dim={
-        user.ticket_bronze_total === 0 &&
-        user.ticket_silver_total === 0 &&
-        user.ticket_gold_total === 0
-      }
-    />
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {tickets.map((t) => (
+        <TicketChip key={t.grade} grade={t.grade} quantity={t.quantity} showName={false} dim={dim} />
+      ))}
+    </div>
   );
 };
 
@@ -209,7 +183,7 @@ export const MemberTable: React.FC<MemberTableProps> = ({
       <table>
         <thead>
           <tr>
-            <th>닉네임 / 식별자</th>
+            <th>닉네임(카카오ID)</th>
             <th>연동 상태</th>
             <th>가입일</th>
             <th>랜덤 티켓</th>
@@ -238,16 +212,25 @@ export const MemberTable: React.FC<MemberTableProps> = ({
                 <td>{renderLinkStatus(member)}</td>
                 <td style={{ textAlign: 'center' }}>{renderDateTime(member.created_at)}</td>
                 <td>
-                  <div className="rnd-chip-wrap">
+                  {member.pending_random_tickets > 0 ? (
+                    <div className="rnd-chip-wrap">
+                      <TicketChip
+                        grade="random"
+                        quantity={member.pending_random_tickets}
+                        size="small"
+                        showName={false}
+                      />
+                      <span className="conv-arrow">→</span>
+                    </div>
+                  ) : (
                     <TicketChip
                       grade="random"
                       quantity={member.pending_random_tickets}
                       size="small"
                       showName={false}
-                      dim={member.pending_random_tickets === 0}
+                      dim
                     />
-                    {member.pending_random_tickets > 0 && <span className="conv-arrow">→</span>}
-                  </div>
+                  )}
                 </td>
                 <td>{getPendingBadge(member)}</td>
                 <td>{getActiveBadge(member)}</td>
@@ -260,7 +243,7 @@ export const MemberTable: React.FC<MemberTableProps> = ({
                     dim={member.ticket_event_total === 0}
                   />
                 </td>
-                <td>{renderMarketing(member.user_setting.marketing_consent)}</td>
+                <td>{renderMarketing(member.user_setting?.marketing_consent)}</td>
                 <td>
                   <span className={`badge ${getMemberStatus(member.account_status).className}`}>
                     {getMemberStatus(member.account_status).label}

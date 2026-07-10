@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+export interface MemberFilterValues {
+  search: string;
+  kakao_status: string;
+  account_status: string;
+}
 
 interface MemberFiltersProps {
-  onSearch?: (value: string) => void;
-  onKakaoStatusChange: (value: string) => void;
-  onAccountStatusChange: (value: string) => void;
-  onMarketingChange: (value: string) => void;
+  onApplyFilters: (filters: MemberFilterValues) => void;
 }
 
 const kakaoStatusOptions = [
@@ -20,47 +23,52 @@ const accountStatusOptions = [
   { value: 'DELETE', label: '탈퇴' },
 ];
 
-const marketingOptions = [
-  { value: '', label: '전체 마케팅' },
-  { value: 'ALL', label: '전체 동의' },
-  { value: 'SELECTIVE', label: '선택 동의' },
-  { value: 'NONE', label: '전체 거부' },
-];
+export const MemberFilters: React.FC<MemberFiltersProps> = ({ onApplyFilters }) => {
+  const [search, setSearch] = useState('');
+  const [kakaoStatus, setKakaoStatus] = useState('');
+  const [accountStatus, setAccountStatus] = useState('');
 
-export const MemberFilters: React.FC<MemberFiltersProps> = ({
-  onSearch,
-  onKakaoStatusChange,
-  onAccountStatusChange,
-  onMarketingChange,
-}) => {
+  const handleApplyFilters = () => {
+    onApplyFilters({
+      search,
+      kakao_status: kakaoStatus,
+      account_status: accountStatus,
+    });
+  };
+
   return (
-    <div className="toolbar">
+    <>
       <input
         className="search-box"
         placeholder="닉네임 검색..."
-        onChange={(e) => onSearch?.(e.target.value)}
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
       />
-      <select className="filter-sel" onChange={(e) => onKakaoStatusChange?.(e.target.value)}>
+      <select
+        className="filter-sel"
+        value={kakaoStatus}
+        onChange={(e) => setKakaoStatus(e.target.value)}
+      >
         {kakaoStatusOptions.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
         ))}
       </select>
-      <select className="filter-sel" onChange={(e) => onAccountStatusChange?.(e.target.value)}>
+      <select
+        className="filter-sel"
+        value={accountStatus}
+        onChange={(e) => setAccountStatus(e.target.value)}
+      >
         {accountStatusOptions.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
         ))}
       </select>
-      <select className="filter-sel" onChange={(e) => onMarketingChange?.(e.target.value)}>
-        {marketingOptions.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-    </div>
+      <button className="btn btn-primary btn-sm" onClick={handleApplyFilters}>
+        검색
+      </button>
+    </>
   );
 };

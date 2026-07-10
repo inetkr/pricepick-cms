@@ -78,7 +78,13 @@ export const MemberModal: React.FC<MemberModalProps> = ({
 
   return (
     <div className={`modal-overlay ${isOpen ? 'open' : ''}`}>
-      <div className="modal">
+      <div
+        className="modal"
+        style={{
+          minWidth: '500px',
+          width: 'auto',
+        }}
+      >
         <div className="modal-header">
           <div className="modal-title">회원 상세</div>
           <button type="button" className="modal-close" onClick={onClose}>
@@ -116,7 +122,21 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               >
                 {member.kakao_info ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span className="member-type-kakao">카카오</span>
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '18px',
+                        height: '18px',
+                        borderRadius: '5px',
+                        background: '#FEE500',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                      }}
+                    >
+                      K
+                    </span>
                     <span style={{ fontSize: '12px', color: 'var(--text2)' }}>
                       {member.username}
                     </span>
@@ -169,6 +189,16 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                 disabled
               />
             </div>
+            <div className="form-group">
+              <label className="form-label">식별 아이디</label>
+              <input
+                className="form-input"
+                id="m-doc-id"
+                disabled
+                value={member.identified_id}
+                style={{ fontFamily: 'monospace', fontSize: '12px' }}
+              />
+            </div>
           </div>
           <div className="form-group">
             <div className="form-label">티켓 보유 현황</div>
@@ -203,36 +233,19 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   id="m-conv-preview"
                   style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '0px 4px' }}
                 >
-                  <span style={{ fontSize: '11px', color: 'var(--text3)' }}>전환예정 →</span>
-                  <span
-                    style={{
-                      fontSize: '10px',
-                      fontWeight: 800,
-                      background: 'rgba(205,127,50,.2)',
-                      color: 'var(--bronze)',
-                      border: '1px solid rgba(205,127,50,.35)',
-                      borderRadius: '5px',
-                      padding: '2px 7px',
-                    }}
-                  >
-                    +1
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '10px',
-                      fontWeight: 800,
-                      background: 'rgba(192,192,192,.12)',
-                      color: 'var(--silver)',
-                      border: '1px solid rgba(192,192,192,.25)',
-                      borderRadius: '5px',
-                      padding: '2px 7px',
-                    }}
-                  >
-                    +1
-                  </span>
+                  {(member.pending_bronze > 0 ||
+                    member.pending_silver > 0 ||
+                    member.pending_gold > 0) && (
+                    <>
+                      <span style={{ fontSize: '10px', color: 'var(--text-3)' }}>전환예정</span>
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-2)' }}>
+                        브+{member.pending_bronze}·실+{member.pending_silver}·골+
+                        {member.pending_gold}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
-
               <div
                 id="m-bronze-wrap"
                 style={{
@@ -253,7 +266,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   id="m-bronze-count"
                   style={{ fontSize: '15px', fontWeight: 800, color: 'var(--bronze)' }}
                 >
-                  {member.pending_bronze}
+                  {member.ticket_bronze_total}
                 </span>
               </div>
 
@@ -277,7 +290,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   id="m-silver-count"
                   style={{ fontSize: '15px', fontWeight: 800, color: 'var(--silver)' }}
                 >
-                  {member.pending_silver}
+                  {member.ticket_silver_total}
                 </span>
               </div>
               <div
@@ -300,7 +313,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   id="m-gold-count"
                   style={{ fontSize: '15px', fontWeight: 800, color: 'var(--gold)' }}
                 >
-                  {member.pending_gold}
+                  {member.ticket_gold_total}
                 </span>
               </div>
               <div
@@ -365,9 +378,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   지급
                 </button>
               </div>
-              <div className="form-hint">
-                지급 이력은 티켓 내역에 &apos;관리자 지급&apos;으로 기록됩니다.
-              </div>
+              <div className="form-hint">지급 이력은 티켓 내역에 '관리자 지급'으로 기록됩니다.</div>
             </div>
           )}
         </div>

@@ -1,14 +1,45 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import type { CsvColumn } from 'src/components/common/csv-export-button';
+import { CsvExportButton } from 'src/components/common/csv-export-button';
 import type { PaginationProps } from 'src/components/common/pagination';
 import { MemberFilters } from 'src/components/members/member-filters';
 import { MemberModal } from 'src/components/members/member-modal';
 import { MemberStats } from 'src/components/members/member-stats';
 import { MemberTable } from 'src/components/members/member-table';
-import { useDebounce } from 'src/hooks/use-debounce';
 import { useMembers } from 'src/sections/members/hooks/use-member';
 import type { IUser } from 'src/types/users/user';
+import { formatDate } from 'src/utils/helper';
+
+const accountStatusLabels: Record<string, string> = {
+  NORMAL: '정상',
+  BLOCK: '차단',
+  DELETE: '탈퇴',
+};
+
+const marketingConsentLabels: Record<string, string> = {
+  ALL: '전체 동의',
+  SELECTIVE: '선택 동의',
+  NONE: '전체 거부',
+};
+
+const memberCsvColumns: CsvColumn<IUser>[] = [
+  { header: '닉네임', accessor: (m) => m.nickname },
+  { header: '식별자', accessor: (m) => m.username },
+  { header: '연동 상태', accessor: (m) => (m.kakao_id ? '카카오 연동' : '게스트(미연동)') },
+  { header: '가입일', accessor: (m) => formatDate(m.created_at) },
+  { header: '랜덤 티켓', accessor: (m) => m.pending_random_tickets },
+  { header: '브론즈 티켓', accessor: (m) => m.ticket_bronze_total },
+  { header: '실버 티켓', accessor: (m) => m.ticket_silver_total },
+  { header: '골드 티켓', accessor: (m) => m.ticket_gold_total },
+  { header: '이벤트 티켓', accessor: (m) => m.ticket_event_total },
+  {
+    header: '마케팅 수신',
+    accessor: (m) => marketingConsentLabels[m.user_setting?.marketing_consent] ?? '',
+  },
+  { header: '상태', accessor: (m) => accountStatusLabels[m.account_status] ?? '' },
+];
 
 export const MembersSection: React.FC = () => {
   const {
@@ -27,8 +58,6 @@ export const MembersSection: React.FC = () => {
     grantTicket,
   } = useMembers();
   const [selectedMember, setSelectedMember] = useState<IUser | null>(null);
-  const [keyword, setKeyword] = useState<string>('');
-  const debouncedInput = useDebounce(keyword, 500);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleViewDetail = (id: string) => {
@@ -62,10 +91,6 @@ export const MembersSection: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    setFilters({ ...filters, search: debouncedInput });
-  }, [debouncedInput]);
-
   const paginationProps: PaginationProps = {
     currentPage: page,
     totalPages,
@@ -98,14 +123,19 @@ export const MembersSection: React.FC = () => {
         <strong>연동 D+7 / 미연동 D+30 확정</strong> 시 등급 티켓(브론즈/실버/골드)으로 전환
       </div> */}
 
-      <MemberFilters
-        onSearch={(value) => {
-          setKeyword(value);
-        }}
-        onKakaoStatusChange={(value) => setFilters({ ...filters, kakao_status: value })}
-        onAccountStatusChange={(value) => setFilters({ ...filters, account_status: value })}
-        onMarketingChange={(value) => setFilters({ ...filters, marketing_consent: value })}
-      />
+      <div className="toolbar">
+        <MemberFilters
+          onApplyFilters={(newFilters) => setFilters({ ...filters, ...newFilters })}
+        />
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+          <CsvExportButton
+            data={members}
+            columns={memberCsvColumns}
+            filename="members.csv"
+            label="내보내기"
+          />
+        </div>
+      </div>
 
       <MemberStats stats={stats} />
 

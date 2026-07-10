@@ -51,4 +51,24 @@ export default class UserAPI extends BaseAPI {
       throw error;
     }
   };
+
+  searchUserByKeyword = async (
+    keyword: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<ApiPaginatedResponse<IUser>> => {
+    try {
+      const response = await axios.axiosInstance.get(`/${tableName}/admin/search`, {
+        params: {
+          page,
+          limit,
+          filter: JSON.stringify({ search: keyword }),
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error searching users by keyword:', error);
+      throw error;
+    }
+  };
 }

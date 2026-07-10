@@ -5,6 +5,7 @@ export type IUser = IBase & {
   id: string;
   username: string;
   nickname: string;
+  identified_id: string;
   email: string | null;
   login_type: ILoginType;
   kakao_id: string | number | null;
