@@ -1539,6 +1539,54 @@ export const globalStyles = css`
     resize: vertical;
     min-height: 80px;
   }
+  .tm-grade-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .tm-grade-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex-shrink: 0;
+    min-width: 44px;
+  }
+  .tm-stepper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .tm-stepper-btn {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: var(--r-md);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-2);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-family: var(--font);
+    transition: all .15s;
+  }
+  .tm-stepper-btn:hover {
+    background: var(--surface);
+    border-color: var(--text-2);
+    color: var(--text);
+  }
+  .tm-stepper .form-input {
+    width:64px;
+    text-align:center;
+    flex:none;
+  }
 
   /* ── Pagination Wrapper ── */
   .pagination-wrapper {

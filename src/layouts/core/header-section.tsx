@@ -12,6 +12,7 @@ const PAGE_META: Record<string, { title: string; bc: string }> = {
   '/prizes': { title: '경품/응모 관리', bc: '티켓 · 보상' },
   '/attendance': { title: '주간 이벤트 추첨', bc: '티켓 · 보상' },
   '/clawback': { title: '환수 이력', bc: '티켓 · 보상' },
+  '/lucky-spin-config': { title: '행운룰렛 설정', bc: '티켓 · 보상' },
   '/points': { title: '포인트 내역', bc: '포인트 관리' },
   '/point-attendance': { title: '출석체크 설정', bc: '포인트 관리' },
   '/point-policy': { title: '포인트 정책', bc: '포인트 관리' },

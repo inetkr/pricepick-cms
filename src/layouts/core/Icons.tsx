@@ -451,6 +451,20 @@ export const ScheduleIcon = ({ className = '' }: { className?: string }) => (
   </svg>
 );
 
+export const LuckySpinIcon = ({ className = '' }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+  >
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 3v9l6 3" />
+  </svg>
+);
+
 export const AdminIcon = ({ className = '' }: { className?: string }) => (
   <svg
     className={className}

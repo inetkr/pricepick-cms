@@ -10,33 +10,33 @@ export const TicketStats: React.FC<TicketStatsProps> = ({ stats }) => {
   return (
     <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
       <StatCard
-        label="누적 발행"
-        value={`${stats.total_issued.all.toLocaleString()}장`}
+        label="누적 발행 (적립)"
+        value={`${stats.total_transactions.toLocaleString()}`}
         change={{ type: 'neutral', text: '전체 누적' }}
         color="purple"
       />
       <StatCard
-        label="오늘 발행"
-        value={`${stats.today_issued.all.toLocaleString()}장`}
-        change={{ type: 'up', text: '금일 기준' }}
+        label="기프티콘 교환"
+        value={`${stats.total_gifticon_purchases.toLocaleString()}`}
+        change={{ type: 'neutral', text: '티켓 소모' }}
         color="green"
       />
       <StatCard
-        label="기프티콘 교환"
-        value={`${stats.gifticon_purchases_this_month.toLocaleString()}장`}
-        change={{ type: 'neutral', text: '이번달 누적' }}
+        label="전체 원장 레코드"
+        value={`${stats.total_accumulation_transactions.toLocaleString()}`}
+        change={{ type: 'neutral', text: 'append-only' }}
         color="amber"
       />
       <StatCard
-        label="경품 응모 소모"
-        value={`${stats.event_ticket_prize_entries.toLocaleString()}장`}
+        label="만료 소멸"
+        value={`${stats.total_expired.toLocaleString()}`}
         change={{ type: 'neutral', text: '이벤트 티켓' }}
         color="blue"
       />
       <StatCard
         label="부정행위 회수"
-        value={`${stats.fraud_revoked.toLocaleString()}장`}
-        change={{ type: 'down', text: '이번달 누적' }}
+        value={`${stats.total_admin_sub.toLocaleString()}`}
+        change={{ type: 'neutral', text: '이번달 누적' }}
         color="red"
       />
     </div>

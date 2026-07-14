@@ -3,6 +3,7 @@ import 'src/global.css';
 // ----------------------------------------------------------------------
 
 import type { Viewport } from 'next';
+import { Toaster } from 'sonner';
 import { CONFIG } from 'src/config-global';
 import { LocalizationProvider } from 'src/locales';
 import { detectLanguage } from 'src/locales/server';
@@ -41,7 +42,10 @@ export default async function RootLayout({ children }: Props) {
             <LoadingWrapper>
               <DialogMessageProvider>
                 <AuthProvider>
-                  <AppThemeProvider>{children}</AppThemeProvider>
+                  <AppThemeProvider>
+                    {children}
+                    <Toaster richColors position="bottom-right" visibleToasts={1} duration={1000} />
+                  </AppThemeProvider>
                 </AuthProvider>
               </DialogMessageProvider>
             </LoadingWrapper>

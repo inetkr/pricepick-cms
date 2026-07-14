@@ -1,15 +1,8 @@
 export type ITicketStat = {
-  total_issued: ITicketTotalType;
-  today_issued: ITicketTotalType;
-  gifticon_purchases_this_month: number;
-  event_ticket_prize_entries: number;
-  fraud_revoked: number;
+  total_transactions: number;
+  total_accumulation_transactions: number;
+  total_gifticon_purchases: number;
+  total_expired: number;
+  total_admin_sub: number;
 };
 
-export type ITicketTotalType = {
-  bronze: number;
-  silver: number;
-  gold: number;
-  event: number;
-  all: number;
-}

@@ -1,138 +1,89 @@
 'use client';
 
 import React, { useState } from 'react';
-import type { DrawItem} from 'src/components/draws/draw.table';
-import { DrawTable } from 'src/components/draws/draw.table';
-import { DrawForm } from 'src/components/draws/draw-form';
-
-// Mock data
-const mockDraws: DrawItem[] = [
-  {
-    id: 1,
-    round: '12회',
-    prizes: [
-      { rank: '🥇', name: '에어팟 프로 2세대', count: 1 },
-      { rank: '🥈', name: '스타벅스 5만원권', count: 3 },
-      { rank: '🥉', name: '편의점 상품권 1만원', count: 5 },
-    ],
-    period: '05/05 ~ 05/12',
-    deadline: '05/12 (D-1)',
-    ticketCount: 18240,
-    winners: [
-      { rank: '1등', count: 1 },
-      { rank: '2등', count: 3 },
-      { rank: '3등', count: 5 },
-    ],
-    status: '진행 중',
-  },
-  {
-    id: 2,
-    round: '11회',
-    prizes: [
-      { rank: '🥇', name: '스타벅스 5만원권', count: 1 },
-      { rank: '🥈', name: '배스킨라빈스 아이스크림 교환권', count: 3 },
-    ],
-    period: '04/28 ~ 05/05',
-    deadline: '05/05',
-    ticketCount: 14820,
-    winners: [
-      { rank: '1등', count: 1 },
-      { rank: '2등', count: 3 },
-    ],
-    status: '완료',
-  },
-  {
-    id: 3,
-    round: '10회',
-    prizes: [
-      { rank: '🥇', name: '삼성 갤럭시 버즈', count: 1 },
-      { rank: '🥈', name: '투썸 케이크 교환권', count: 5 },
-    ],
-    period: '04/21 ~ 04/28',
-    deadline: '04/28',
-    ticketCount: 12340,
-    winners: [
-      { rank: '1등', count: 1 },
-      { rank: '2등', count: 5 },
-    ],
-    status: '완료',
-  },
-];
+import { toast } from 'sonner';
+import { InfoBox } from 'src/components/common/info-box';
+import type { PaginationProps } from 'src/components/common/pagination';
+import type { DrawCreateInput } from 'src/components/draws/draw-create-modal';
+import { DrawCreateModal } from 'src/components/draws/draw-create-modal';
+import { DrawTable } from 'src/components/draws/draw-table';
+import type { DrawProcessInput } from 'src/components/draws/draw-winner-modal';
+import { DrawWinnerModal } from 'src/components/draws/draw-winner-modal';
+import { useDraws } from 'src/sections/draws/hooks/use-draw';
+import type { IDraw } from 'src/types/draws/draw';
 
 export const DrawsSection: React.FC = () => {
-  const [draws, setDraws] = useState<DrawItem[]>(mockDraws);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [showForm, setShowForm] = useState(false);
+  const { draws, page, setPage, totalPages, totalItems, pendingCount, createDraw, processDraw } =
+    useDraws();
 
-  const handleDraw = (id: string | number) => {
-    // Mở modal xử lý 당첨
-    // toast(`당첨 처리 모달 열기 - 회차 ${id}`);
+  const [isCreateOpen, setCreateOpen] = useState(false);
+  const [winnerTarget, setWinnerTarget] = useState<IDraw | null>(null);
+  const [isWinnerReadOnly, setWinnerReadOnly] = useState(false);
+
+  const handleCreate = (data: DrawCreateInput) => {
+    createDraw(data);
+    toast.success(`'${data.round_name}' 회차가 등록되었습니다.`);
   };
 
-  const handleViewResult = (id: string | number) => {
-    // toast(`결과 보기 - 회차 ${id}`);
+  const handleProcess = (data: DrawProcessInput) => {
+    if (!winnerTarget) return;
+    processDraw(winnerTarget.id, data);
+    toast.success(`'${winnerTarget.round_name}' 당첨 처리가 완료되었습니다.`);
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    // fetch data for page
-    // toast(`페이지 ${page} 로드`);
+  const openProcessModal = (draw: IDraw) => {
+    setWinnerReadOnly(false);
+    setWinnerTarget(draw);
   };
 
-  const handleCreateDraw = (data: any) => {
-    // Tạo mới đợt rút thăm
-    const newDraw: DrawItem = {
-      id: draws.length + 1,
-      round: data.roundName || `${draws.length + 1}회`,
-      prizes: data.prizes.map((p: any) => ({
-        rank: p.rank,
-        name: p.name,
-        count: p.winnerCount,
-      })),
-      period: `${data.startDate} ~ ${data.endDate}`,
-      deadline: data.endDate,
-      ticketCount: 0,
-      winners: data.prizes.map((p: any) => ({
-        rank: p.rank,
-        count: p.winnerCount,
-      })),
-      status: '예정',
-    };
-    setDraws([newDraw, ...draws]);
-    setShowForm(false);
-    // toast('새 추첨 회차가 등록되었습니다.');
+  const openResultModal = (draw: IDraw) => {
+    setWinnerReadOnly(true);
+    setWinnerTarget(draw);
+  };
+
+  const paginationProps: PaginationProps = {
+    currentPage: page,
+    totalPages,
+    onPageChange: setPage,
+    totalItems,
   };
 
   return (
-    <div className="section active">
+    <div className="section active" id="sec-draws">
+      <InfoBox>
+        <strong>좌측 메뉴 배지</strong> = 관리자 처리 대기 추첨 건수입니다. 마감됐으나 아직
+        &apos;당첨 처리&apos;를 하지 않은 회차 수를 나타내며
+        {pendingCount > 0 ? ` 현재 ${pendingCount}건이 대기 중입니다.` : ' 현재 대기 중인 회차는 없습니다.'}{' '}
+        해당 회차의 당첨 처리를 완료하면 카운트가 줄고, 0이 되면 배지가 사라집니다.
+      </InfoBox>
+
       <div className="card">
         <div className="card-header">
           <div>
             <div className="card-title">추첨 회차 목록</div>
-            <div className="card-sub">매주 월요일 당첨자 발표</div>
+            <div className="card-sub">추첨 방식: 매주 월요일 자동 발표 (수동/자동 선택 가능)</div>
           </div>
-          <div id="draw-hdr-actions" />
+          <button type="button" className="btn btn-primary btn-sm" onClick={() => setCreateOpen(true)}>
+            + 회차 등록
+          </button>
         </div>
         <DrawTable
           data={draws}
-          onDraw={handleDraw}
-          onViewResult={handleViewResult}
-          onPageChange={handlePageChange}
-          currentPage={currentPage}
-          totalPages={Math.ceil(draws.length / 10)}
-          totalItems={draws.length}
+          pagination={paginationProps}
+          onProcess={openProcessModal}
+          onViewResult={openResultModal}
         />
       </div>
 
-      {!showForm ? (
-        <div style={{ marginTop: '16px', textAlign: 'right' }}>
-          <button type="button" className="btn btn-primary" onClick={() => setShowForm(true)}>
-            + 새 회차 등록
-          </button>
-        </div>
-      ) : (
-        <DrawForm onSubmit={handleCreateDraw} onCancel={() => setShowForm(false)} />
-      )}
+      <DrawCreateModal open={isCreateOpen} onClose={() => setCreateOpen(false)} onSubmit={handleCreate} />
+
+      <DrawWinnerModal
+        open={!!winnerTarget}
+        draw={winnerTarget}
+        readOnly={isWinnerReadOnly}
+        onClose={() => setWinnerTarget(null)}
+        onSubmit={handleProcess}
+      />
     </div>
   );
 };

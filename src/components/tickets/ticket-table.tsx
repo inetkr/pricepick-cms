@@ -2,8 +2,7 @@ import React from 'react';
 import type { ITicket } from 'src/types/tickets/ticket';
 import type { PaginationProps } from '../common/pagination';
 import { Pagination } from '../common/pagination';
-import type { TicketGrade } from '../common/ticket-chip';
-import { TicketChipGroup } from '../common/ticket-chip';
+import { TicketNameByGrade } from '../common/ticket-chip';
 import type { IUsageStatus } from 'src/types/common';
 
 interface TicketTableProps {
@@ -74,7 +73,7 @@ export const TicketTable: React.FC<TicketTableProps> = ({ tickets, pagination })
       <table>
         <thead>
           <tr>
-            <th>닉네임(카카오톡 ID)</th>
+            <th>닉네임 / 카카오톡 ID / 식별 아이디</th>
             <th>사유</th>
             <th>티켓</th>
             <th>상태</th>
@@ -96,28 +95,26 @@ export const TicketTable: React.FC<TicketTableProps> = ({ tickets, pagination })
               <tr key={ticket.id}>
                 <td>
                   <div style={{ fontWeight: 500 }}>{ticket.nickname}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
+                    {ticket.kakao_nickname ?? '게스트(비연동)'}
+                  </div>
                   <div
                     style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}
                   >
-                    ({ticket.username ?? '-'})
+                    ({ticket.identified_id ?? '-'})
                   </div>
                 </td>
-                <td style={{ textAlign: 'center' }}>{ticket.description}</td>
                 <td style={{ textAlign: 'center' }}>
-                  <TicketChipGroup
-                    tickets={Object.entries(ticket.ticket_breakdown)
-                      .filter(([, quantity]) => quantity !== 0)
-                      .map(([grade, quantity]) => ({ grade: grade as TicketGrade, quantity }))}
-                    bare
-                    showQuantity
-                    showName
-                  />
+                  <span style={{ color: 'var(--success)' }}>{ticket.description}</span>
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <TicketNameByGrade grade={ticket.ticket_type} />
                 </td>
                 <td style={{ textAlign: 'center', fontWeight: 600 }}>
                   {renderStatusBadge(ticket.usage_status)}
                 </td>
                 <td style={{ textAlign: 'center', fontSize: '12px', whiteSpace: 'nowrap' }}>
-                  {renderDateTime(ticket.updated_at)}
+                  {renderDateTime(ticket.created_at)}
                 </td>
               </tr>
             ))

@@ -18,5 +18,8 @@ export type ITransactionTypeGroup = 'ADMIN_ADD' | 'COUPANG_PURCHASE' | 'ATTENDAN
 
 export type IUsageStatus = 'HOLDING' | 'USED' | 'PENDING' | 'ADMIN_SUB' | 'REJECTED';
 
-export type ITicketType = 'RANDOM' | 'RANK' | 'EVENT';
-;
+export type ITicketType = 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT';
+
+export type TicketGrade = 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT' | 'RANDOM';
+
+export type IPrizeType = 'EVENT_TICKET' | 'NO_WIN' | 'POINT';

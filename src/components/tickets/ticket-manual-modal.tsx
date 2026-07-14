@@ -8,8 +8,10 @@ import type { IUser } from 'src/types/users/user';
 export interface TicketManualActionData {
   user_identifier: string; // 닉네임 또는 UID
   action: 'ADMIN_ADD' | 'ADMIN_SUB';
-  ticket_type: 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT';
-  amount: number;
+  tickets: {
+    ticket_type: 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT';
+    amount: number;
+  }[];
   description: string;
 }
 
@@ -19,32 +21,36 @@ interface TicketManualModalProps {
   onSubmit: (data: TicketManualActionData) => void;
 }
 
-const INITIAL_STATE: TicketManualActionData = {
-  user_identifier: '',
-  action: 'ADMIN_ADD',
-  ticket_type: 'BRONZE',
-  amount: 1,
-  description: '',
-};
+type TicketGrade = 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT';
 
 const ADMIN_ACTIONS = [
   { value: 'ADMIN_ADD', label: '지급' },
   { value: 'ADMIN_SUB', label: '회수' },
 ];
 
-const TICKET_TYPES = [
+const TICKET_GRADES: { value: TicketGrade; label: string }[] = [
   { value: 'BRONZE', label: '브론즈' },
   { value: 'SILVER', label: '실버' },
   { value: 'GOLD', label: '골드' },
   { value: 'EVENT', label: '이벤트' },
 ];
 
+const INITIAL_QUANTITIES: Record<TicketGrade, number> = {
+  BRONZE: 0,
+  SILVER: 0,
+  GOLD: 0,
+  EVENT: 0,
+};
+
 export const TicketManualModal: React.FC<TicketManualModalProps> = ({
   open,
   onClose,
   onSubmit,
 }) => {
-  const [formData, setFormData] = useState<TicketManualActionData>(INITIAL_STATE);
+  const [userIdentifier, setUserIdentifier] = useState('');
+  const [action, setAction] = useState<'ADMIN_ADD' | 'ADMIN_SUB'>('ADMIN_ADD');
+  const [quantities, setQuantities] = useState<Record<TicketGrade, number>>(INITIAL_QUANTITIES);
+  const [description, setDescription] = useState('');
   const [keyword, setKeyword] = useState('');
   const [searchResults, setSearchResults] = useState<IUser[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -54,7 +60,10 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
 
   useEffect(() => {
     if (open) {
-      setFormData(INITIAL_STATE);
+      setUserIdentifier('');
+      setAction('ADMIN_ADD');
+      setQuantities(INITIAL_QUANTITIES);
+      setDescription('');
       setKeyword('');
       setSearchResults([]);
       setShowResults(false);
@@ -102,19 +111,35 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
     const label = `${user.username} · ${user.nickname} · ${user.id}`;
     lastSelectedKeywordRef.current = label;
     setKeyword(label);
-    setFormData({ ...formData, user_identifier: user.id });
+    setUserIdentifier(user.id);
     setSearchResults([]);
     setShowResults(false);
   };
 
+  const stepQty = (grade: TicketGrade, delta: number) => {
+    setQuantities((prev) => ({ ...prev, [grade]: Math.max(0, prev[grade] + delta) }));
+  };
+
+  const setQty = (grade: TicketGrade, value: number) => {
+    setQuantities((prev) => ({ ...prev, [grade]: Number.isFinite(value) ? Math.max(0, value) : 0 }));
+  };
+
+  const hasQuantity = TICKET_GRADES.some((g) => quantities[g.value] > 0);
+
   const isValid =
-    formData.user_identifier.trim() !== '' &&
-    formData.amount >= 1 &&
-    formData.description.trim() !== '';
+    userIdentifier.trim() !== '' && hasQuantity && description.trim() !== '';
 
   const handleSubmit = () => {
     if (!isValid) return;
-    onSubmit(formData);
+    onSubmit({
+      user_identifier: userIdentifier,
+      action,
+      tickets: TICKET_GRADES.filter((g) => quantities[g.value] > 0).map((g) => ({
+        ticket_type: g.value,
+        amount: quantities[g.value],
+      })),
+      description,
+    });
     onClose();
   };
 
@@ -162,7 +187,7 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
                 onChange={(e) => {
                   const value = e.target.value;
                   setKeyword(value);
-                  setFormData({ ...formData, user_identifier: value });
+                  setUserIdentifier(value);
                 }}
                 onFocus={() => {
                   if (searchResults.length > 0) setShowResults(true);
@@ -222,76 +247,67 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
               )}
             </div>
           </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label" htmlFor="ticket-manual-action">
-                처리 유형
-              </label>
-              <select
-                id="ticket-manual-action"
-                className="form-select"
-                value={formData.action}
-                onChange={(e) =>
-                  setFormData({ ...formData, action: e.target.value as 'ADMIN_ADD' | 'ADMIN_SUB' })
-                }
-              >
-                {ADMIN_ACTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="ticket-manual-ticket-type">
-                티켓 등급
-              </label>
-              <select
-                id="ticket-manual-ticket-type"
-                className="form-select"
-                value={formData.ticket_type}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    ticket_type: e.target.value as 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT',
-                  })
-                }
-              >
-                {TICKET_TYPES.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+          <div className="form-group">
+            <label className="form-label" htmlFor="ticket-manual-action">
+              처리 유형
+            </label>
+            <select
+              id="ticket-manual-action"
+              className="form-select"
+              value={action}
+              onChange={(e) => setAction(e.target.value as 'ADMIN_ADD' | 'ADMIN_SUB')}
+            >
+              {ADMIN_ACTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <label className="form-label">티켓 수량 (등급별, 0보다 큰 것만 처리)</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {TICKET_GRADES.map((g) => (
+                <div key={g.value} className="tm-grade-row">
+                  <span className="tm-grade-label">{g.label}</span>
+                  <div className="tm-stepper">
+                    <button
+                      type="button"
+                      className="tm-stepper-btn"
+                      onClick={() => stepQty(g.value, -1)}
+                    >
+                      −
+                    </button>
+                    <input
+                      className="form-input"
+                      type="number"
+                      min={0}
+                      value={quantities[g.value]}
+                      onChange={(e) => setQty(g.value, Number(e.target.value))}
+                    />
+                    <button
+                      type="button"
+                      className="tm-stepper-btn"
+                      onClick={() => stepQty(g.value, 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label" htmlFor="ticket-manual-amount">
-                수량
-              </label>
-              <input
-                id="ticket-manual-amount"
-                className="form-input"
-                type="number"
-                placeholder="0"
-                min={1}
-                value={formData.amount}
-                onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) || 0 })}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="ticket-manual-description">
-                사유
-              </label>
-              <input
-                id="ticket-manual-description"
-                className="form-input"
-                placeholder="처리 사유 (필수)"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              />
-            </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="ticket-manual-description">
+              사유
+            </label>
+            <input
+              id="ticket-manual-description"
+              className="form-input"
+              placeholder="처리 사유 (필수)"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
           </div>
         </div>
         <div className="modal-footer">

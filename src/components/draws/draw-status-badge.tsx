@@ -1,26 +1,22 @@
 import React from 'react';
+import type { IDrawStatus } from 'src/types/draws/draw';
 
-type DrawStatus = '진행 중' | '완료' | '예정' | '마감';
+const STATUS_META: Record<IDrawStatus, { label: string; badgeClass: string }> = {
+  SCHEDULED: { label: '예정', badgeClass: 'badge-blue' },
+  ACTIVE: { label: '진행 중', badgeClass: 'badge-amber' },
+  CLOSED: { label: '마감', badgeClass: 'badge-red' },
+  COMPLETED: { label: '완료', badgeClass: 'badge-green' },
+};
 
 interface DrawStatusBadgeProps {
-  status: DrawStatus;
+  status: IDrawStatus;
 }
 
 export const DrawStatusBadge: React.FC<DrawStatusBadgeProps> = ({ status }) => {
-  const getBadgeClass = () => {
-    switch (status) {
-      case '진행 중':
-        return 'badge-amber';
-      case '완료':
-        return 'badge-green';
-      case '예정':
-        return 'badge-blue';
-      case '마감':
-        return 'badge-red';
-      default:
-        return 'badge-gray';
-    }
-  };
-
-  return <span className={`badge ${getBadgeClass()}`}>{status}</span>;
+  const meta = STATUS_META[status];
+  return <span className={`badge ${meta.badgeClass}`}>{meta.label}</span>;
 };
+
+export const DRAW_STATUS_LABEL: Record<IDrawStatus, string> = Object.fromEntries(
+  Object.entries(STATUS_META).map(([key, value]) => [key, value.label])
+) as Record<IDrawStatus, string>;

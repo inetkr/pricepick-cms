@@ -1,6 +1,5 @@
 import React from 'react';
-
-export type TicketGrade = 'bronze' | 'silver' | 'gold' | 'event' | 'random';
+import { TicketGrade } from 'src/types/common';
 
 interface TicketChipProps {
   grade: TicketGrade;
@@ -25,11 +24,11 @@ const TK_P3 =
   'M180.7,298.9l-5.2,5.2,27.4,27.4-4.7,4.7-27.4-27.4-5.2,5.2-4.2-4.2,15.1-15.1,4.2,4.2ZM215.3,319.1l-4.7,4.7-31.6-31.6,4.7-4.7,31.6,31.6ZM231.9,296.8c1.9,1.9,1.9,3.9,0,5.8l-9.9,9.9c-1.9,1.9-3.8,1.8-5.7,0l-25.8-25.8c-1.9-1.9-2-3.8-.1-5.7l9.9-9.9c1.9-1.9,3.9-1.9,5.8,0l7.4,7.4-4.7,4.7-6.2-6.2-6.1,6.1,23.5,23.5,6.1-6.1-6.6-6.6,4.7-4.7,7.8,7.8ZM254.4,280l-5.2,5.2-20.1-8.1,14.1,14.1-4.7,4.7-31.6-31.6,4.7-4.7,13.4,13.4-8.1-18.6,5.2-5.2.2.2,8.6,21.4,23.6,9.2ZM269.5,265l-13.1,13.1-31.6-31.6,13-13,4.2,4.2-8.3,8.3,9.2,9.2,7.1-7.1,4.1,4.1-7.1,7.1,9.9,9.9,8.4-8.4,4.2,4.2ZM259,220.6l-5.2,5.2,27.4,27.4-4.7,4.7-27.4-27.4-5.2,5.2-4.2-4.2,15.1-15.1,4.2,4.2Z';
 
 const GRADE_COLORS = {
-  bronze: { c1: '#C68250', c2: '#8B5A2B', icon: 'rgba(255,255,255,0.95)' },
-  silver: { c1: '#D8D8D8', c2: '#999999', icon: 'rgba(50,50,50,0.75)' },
-  gold: { c1: '#FFD93B', c2: '#E6A800', icon: 'rgba(255,255,255,0.95)' },
-  event: { c1: '#C9AAFF', c2: '#845EEE', icon: 'rgba(255,255,255,0.95)' },
-  random: { c1: '#FF6B55', c2: '#C8200A', icon: 'rgba(255,255,255,0.95)' },
+  BRONZE: { c1: '#C68250', c2: '#8B5A2B', icon: 'rgba(255,255,255,0.95)' },
+  SILVER: { c1: '#D8D8D8', c2: '#999999', icon: 'rgba(50,50,50,0.75)' },
+  GOLD: { c1: '#FFD93B', c2: '#E6A800', icon: 'rgba(255,255,255,0.95)' },
+  EVENT: { c1: '#C9AAFF', c2: '#845EEE', icon: 'rgba(255,255,255,0.95)' },
+  RANDOM: { c1: '#FF6B55', c2: '#C8200A', icon: 'rgba(255,255,255,0.95)' },
 };
 
 export const TicketChip: React.FC<TicketChipProps> = ({
@@ -58,7 +57,7 @@ export const TicketChip: React.FC<TicketChipProps> = ({
   const renderIcon = () => {
     // Random ticket có thêm dấu ?
     const questionMark =
-      grade === 'random'
+      grade === 'RANDOM'
         ? `<text x="220" y="370" font-family="Arial Black, Arial" font-size="270" font-weight="900" fill="rgba(255,255,255,0.5)" text-anchor="middle">?</text>`
         : '';
 
@@ -91,17 +90,17 @@ export const TicketChip: React.FC<TicketChipProps> = ({
   };
 
   const renderNameByGrade = {
-    bronze: '브론즈',
-    silver: '실버',
-    gold: '골드',
-    event: '이벤트',
-    random: '랜덤',
+    BRONZE: '브론즈',
+    SILVER: '실버',
+    GOLD: '골드',
+    EVENT: '이벤트',
+    RANDOM: '랜덤',
   };
 
   // Nếu bare mode: chỉ hiển thị icon + số, không có background
   if (bare) {
     return (
-      <span className={`tk-chip bare ${grade} ${dim ? 'dim' : ''} ${className}`}>
+      <span className={`tk-chip bare ${grade.toLowerCase()} ${dim ? 'dim' : ''} ${className}`}>
         {renderIcon()}
         {showQuantity &&
           quantity !== undefined &&
@@ -110,7 +109,10 @@ export const TicketChip: React.FC<TicketChipProps> = ({
               {renderNameByGrade[grade]} {quantity}장
             </span>
           ) : (
-            <span>{prefix}{quantity}</span>
+            <span>
+              {prefix}
+              {quantity}
+            </span>
           ))}
       </span>
     );
@@ -118,7 +120,7 @@ export const TicketChip: React.FC<TicketChipProps> = ({
 
   // Normal mode: có background và border theo grade
   return (
-    <span className={`tk-chip ${grade} ${dim ? 'dim' : ''} ${className}`}>
+    <span className={`tk-chip ${grade.toLowerCase()} ${dim ? 'dim' : ''} ${className}`}>
       {renderIcon()}
       {showQuantity &&
         quantity !== undefined &&
@@ -127,10 +129,24 @@ export const TicketChip: React.FC<TicketChipProps> = ({
             {renderNameByGrade[grade]} {quantity}장
           </span>
         ) : (
-          <span>{prefix}{quantity}</span>
+          <span>
+            {prefix}
+            {quantity}
+          </span>
         ))}
     </span>
   );
+};
+
+export const TicketNameByGrade: React.FC<{ grade: TicketGrade }> = ({ grade }) => {
+  const renderNameByGrade = {
+    BRONZE: '브론즈',
+    SILVER: '실버',
+    GOLD: '골드',
+    EVENT: '이벤트',
+    RANDOM: '랜덤',
+  };
+  return <span className={`tk-chip ${grade.toLowerCase()} bare `}>{renderNameByGrade[grade]}</span>;
 };
 
 // Component để render nhiều ticket chips
