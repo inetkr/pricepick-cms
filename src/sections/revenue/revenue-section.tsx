@@ -1,87 +1,188 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import type { PaginationProps } from 'src/components/common/pagination';
 import { RevenueStats } from 'src/components/revenue/revenue-stats';
-import type {
-  FeeRevenueItem,
-  GifticonRevenueItem} from 'src/components/revenue/revenue-table';
-import {
-  RevenueTable,
-} from 'src/components/revenue/revenue-table';
+import { RevenueTable } from 'src/components/revenue/revenue-table';
 import { RevenueTabs } from 'src/components/revenue/revenue-tabs';
 import { RevenueToolbar } from 'src/components/revenue/revenue-toolbar';
+import { useRevenue } from 'src/sections/revenue/hooks/use-revenue';
+import type { IFeeRevenue, IGifticonRevenue } from 'src/types/revenue/revenue';
 
-// Mock data
-const feeData: FeeRevenueItem[] = [
+const won = (amount: number) => `${(amount || 0).toLocaleString()}원`;
+
+const renderDateTime = (date: string) => {
+  const d = new Date(date);
+  if (Number.isNaN(d.getTime())) return '-';
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const seconds = String(d.getSeconds()).padStart(2, '0');
+  return (
+    <>
+      <div style={{ fontWeight: 700, color: '#333333' }}>{`${year}/${month}/${day}`}</div>
+      <div style={{ color: 'var(--text-3)' }}>{`${hours}:${minutes}:${seconds}`}</div>
+    </>
+  );
+};
+
+const feeColumns: {
+  key: keyof IFeeRevenue;
+  label: string;
+  render?: (item: IFeeRevenue) => React.ReactNode;
+}[] = [
   {
-    datetime: '2026/05/29<br>14:23:01',
-    mall: '쿠팡',
-    nickname: '쇼핑왕민준',
-    uid: '#10042',
-    orderNumber: '20260529-1423042',
-    amount: '129,000원',
-    commissionRate: '3.0%',
-    commission: '+3,870원',
-    ticketCost: '−2,500원',
-    status: '정상',
+    key: 'created_at',
+    label: '발생 일시',
+    render: (item) => renderDateTime(item.created_at),
   },
   {
-    datetime: '2026/05/29<br>13:47:22',
-    mall: '11번가',
-    nickname: '알뜰살뜰지호',
-    uid: '#10039',
-    orderNumber: '11ST-0529-88412',
-    amount: '28,900원',
-    commissionRate: '3.5%',
-    commission: '+1,011원',
-    ticketCost: '−500원',
-    status: '정상',
+    key: 'mall_name',
+    label: '제휴몰',
+    render: (item) => <span style={{ fontWeight: 500 }}>{item.mall_name || '—'}</span>,
   },
-  // thêm dữ liệu mock...
-];
-
-const gifticonData: GifticonRevenueItem[] = [
   {
-    datetime: '2026/05/29<br>14:05:33',
-    product: '스타벅스 아메리카노 T',
-    nickname: '가격헌터서연',
-    uid: '#10055',
-    exchangePrice: '4,500원',
-    wholesaleCost: '4,090원',
-    margin: '+410원',
-    status: '완료',
+    key: 'nickname',
+    label: '회원(UID)',
+    render: (item) => (
+      <>
+        <div>{item.nickname}</div>
+        <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>#{item.user_id}</div>
+      </>
+    ),
   },
-  // thêm dữ liệu mock...
+  {
+    key: 'order_number',
+    label: '주문번호',
+    render: (item) => (
+      <span style={{ fontFamily: 'monospace', fontSize: '11.5px', color: 'var(--text-2)' }}>
+        {item.order_number}
+      </span>
+    ),
+  },
+  { key: 'purchase_amount', label: '구매금액', render: (item) => won(item.purchase_amount) },
+  {
+    key: 'commission_rate',
+    label: '수수료율',
+    render: (item) => `${item.commission_rate}%`,
+  },
+  {
+    key: 'commission_amount',
+    label: '수수료 매출',
+    render: (item) => (
+      <span style={{ color: 'var(--success)', fontWeight: 600 }}>+{won(item.commission_amount)}</span>
+    ),
+  },
+  {
+    key: 'ticket_cost',
+    label: '적립 금액(티켓)',
+    render: (item) =>
+      item.ticket_cost > 0 ? (
+        <span style={{ color: 'var(--amber)', fontWeight: 600 }}>{won(item.ticket_cost)}</span>
+      ) : (
+        <span style={{ color: 'var(--text-3)' }}>—</span>
+      ),
+  },
+  {
+    key: 'status',
+    label: '상태',
+    render: (item) => (
+      <span className={`badge ${item.status === 'NORMAL' ? 'badge-green' : 'badge-red'}`}>
+        {item.status === 'NORMAL' ? '정상' : '오류'}
+      </span>
+    ),
+  },
 ];
 
-const feeColumns = [
-  { key: 'datetime' as const, label: '발생 일시' },
-  { key: 'mall' as const, label: '제휴몰' },
-  { key: 'nickname' as const, label: '회원(UID)' },
-  { key: 'orderNumber' as const, label: '주문번호' },
-  { key: 'amount' as const, label: '구매금액' },
-  { key: 'commissionRate' as const, label: '수수료율' },
-  { key: 'commission' as const, label: '수수료 매출' },
-  { key: 'ticketCost' as const, label: '적립 금액(티켓)' },
-  { key: 'status' as const, label: '상태' },
-];
-
-const gifticonColumns = [
-  { key: 'datetime' as const, label: '발생 일시' },
-  { key: 'product' as const, label: '기프티콘 상품' },
-  { key: 'nickname' as const, label: '회원(UID)' },
-  { key: 'exchangePrice' as const, label: '교환가(실가)' },
-  { key: 'wholesaleCost' as const, label: '도매 원가' },
-  { key: 'margin' as const, label: '판매 마진' },
-  { key: 'status' as const, label: '상태' },
+const gifticonColumns: {
+  key: keyof IGifticonRevenue;
+  label: string;
+  render?: (item: IGifticonRevenue) => React.ReactNode;
+}[] = [
+  {
+    key: 'created_at',
+    label: '발생 일시',
+    render: (item) => renderDateTime(item.created_at),
+  },
+  {
+    key: 'product_name',
+    label: '기프티콘 상품',
+    render: (item) => <span style={{ fontWeight: 500 }}>{item.product_name || '—'}</span>,
+  },
+  {
+    key: 'nickname',
+    label: '회원(UID)',
+    render: (item) => (
+      <>
+        <div>{item.nickname}</div>
+        <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>#{item.user_id}</div>
+      </>
+    ),
+  },
+  { key: 'exchange_price', label: '교환가(실가)', render: (item) => won(item.exchange_price) },
+  { key: 'wholesale_cost', label: '도매 원가', render: (item) => won(item.wholesale_cost) },
+  {
+    key: 'margin',
+    label: '판매 마진',
+    render: (item) => <span style={{ color: 'var(--success)', fontWeight: 600 }}>+{won(item.margin)}</span>,
+  },
+  {
+    key: 'status',
+    label: '상태',
+    render: (item) => (
+      <span className={`badge ${item.status === 'COMPLETED' ? 'badge-green' : 'badge-amber'}`}>
+        {item.status === 'COMPLETED' ? '완료' : '대기'}
+      </span>
+    ),
+  },
 ];
 
 export const RevenueSection: React.FC = () => {
-  const [, setSearchTerm] = useState('');
-  const [, setSelectedMall] = useState('');
-  const [, setSelectedPeriod] = useState('today');
+  const {
+    stats,
+    feeRevenues,
+    setFeeFilters,
+    feePage,
+    setFeePage,
+    feeLimit,
+    setFeeLimit,
+    feeTotalPages,
+    feeTotalItems,
+    isFeeLoading,
+    gifticonRevenues,
+    setGifticonFilters,
+    gifticonPage,
+    setGifticonPage,
+    gifticonLimit,
+    setGifticonLimit,
+    gifticonTotalPages,
+    gifticonTotalItems,
+    isGifticonLoading,
+  } = useRevenue();
 
-  // Filter logic có thể thêm sau
+  const feePagination: PaginationProps = {
+    currentPage: feePage,
+    totalPages: feeTotalPages,
+    onPageChange: setFeePage,
+    onItemsPerPageChange: setFeeLimit,
+    showSizeChanger: true,
+    showTotal: true,
+    totalItems: feeTotalItems,
+    itemsPerPage: feeLimit,
+  };
+
+  const gifticonPagination: PaginationProps = {
+    currentPage: gifticonPage,
+    totalPages: gifticonTotalPages,
+    onPageChange: setGifticonPage,
+    onItemsPerPageChange: setGifticonLimit,
+    showSizeChanger: true,
+    showTotal: true,
+    totalItems: gifticonTotalItems,
+    itemsPerPage: gifticonLimit,
+  };
 
   return (
     <div className="section active">
@@ -96,12 +197,9 @@ export const RevenueSection: React.FC = () => {
       </div>
 
       <RevenueStats
-        feeRevenue="4.2M"
-        gifticonRevenue="0.2M"
-        totalRevenue="4.4M"
-        feeChange="제휴몰 D+30 정산"
-        gifticonChange="교환 마진 · 즉시"
-        totalChange="↑ 전월 +17%"
+        feeRevenue={won(stats.fee_revenue_this_month)}
+        gifticonRevenue={won(stats.gifticon_revenue_this_month)}
+        totalRevenue={won(stats.total_revenue_this_month)}
       />
 
       <div className="card" style={{ padding: '18px' }}>
@@ -109,25 +207,43 @@ export const RevenueSection: React.FC = () => {
           <div>
             <RevenueToolbar
               searchPlaceholder="회원, 주문번호 검색..."
-              onSearch={setSearchTerm}
-              onMallChange={setSelectedMall}
-              onPeriodChange={setSelectedPeriod}
+              onApplyFilters={({ search, mall }) => setFeeFilters({ search, mall })}
             />
-            <RevenueTable
-              data={feeData}
-              columns={feeColumns}
-              totalLabel="오늘 3,421건 · 합 4,240,000원"
-              totalValue="4,240,000원"
-            />
+            {isFeeLoading ? (
+              <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-2)' }}>
+                로딩 중...
+              </div>
+            ) : (
+              <RevenueTable
+                title="제휴 수수료 매출 내역"
+                data={feeRevenues}
+                columns={feeColumns}
+                totalLabel={`총 ${feeTotalItems.toLocaleString()}건 · 합 ${won(stats.fee_revenue_this_month)}`}
+                pagination={feePagination}
+                emptyMessage="조회된 수수료 매출 내역이 없습니다."
+              />
+            )}
           </div>
           <div>
-            <RevenueToolbar searchPlaceholder="회원, 상품 검색..." onSearch={setSearchTerm} />
-            <RevenueTable
-              data={gifticonData}
-              columns={gifticonColumns}
-              totalLabel="오늘 47건 · 마진 합 38,600원"
-              totalValue="38,600원"
+            <RevenueToolbar
+              searchPlaceholder="회원, 상품 검색..."
+              showMallFilter={false}
+              onApplyFilters={({ search }) => setGifticonFilters({ search })}
             />
+            {isGifticonLoading ? (
+              <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-2)' }}>
+                로딩 중...
+              </div>
+            ) : (
+              <RevenueTable
+                title="기프티콘 판매 매출 내역"
+                data={gifticonRevenues}
+                columns={gifticonColumns}
+                totalLabel={`총 ${gifticonTotalItems.toLocaleString()}건 · 마진 합 ${won(stats.gifticon_revenue_this_month)}`}
+                pagination={gifticonPagination}
+                emptyMessage="조회된 기프티콘 판매 내역이 없습니다."
+              />
+            )}
           </div>
         </RevenueTabs>
       </div>

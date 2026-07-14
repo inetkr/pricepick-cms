@@ -8,15 +8,17 @@ interface SettlementStatsProps {
   confirmedDesc?: string;
   estimatedDesc?: string;
   yearlyChange?: string;
+  yearlyChangeType?: 'up' | 'down' | 'neutral';
 }
 
 export const SettlementStats: React.FC<SettlementStatsProps> = ({
   monthlyConfirmed,
   monthlyEstimated,
   yearlyTotal,
-  confirmedDesc = '2026년 4월분 · 5개 제휴몰',
-  estimatedDesc = '5월 포스트백 기준',
-  yearlyChange = '↑ 전년 대비 +34%',
+  confirmedDesc = '전월 확정분',
+  estimatedDesc = '이번달 포스트백 기준',
+  yearlyChange,
+  yearlyChangeType = 'up',
 }) => {
   return (
     <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
@@ -35,7 +37,7 @@ export const SettlementStats: React.FC<SettlementStatsProps> = ({
       <StatCard
         label="누적 수익 (올해)"
         value={yearlyTotal}
-        change={{ type: 'up', text: yearlyChange }}
+        change={{ type: yearlyChangeType, text: yearlyChange ?? '' }}
         color="amber"
       />
     </div>

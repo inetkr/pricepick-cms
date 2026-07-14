@@ -1,50 +1,30 @@
 // src/components/revenue/RevenueTable.tsx
 import React from 'react';
-
-export interface FeeRevenueItem {
-  datetime: string;
-  mall: string;
-  nickname: string;
-  uid: string;
-  orderNumber: string;
-  amount: string;
-  commissionRate: string;
-  commission: string;
-  ticketCost: string;
-  status: '정상' | '오류';
-}
-
-export interface GifticonRevenueItem {
-  datetime: string;
-  product: string;
-  nickname: string;
-  uid: string;
-  exchangePrice: string;
-  wholesaleCost: string;
-  margin: string;
-  status: '완료' | '대기';
-}
+import type { PaginationProps } from 'src/components/common/pagination';
+import { Pagination } from 'src/components/common/pagination';
 
 interface RevenueTableProps<T> {
+  title: string;
   data: T[];
   columns: { key: keyof T; label: string; render?: (item: T) => React.ReactNode }[];
   totalLabel?: string;
-  totalValue?: string;
+  pagination?: PaginationProps;
+  emptyMessage?: string;
 }
 
 export function RevenueTable<T extends Record<string, any>>({
+  title,
   data,
   columns,
   totalLabel,
-  totalValue,
+  pagination,
+  emptyMessage = '데이터가 없습니다.',
 }: RevenueTableProps<T>) {
   return (
     <div className="card">
       <div className="card-header">
-        <div className="card-title">제휴 수수료 매출 내역</div>
-        <div style={{ fontSize: '12px', color: 'var(--text-2)' }}>
-          오늘 {data.length}건 · 합 {totalValue || ''}
-        </div>
+        <div className="card-title">{title}</div>
+        {totalLabel && <div style={{ fontSize: '12px', color: 'var(--text-2)' }}>{totalLabel}</div>}
       </div>
       <table>
         <thead>
@@ -57,34 +37,32 @@ export function RevenueTable<T extends Record<string, any>>({
           </tr>
         </thead>
         <tbody>
-          {data.map((item, idx) => (
-            <tr key={idx}>
-              {columns.map((col) => {
-                const value = item[col.key];
-                return (
-                  <td key={String(col.key)} style={{ textAlign: 'center' }}>
-                    {col.render ? col.render(item) : value}
-                  </td>
-                );
-              })}
+          {data.length === 0 ? (
+            <tr>
+              <td
+                colSpan={columns.length}
+                style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}
+              >
+                {emptyMessage}
+              </td>
             </tr>
-          ))}
+          ) : (
+            data.map((item, idx) => (
+              <tr key={idx}>
+                {columns.map((col) => {
+                  const value = item[col.key];
+                  return (
+                    <td key={String(col.key)} style={{ textAlign: 'center' }}>
+                      {col.render ? col.render(item) : value}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
-      <div className="pagination">
-        <button type="button" className="page-btn active">
-          1
-        </button>
-        <button type="button" className="page-btn">
-          2
-        </button>
-        <button type="button" className="page-btn">
-          ···
-        </button>
-        <button type="button" className="page-btn">
-          ›
-        </button>
-      </div>
+      {pagination && <Pagination {...pagination} />}
     </div>
   );
 }

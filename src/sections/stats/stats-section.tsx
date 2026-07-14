@@ -3,39 +3,48 @@
 import React from 'react';
 import { DataSourceBar } from 'src/components/common/data-source-bar';
 import { InfoBox } from 'src/components/common/info-box';
-import { StatsTable } from 'src/components/stats/stats-table';
 import { NetProfitSummary } from 'src/components/stats/net-profit-summary';
+import { StatsTable } from 'src/components/stats/stats-table';
+import { useStats } from 'src/sections/stats/hooks/use-stats';
+import type { ITicketGrade } from 'src/types/stats/stats';
+import { sumBy } from 'src/utils/helper';
 
-// Dữ liệu mock
-const commissionData = [
-  { mall: '쿠팡', gmv: '93,300,000원', rate: '3.0%', revenue: '2,800,000원' },
-  { mall: '11번가', gmv: '17,100,000원', rate: '3.5%', revenue: '600,000원' },
-  { mall: 'G마켓', gmv: '13,300,000원', rate: '3.0%', revenue: '400,000원' },
-  { mall: '알리익스프레스', gmv: '6,000,000원', rate: '5.0%', revenue: '300,000원' },
-  { mall: '아이허브', gmv: '2,000,000원', rate: '5.0%', revenue: '100,000원' },
-];
+const won = (amount: number) => `${(amount || 0).toLocaleString()}원`;
 
-const gifticonData = [
-  { label: '교환 기프티콘 환산가치', amount: '1,000,000원', sub: '(유저 티켓 소진)' },
-  { label: '기프티콘 매입원가', amount: '− 800,000원', sub: '(도매)' },
-];
+const ticketGradeLabels: Record<ITicketGrade, string> = {
+  BRONZE: '브론즈',
+  SILVER: '실버',
+  GOLD: '골드',
+};
 
-const ticketCostData = [
-  { grade: '브론즈', quantity: '8,400장', unit: '100원', cost: '840,000원' },
-  { grade: '실버', quantity: '420장', unit: '1,000원', cost: '420,000원' },
-  { grade: '골드', quantity: '70장', unit: '2,000원', cost: '140,000원' },
-];
-
-const profitItems = [
-  { label: '제휴 수수료 매출', amount: '+ 4,200,000원', color: 'success' as const },
-  { label: '기프티콘 판매 수익', amount: '+ 200,000원', color: 'success' as const },
-  { label: '티켓 적립 비용', amount: '− 1,400,000원', color: 'amber' as const },
-];
+const ticketGradeClass: Record<ITicketGrade, string> = {
+  BRONZE: 'bronze',
+  SILVER: 'silver',
+  GOLD: 'gold',
+};
 
 export const StatsSection: React.FC = () => {
+  const { summary, isLoading } = useStats();
+
+  if (isLoading) {
+    return (
+      <div className="section active">
+        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-2)' }}>
+          로딩 중...
+        </div>
+      </div>
+    );
+  }
+
+  const mallGmvTotal = sumBy(summary.mall_commissions, (row) => row.gmv);
+  const mallRevenueTotal = sumBy(summary.mall_commissions, (row) => row.commission_revenue);
+  const ticketQuantityTotal = sumBy(summary.ticket_cost_by_grade, (row) => row.quantity);
+  const ticketCostTotal = sumBy(summary.ticket_cost_by_grade, (row) => row.total_cost);
+
+  const { gifticon_profit: gifticonProfit, net_profit: netProfit } = summary;
+
   return (
     <div className="section active">
-      {/* Data Source */}
       <DataSourceBar
         tags={[
           { label: '우리 DB 집계 · clicks, orders, tickets, gifticons 테이블', type: 'calc' },
@@ -43,7 +52,6 @@ export const StatsSection: React.FC = () => {
         ]}
       />
 
-      {/* Info Box */}
       <InfoBox type="info">
         <strong>수익 구조</strong> — 수익원은 둘입니다. ① <strong>제휴 수수료</strong>(회원이
         제휴몰에서 구매할 때 발생) ② <strong>기프티콘 판매 수익</strong>(회원이 티켓을 기프티콘으로
@@ -51,7 +59,6 @@ export const StatsSection: React.FC = () => {
         것이 <strong>순수익</strong>입니다. 정산은 제휴몰별 D+30 확정.
       </InfoBox>
 
-      {/* Row 1: Commission + Gifticon */}
       <div className="card-grid">
         <StatsTable
           title="매출 구조 — 제휴몰별 수수료"
@@ -62,12 +69,17 @@ export const StatsSection: React.FC = () => {
             { key: 'rate', label: '수수료율', align: 'center' },
             { key: 'revenue', label: '수수료 매출', align: 'right' },
           ]}
-          data={commissionData}
+          data={summary.mall_commissions.map((row) => ({
+            mall: row.mall_name,
+            gmv: won(row.gmv),
+            rate: `${row.commission_rate}%`,
+            revenue: won(row.commission_revenue),
+          }))}
           totalRow={{
             mall: '합계',
-            gmv: '131,700,000원',
+            gmv: won(mallGmvTotal),
             rate: '—',
-            revenue: '4,200,000원',
+            revenue: won(mallRevenueTotal),
           }}
         />
 
@@ -78,29 +90,27 @@ export const StatsSection: React.FC = () => {
           </div>
           <table>
             <tbody>
-              {gifticonData.map((item, idx) => (
-                <tr key={idx}>
-                  <td>
-                    {item.label}
-                    {item.sub && (
-                      <span style={{ fontSize: '11px', color: 'var(--text-3)' }}> {item.sub}</span>
-                    )}
-                  </td>
-                  <td
-                    style={{
-                      textAlign: 'right',
-                      color: item.amount.startsWith('−') ? 'var(--amber)' : undefined,
-                      fontWeight: 600,
-                    }}
-                  >
-                    {item.amount}
-                  </td>
-                </tr>
-              ))}
+              <tr>
+                <td>
+                  교환 기프티콘 환산가치
+                  <span style={{ fontSize: '11px', color: 'var(--text-3)' }}> (유저 티켓 소진)</span>
+                </td>
+                <td style={{ textAlign: 'right', fontWeight: 600 }}>
+                  {won(gifticonProfit.gifticon_exchange_value)}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  기프티콘 매입원가<span style={{ fontSize: '11px', color: 'var(--text-3)' }}> (도매)</span>
+                </td>
+                <td style={{ textAlign: 'right', color: 'var(--amber)', fontWeight: 600 }}>
+                  − {won(gifticonProfit.wholesale_cost)}
+                </td>
+              </tr>
               <tr style={{ borderTop: '2px solid var(--border)' }}>
                 <td style={{ fontWeight: 700 }}>기프티콘 판매 수익 (마진)</td>
                 <td style={{ fontWeight: 700, color: 'var(--success)', textAlign: 'right' }}>
-                  + 200,000원
+                  + {won(gifticonProfit.gifticon_profit)}
                 </td>
               </tr>
             </tbody>
@@ -122,7 +132,6 @@ export const StatsSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Row 2: Ticket Cost + Net Profit */}
       <div className="card-grid">
         <StatsTable
           title="티켓 적립 비용 — 등급별"
@@ -133,28 +142,36 @@ export const StatsSection: React.FC = () => {
             { key: 'unit', label: '환산가치(장당)', align: 'right' },
             { key: 'cost', label: '적립 비용', align: 'right' },
           ]}
-          data={ticketCostData.map((row) => ({
-            ...row,
+          data={summary.ticket_cost_by_grade.map((row) => ({
             grade: (
-              <span
-                className={`tk-chip ${row.grade === '브론즈' ? 'bronze' : row.grade === '실버' ? 'silver' : 'gold'} bare`}
-              >
-                {row.grade}
+              <span className={`tk-chip ${ticketGradeClass[row.grade]} bare`}>
+                {ticketGradeLabels[row.grade] || row.grade}
               </span>
             ),
+            quantity: `${row.quantity.toLocaleString()}장`,
+            unit: won(row.unit_value),
+            cost: won(row.total_cost),
           }))}
           totalRow={{
             grade: '합계',
-            quantity: '8,890장',
+            quantity: `${ticketQuantityTotal.toLocaleString()}장`,
             unit: '—',
-            cost: '1,400,000원',
+            cost: won(ticketCostTotal),
           }}
         />
 
         <NetProfitSummary
-          items={profitItems}
-          total={{ label: '순수익', amount: '3,000,000원' }}
-          margin="68.2%"
+          items={[
+            { label: '제휴 수수료 매출', amount: `+ ${won(netProfit.fee_revenue)}`, color: 'success' },
+            {
+              label: '기프티콘 판매 수익',
+              amount: `+ ${won(netProfit.gifticon_revenue)}`,
+              color: 'success',
+            },
+            { label: '티켓 적립 비용', amount: `− ${won(netProfit.ticket_cost)}`, color: 'amber' },
+          ]}
+          total={{ label: '순수익', amount: won(netProfit.net_profit) }}
+          margin={`${netProfit.net_profit_margin}%`}
         />
       </div>
     </div>

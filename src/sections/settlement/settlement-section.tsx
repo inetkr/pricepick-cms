@@ -1,155 +1,115 @@
 'use client';
 
 import React from 'react';
+import type { CsvColumn } from 'src/components/common/csv-export-button';
+import { exportArrayToCsv } from 'src/components/common/csv-export-button';
 import { SettlementDiffBox } from 'src/components/settlement/settlement-diff-box';
 import { SettlementStats } from 'src/components/settlement/settlement-stats';
-import type { SettlementColumn} from 'src/components/settlement/settlement-table';
+import type { SettlementColumn } from 'src/components/settlement/settlement-table';
 import { SettlementTable } from 'src/components/settlement/settlement-table';
+import { useSettlement } from 'src/sections/settlement/hooks/use-settlement';
+import type { IAffiliateSettlement, IMonthlySettlement } from 'src/types/settlement/settlement';
 
-// Định nghĩa kiểu dữ liệu
-interface AffiliateSettlement {
-  mall: string;
-  ourRecord: string;
-  confirmedAmount: string;
-  diff: string;
-  cycle: string;
-  status: '일치' | '검증 중' | '오류';
-}
+const won = (amount: number | null | undefined) =>
+  amount === null || amount === undefined ? '집계 중' : `${amount.toLocaleString()}원`;
 
-interface MonthlySettlement {
-  month: string;
-  estimatedRevenue: string;
-  confirmedAmount: string;
-  diff: string;
-  status: '집계 중' | '확정' | '처리완료';
-}
+const affiliateStatusLabels: Record<IAffiliateSettlement['status'], string> = {
+  MATCHED: '일치',
+  VERIFYING: '검증 중',
+  ERROR: '오류',
+};
 
-// Mock data
-const affiliateData: AffiliateSettlement[] = [
-  {
-    mall: '쿠팡',
-    ourRecord: '2,550,000원',
-    confirmedAmount: '2,550,000원',
-    diff: '0원',
-    cycle: '익월 15일',
-    status: '일치',
-  },
-  {
-    mall: '11번가',
-    ourRecord: '540,000원',
-    confirmedAmount: '540,000원',
-    diff: '0원',
-    cycle: '익월 말',
-    status: '일치',
-  },
-  {
-    mall: 'G마켓',
-    ourRecord: '360,000원',
-    confirmedAmount: '360,000원',
-    diff: '0원',
-    cycle: '익월 말',
-    status: '일치',
-  },
-  {
-    mall: '알리익스프레스',
-    ourRecord: '270,000원',
-    confirmedAmount: '265,000원',
-    diff: '-5,000원',
-    cycle: 'D+45',
-    status: '검증 중',
-  },
-  {
-    mall: '아이허브',
-    ourRecord: '100,000원',
-    confirmedAmount: '100,000원',
-    diff: '0원',
-    cycle: '익월 15일',
-    status: '일치',
-  },
-];
+const affiliateStatusBadge: Record<IAffiliateSettlement['status'], string> = {
+  MATCHED: 'badge-green',
+  VERIFYING: 'badge-amber',
+  ERROR: 'badge-red',
+};
 
-const monthlyData: MonthlySettlement[] = [
-  {
-    month: '2026년 5월',
-    estimatedRevenue: '4,200,000원',
-    confirmedAmount: '집계 중',
-    diff: '—',
-    status: '집계 중',
-  },
-  {
-    month: '2026년 4월',
-    estimatedRevenue: '3,820,000원',
-    confirmedAmount: '3,815,000원',
-    diff: '-5,000원',
-    status: '확정',
-  },
-  {
-    month: '2026년 3월',
-    estimatedRevenue: '3,505,000원',
-    confirmedAmount: '3,480,000원',
-    diff: '-25,000원',
-    status: '처리완료',
-  },
-];
+const monthlyStatusLabels: Record<IMonthlySettlement['status'], string> = {
+  AGGREGATING: '집계 중',
+  CONFIRMED: '확정',
+  PROCESSED: '처리완료',
+};
 
-// Định nghĩa columns
-const affiliateColumns: SettlementColumn<AffiliateSettlement>[] = [
-  { key: 'mall', label: '제휴몰' },
-  { key: 'ourRecord', label: '우리 기록', align: 'center' },
-  { key: 'confirmedAmount', label: '확정 정산금', align: 'center' },
+const monthlyStatusBadge: Record<IMonthlySettlement['status'], string> = {
+  AGGREGATING: 'badge-amber',
+  CONFIRMED: 'badge-green',
+  PROCESSED: 'badge-green',
+};
+
+const formatMonth = (month: string) => {
+  const [year, m] = month.split('-');
+  if (!year || !m) return month;
+  return `${year}년 ${Number(m)}월`;
+};
+
+const affiliateColumns: SettlementColumn<IAffiliateSettlement>[] = [
+  { key: 'mall_name', label: '제휴몰' },
   {
-    key: 'diff',
+    key: 'our_record_amount',
+    label: '우리 기록',
+    align: 'center',
+    render: (item) => won(item.our_record_amount),
+  },
+  {
+    key: 'confirmed_amount',
+    label: '확정 정산금',
+    align: 'center',
+    render: (item) => won(item.confirmed_amount),
+  },
+  {
+    key: 'diff_amount',
     label: '차액',
     align: 'center',
     render: (item) => (
-      <span style={{ color: item.diff === '0원' ? 'var(--text-2)' : 'var(--danger)' }}>
-        {item.diff}
+      <span style={{ color: item.diff_amount === 0 ? 'var(--text-2)' : 'var(--danger)' }}>
+        {won(item.diff_amount)}
       </span>
     ),
   },
   {
-    key: 'cycle',
+    key: 'settlement_cycle',
     label: '정산 주기',
     align: 'center',
-    render: (item) => <span style={{ fontSize: '12px' }}>{item.cycle}</span>,
+    render: (item) => <span style={{ fontSize: '12px' }}>{item.settlement_cycle}</span>,
   },
   {
     key: 'status',
     label: '상태',
     align: 'center',
-    render: (item) => {
-      const statusMap = {
-        일치: 'badge-green',
-        '검증 중': 'badge-amber',
-        오류: 'badge-red',
-      };
-      return (
-        <span className={`badge ${statusMap[item.status] || 'badge-gray'}`}>{item.status}</span>
-      );
-    },
+    render: (item) => (
+      <span className={`badge ${affiliateStatusBadge[item.status] || 'badge-gray'}`}>
+        {affiliateStatusLabels[item.status] || item.status}
+      </span>
+    ),
   },
 ];
 
-const monthlyColumns: SettlementColumn<MonthlySettlement>[] = [
-  { key: 'month', label: '정산 월' },
-  { key: 'estimatedRevenue', label: '추정 매출', align: 'center' },
+const monthlyColumns: SettlementColumn<IMonthlySettlement>[] = [
+  { key: 'month', label: '정산 월', render: (item) => formatMonth(item.month) },
   {
-    key: 'confirmedAmount',
+    key: 'estimated_revenue',
+    label: '추정 매출',
+    align: 'center',
+    render: (item) => won(item.estimated_revenue),
+  },
+  {
+    key: 'confirmed_amount',
     label: '확정 정산금',
     align: 'center',
     render: (item) => (
-      <span style={{ color: item.confirmedAmount === '집계 중' ? 'var(--text-3)' : 'var(--text)' }}>
-        {item.confirmedAmount}
+      <span style={{ color: item.confirmed_amount === null ? 'var(--text-3)' : 'var(--text)' }}>
+        {won(item.confirmed_amount)}
       </span>
     ),
   },
   {
-    key: 'diff',
+    key: 'diff_amount',
     label: '차액',
     align: 'center',
     render: (item) => (
-      <span style={{ color: item.diff === '—' ? 'var(--text-3)' : 'var(--danger)' }}>
-        {item.diff}
+      <span style={{ color: item.diff_amount === null ? 'var(--text-3)' : 'var(--danger)' }}>
+        {item.diff_amount === null ? '—' : won(item.diff_amount)}
       </span>
     ),
   },
@@ -157,35 +117,52 @@ const monthlyColumns: SettlementColumn<MonthlySettlement>[] = [
     key: 'status',
     label: '상태',
     align: 'center',
-    render: (item) => {
-      const statusMap = {
-        '집계 중': 'badge-amber',
-        확정: 'badge-green',
-        처리완료: 'badge-green',
-      };
-      return (
-        <span className={`badge ${statusMap[item.status] || 'badge-gray'}`}>{item.status}</span>
-      );
-    },
+    render: (item) => (
+      <span className={`badge ${monthlyStatusBadge[item.status] || 'badge-gray'}`}>
+        {monthlyStatusLabels[item.status] || item.status}
+      </span>
+    ),
   },
 ];
 
-const diffReasons = [
-  {
-    label: '환불 처리 누락',
-    description: '2건 · -38,000원 (제휴몰은 차감, 우리 시스템 미반영 → 포스트백 재처리 필요)',
-  },
-  {
-    label: '부정거래 검증 지연',
-    description: '5건 · -5,000원 (제휴몰 검증 후 차감, 다음달 정산 반영)',
-  },
+const affiliateCsvColumns: CsvColumn<IAffiliateSettlement>[] = [
+  { header: '제휴몰', accessor: (item) => item.mall_name },
+  { header: '우리 기록', accessor: (item) => item.our_record_amount },
+  { header: '확정 정산금', accessor: (item) => item.confirmed_amount },
+  { header: '차액', accessor: (item) => item.diff_amount },
+  { header: '정산 주기', accessor: (item) => item.settlement_cycle },
+  { header: '상태', accessor: (item) => affiliateStatusLabels[item.status] || item.status },
+];
+
+const monthlyCsvColumns: CsvColumn<IMonthlySettlement>[] = [
+  { header: '정산 월', accessor: (item) => formatMonth(item.month) },
+  { header: '추정 매출', accessor: (item) => item.estimated_revenue },
+  { header: '확정 정산금', accessor: (item) => item.confirmed_amount ?? '' },
+  { header: '차액', accessor: (item) => item.diff_amount ?? '' },
+  { header: '상태', accessor: (item) => monthlyStatusLabels[item.status] || item.status },
 ];
 
 export const SettlementSection: React.FC = () => {
-  const handleExport = () => {
-    console.log('Export CSV');
-    // TODO: implement export
+  const { stats, affiliateSettlements, monthlySettlements, diffReasons, isLoading } =
+    useSettlement();
+
+  const handleExportAffiliate = () => {
+    exportArrayToCsv(affiliateSettlements, affiliateCsvColumns, 'affiliate-settlement.csv');
   };
+
+  const handleExportMonthly = () => {
+    exportArrayToCsv(monthlySettlements, monthlyCsvColumns, 'monthly-settlement.csv');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="section active">
+        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-2)' }}>
+          로딩 중...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="section active">
@@ -196,32 +173,30 @@ export const SettlementSection: React.FC = () => {
       </div>
 
       <SettlementStats
-        monthlyConfirmed="3.8M"
-        monthlyEstimated="4.2M"
-        yearlyTotal="18.4M"
-        confirmedDesc="2026년 4월분 · 5개 제휴몰"
-        estimatedDesc="5월 포스트백 기준"
-        yearlyChange="↑ 전년 대비 +34%"
+        monthlyConfirmed={won(stats.monthly_confirmed)}
+        monthlyEstimated={won(stats.monthly_estimated)}
+        yearlyTotal={won(stats.yearly_total)}
+        confirmedDesc={
+          affiliateSettlements.length > 0 ? `전월 확정분 · ${affiliateSettlements.length}개 제휴몰` : '전월 확정분'
+        }
+        yearlyChangeType={stats.yearly_change_rate >= 0 ? 'up' : 'down'}
+        yearlyChange={`${stats.yearly_change_rate >= 0 ? '↑' : '↓'} 전년 대비 ${stats.yearly_change_rate >= 0 ? '+' : ''}${stats.yearly_change_rate}%`}
       />
 
-      {/* Bảng 정산 현황 theo 제휴몰 */}
       <SettlementTable
         title="제휴몰별 정산 현황"
-        totalLabel="2026년 4월 확정분"
-        data={affiliateData}
+        data={affiliateSettlements}
         columns={affiliateColumns}
-        onExport={handleExport}
+        onExport={handleExportAffiliate}
       />
 
-      {/* Bảng 월별 정산 추이 */}
       <SettlementTable
         title="월별 정산 추이"
-        data={monthlyData}
+        data={monthlySettlements}
         columns={monthlyColumns}
-        onExport={handleExport}
+        onExport={handleExportMonthly}
       />
 
-      {/* Hộp giải thích chênh lệch */}
       <SettlementDiffBox title="차액 사유 (이번달)" reasons={diffReasons} />
     </div>
   );

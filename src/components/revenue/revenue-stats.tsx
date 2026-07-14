@@ -16,26 +16,26 @@ export const RevenueStats: React.FC<RevenueStatsProps> = ({
   totalRevenue,
   feeChange = '제휴몰 D+30 정산',
   gifticonChange = '교환 마진 · 즉시',
-  totalChange = '↑ 전월 +17%',
+  totalChange = '포스트백 + 교환 마진',
 }) => {
   return (
     <div className="stats-grid">
       <StatCard
-        label="이번달 제휴 수수료 매출"
+        label="제휴 수수료 매출"
         value={feeRevenue}
         change={{ type: 'neutral', text: feeChange }}
         color="purple"
       />
       <StatCard
-        label="이번달 기프티콘 판매 매출"
+        label="기프티콘 판매 매출"
         value={gifticonRevenue}
         change={{ type: 'neutral', text: gifticonChange }}
         color="amber"
       />
       <StatCard
-        label="이번달 총 매출"
+        label="총 매출"
         value={totalRevenue}
-        change={{ type: 'up', text: totalChange }}
+        change={{ type: 'neutral', text: totalChange }}
         color="green"
       />
     </div>
