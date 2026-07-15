@@ -16,21 +16,21 @@ export const PointsStats: React.FC<PointsStatsProps> = ({ stats }) => {
         color="purple"
       />
       <StatCard
-        label="오늘 적립"
-        value={`${stats.today_accumulated.toLocaleString()}P`}
-        change={{ type: 'up', text: '금일 기준' }}
+        label="전체 원장 레코드"
+        value={stats.total_transactions.toLocaleString()}
+        change={{ type: 'neutral', text: 'append-only' }}
         color="green"
       />
       <StatCard
-        label="누적 사용·교환"
-        value={`${stats.total_used.toLocaleString()}P`}
+        label="누적 사용·차감"
+        value={`${stats.used_and_converted.toLocaleString()}P`}
         change={{ type: 'neutral', text: '티켓 교환 포함' }}
         color="amber"
       />
       <StatCard
-        label="이번달 만료"
-        value={`${stats.expired_this_month.toLocaleString()}P`}
-        change={{ type: 'down', text: '유효기간 1년 경과' }}
+        label="만료 소멸"
+        value={`${stats.total_expired.toLocaleString()}P`}
+        change={{ type: 'neutral', text: '유효기간 경과' }}
         color="red"
       />
     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { IPoint } from 'src/types/points/point';
+import type { IPoint, IPointTransactionType } from 'src/types/points/point';
 import type { PaginationProps } from '../common/pagination';
 import { Pagination } from '../common/pagination';
 
@@ -8,28 +8,30 @@ interface PointsTableProps {
   pagination?: PaginationProps;
 }
 
-const typeBadgeMap: Record<string, { color: string; label: string }> = {
+const transactionTypeConfig: Record<IPointTransactionType, { color: string; label: string }> = {
   ATTENDANCE: { color: '#c084fc', label: '출석 적립' },
-  EXCHANGE: { color: 'var(--main)', label: '티켓 교환' },
-  ADMIN_GRANT: { color: 'var(--main)', label: '관리자 지급' },
+  CONVERT_TO_TICKET: { color: 'var(--danger)', label: '티켓 전환(사용)' },
+  CONVERT_FROM_TICKET: { color: 'var(--success)', label: '티켓 전환(적립)' },
+  ADMIN_ADD: { color: 'var(--success)', label: '관리자 지급' },
+  ADMIN_SUB: { color: 'var(--danger)', label: '관리자 회수' },
   USED: { color: 'var(--danger)', label: '사용 차감' },
   EXPIRED: { color: 'var(--text-2)', label: '만료 소멸' },
 };
 
-const renderTypeBadge = (type: string) => {
-  const config = typeBadgeMap[type] || { color: 'var(--text-2)', label: type };
+const renderTransactionTypeBadge = (type: IPointTransactionType) => {
+  const config = transactionTypeConfig[type] || { color: 'var(--text-2)', label: type };
   return <span style={{ color: config.color }}>{config.label}</span>;
 };
 
-const renderPoints = (points: number) => {
-  const isPositive = points > 0;
-  const isNegative = points < 0;
+const renderPoints = (amount: number) => {
+  const isPositive = amount > 0;
+  const isNegative = amount < 0;
   const color = isPositive ? 'var(--success)' : isNegative ? 'var(--danger)' : 'var(--text-2)';
   const sign = isPositive ? '+' : '';
   return (
     <span style={{ color, fontWeight: 700 }}>
       {sign}
-      {points.toLocaleString()}P
+      {amount.toLocaleString()}P
     </span>
   );
 };
@@ -60,7 +62,7 @@ export const PointsTable: React.FC<PointsTableProps> = ({ points, pagination }) 
       <table>
         <thead>
           <tr>
-            <th>닉네임(카카오톡 ID)</th>
+            <th>닉네임 / 카카오톡 ID / 식별 아이디</th>
             <th>유형</th>
             <th>포인트</th>
             <th>교환 후 잔액</th>
@@ -82,16 +84,21 @@ export const PointsTable: React.FC<PointsTableProps> = ({ points, pagination }) 
               <tr key={point.id}>
                 <td>
                   <div style={{ fontWeight: 500 }}>{point.nickname}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
+                    {point.kakao_id ?? '게스트(비연동)'}
+                  </div>
                   <div
-                    style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}
+                    style={{ fontSize: '11px', color: 'var(--text-3)', fontFamily: 'monospace' }}
                   >
-                    ({point.kakao_id ?? '-'})
+                    {point.identified_id}
                   </div>
                 </td>
-                <td style={{ textAlign: 'center' }}>{renderTypeBadge(point.type)}</td>
-                <td style={{ textAlign: 'center' }}>{renderPoints(point.points)}</td>
+                <td style={{ textAlign: 'center' }}>
+                  {renderTransactionTypeBadge(point.transaction_type)}
+                </td>
+                <td style={{ textAlign: 'center' }}>{renderPoints(point.amount)}</td>
                 <td style={{ textAlign: 'center', fontWeight: 600 }}>
-                  {point.balance.toLocaleString()}P
+                  {point.balance_after.toLocaleString()}P
                 </td>
                 <td style={{ textAlign: 'center', fontSize: '12px', whiteSpace: 'nowrap' }}>
                   {renderDateTime(point.created_at)}

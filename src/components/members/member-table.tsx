@@ -1,9 +1,8 @@
 import React from 'react';
 import type { IUser } from 'src/types/users/user';
 import { MemberActions } from './member-actions';
-import type { TicketGrade } from '../common/ticket-chip';
 import { TicketChip } from '../common/ticket-chip';
-import type { IAccountStatus, IMarketingConsent } from 'src/types/common';
+import type { IAccountStatus, IMarketingConsent, TicketGrade } from 'src/types/common';
 import type { PaginationProps } from '../common/pagination';
 import { Pagination } from '../common/pagination';
 
@@ -97,7 +96,7 @@ const getPendingBadge = (user: IUser) => {
       <div className="conv-preview">
         {user.pending_bronze > 0 && (
           <TicketChip
-            grade="bronze"
+            grade="BRONZE"
             quantity={user.pending_bronze}
             size="small"
             showName={false}
@@ -106,7 +105,7 @@ const getPendingBadge = (user: IUser) => {
         )}
         {user.pending_silver > 0 && (
           <TicketChip
-            grade="silver"
+            grade="SILVER"
             quantity={user.pending_silver}
             size="small"
             showName={false}
@@ -115,7 +114,7 @@ const getPendingBadge = (user: IUser) => {
         )}
         {user.pending_gold > 0 && (
           <TicketChip
-            grade="gold"
+            grade="GOLD"
             quantity={user.pending_gold}
             size="small"
             showName={false}
@@ -130,9 +129,9 @@ const getPendingBadge = (user: IUser) => {
 
 const getActiveBadge = (user: IUser) => {
   const tickets: Array<{ grade: TicketGrade; quantity: number }> = [
-    { grade: 'bronze', quantity: user.ticket_bronze_total },
-    { grade: 'silver', quantity: user.ticket_silver_total },
-    { grade: 'gold', quantity: user.ticket_gold_total },
+    { grade: 'BRONZE', quantity: user.ticket_bronze_total },
+    { grade: 'SILVER', quantity: user.ticket_silver_total },
+    { grade: 'GOLD', quantity: user.ticket_gold_total },
   ];
   const dim =
     user.ticket_bronze_total === 0 &&
@@ -150,7 +149,13 @@ const getActiveBadge = (user: IUser) => {
       }}
     >
       {tickets.map((t) => (
-        <TicketChip key={t.grade} grade={t.grade} quantity={t.quantity} showName={false} dim={dim} />
+        <TicketChip
+          key={t.grade}
+          grade={t.grade.toUpperCase() as TicketGrade}
+          quantity={t.quantity}
+          showName={false}
+          dim={dim}
+        />
       ))}
     </div>
   );
@@ -215,7 +220,7 @@ export const MemberTable: React.FC<MemberTableProps> = ({
                   {member.pending_random_tickets > 0 ? (
                     <div className="rnd-chip-wrap">
                       <TicketChip
-                        grade="random"
+                        grade="RANDOM"
                         quantity={member.pending_random_tickets}
                         size="small"
                         showName={false}
@@ -224,7 +229,7 @@ export const MemberTable: React.FC<MemberTableProps> = ({
                     </div>
                   ) : (
                     <TicketChip
-                      grade="random"
+                      grade="RANDOM"
                       quantity={member.pending_random_tickets}
                       size="small"
                       showName={false}
@@ -236,7 +241,7 @@ export const MemberTable: React.FC<MemberTableProps> = ({
                 <td>{getActiveBadge(member)}</td>
                 <td>
                   <TicketChip
-                    grade="event"
+                    grade="EVENT"
                     quantity={member.ticket_event_total}
                     size="small"
                     showName={false}

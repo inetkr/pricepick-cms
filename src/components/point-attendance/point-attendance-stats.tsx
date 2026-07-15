@@ -2,45 +2,35 @@ import React from 'react';
 import { StatCard } from '../common/stat-card';
 
 interface PointAttendanceStatsProps {
-  todayMembers: number;
+  todayVisits: number;
   todayPoints: number;
-  streakCount: number;
-  conversionRate: number;
-  conversionChange?: string;
+  isLoading?: boolean;
 }
 
 export const PointAttendanceStats: React.FC<PointAttendanceStatsProps> = ({
-  todayMembers,
+  todayVisits,
   todayPoints,
-  streakCount,
-  conversionRate,
-  conversionChange = '방문→복귀 완료',
+  isLoading = false,
 }) => {
   return (
-    <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+    <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
       <StatCard
-        label="오늘 출석 회원"
-        value={todayMembers.toLocaleString()}
-        change={{ type: 'neutral', text: '복귀 완료 기준' }}
+        label="오늘 출석 인원"
+        value={isLoading ? '—' : `${todayVisits.toLocaleString()}명`}
+        change={{ type: 'neutral', text: '오늘 기준' }}
         color="purple"
       />
       <StatCard
         label="오늘 지급 포인트"
-        value={`${todayPoints.toLocaleString()}P`}
-        change={{ type: 'up', text: `${todayMembers}명 × 100P` }}
+        value={isLoading ? '—' : `${todayPoints.toLocaleString()}P`}
+        change={{ type: 'neutral', text: '오늘 기준' }}
         color="green"
       />
       <StatCard
         label="5일 연속 달성"
-        value={streakCount.toLocaleString()}
-        change={{ type: 'neutral', text: '이벤트 티켓 지급' }}
+        value="—"
+        change={{ type: 'neutral', text: '오늘 기준' }}
         color="amber"
-      />
-      <StatCard
-        label="제휴몰 방문 전환율"
-        value={`${conversionRate}%`}
-        change={{ type: 'up', text: conversionChange }}
-        color="blue"
       />
     </div>
   );

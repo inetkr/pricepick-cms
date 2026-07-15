@@ -1,13 +1,21 @@
-import type { IBase } from "../base";
+export type IPointTransactionType =
+  | 'ATTENDANCE'
+  | 'CONVERT_TO_TICKET'
+  | 'CONVERT_FROM_TICKET'
+  | 'ADMIN_ADD'
+  | 'ADMIN_SUB'
+  | 'USED'
+  | 'EXPIRED';
 
-export type IPointType = 'ATTENDANCE' | 'EXCHANGE' | 'ADMIN_GRANT' | 'USED' | 'EXPIRED';
-
-export type IPoint = IBase & {
+export type IPoint = {
   id: string;
   user_id: string;
+  identified_id: string;
   nickname: string;
-  kakao_id: string | number | null;
-  type: IPointType;
-  points: number;
-  balance: number;
-}
+  kakao_id: string | null;
+  transaction_type: IPointTransactionType;
+  description: string;
+  amount: number;
+  balance_after: number;
+  created_at: string;
+};

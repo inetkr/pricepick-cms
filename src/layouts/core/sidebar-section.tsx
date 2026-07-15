@@ -33,6 +33,8 @@ import {
   TermsIcon,
   TicketIcon,
   WithdrawIcon,
+  AttendanceIcon,
+  PointPolicyIcon,
 } from './Icons';
 import { CalendarIcon } from '@mui/x-date-pickers/icons';
 import { authAPI } from 'src/api';
@@ -79,7 +81,12 @@ const MENU_GROUPS: MenuGroup[] = [
       { id: 'tickets', label: '티켓 내역', icon: <TicketIcon />, href: '/tickets' },
       { id: 'draws', label: '추첨 관리', icon: <DrawIcon />, href: '/draws', badge: 1 },
       { id: 'prizes', label: '경품/응모 관리', icon: <PrizeIcon />, href: '/prizes' },
-      { id: 'attendance', label: '주간 이벤트 추첨', icon: <CalendarIcon />, href: '/attendance' },
+      {
+        id: 'attendance',
+        label: '주간 이벤트 추첨',
+        icon: <AttendanceIcon />,
+        href: '/attendance',
+      },
       {
         id: 'lucky-spin-config',
         label: '행운룰렛 설정',
@@ -97,10 +104,15 @@ const MENU_GROUPS: MenuGroup[] = [
       {
         id: 'point-attendance',
         label: '출석체크 설정',
-        icon: <CalendarIcon />,
+        icon: <AttendanceIcon />,
         href: '/point-attendance',
       },
-      { id: 'point-policy', label: '포인트 정책', icon: <PolicyIcon />, href: '/point-policy' },
+      {
+        id: 'point-policy',
+        label: '포인트 정책',
+        icon: <PointPolicyIcon />,
+        href: '/point-policy',
+      },
     ],
   },
   {

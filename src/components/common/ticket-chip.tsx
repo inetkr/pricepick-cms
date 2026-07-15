@@ -138,7 +138,10 @@ export const TicketChip: React.FC<TicketChipProps> = ({
   );
 };
 
-export const TicketNameByGrade: React.FC<{ grade: TicketGrade }> = ({ grade }) => {
+export const TicketNameByGrade: React.FC<{ grade: TicketGrade; quantity: number }> = ({
+  grade,
+  quantity,
+}) => {
   const renderNameByGrade = {
     BRONZE: '브론즈',
     SILVER: '실버',
@@ -146,7 +149,14 @@ export const TicketNameByGrade: React.FC<{ grade: TicketGrade }> = ({ grade }) =
     EVENT: '이벤트',
     RANDOM: '랜덤',
   };
-  return <span className={`tk-chip ${grade.toLowerCase()} bare `}>{renderNameByGrade[grade]}</span>;
+  return (
+    <>
+      <span className={`tk-chip ${grade.toLowerCase()} bare `}>{renderNameByGrade[grade]}</span>
+      <span style={{ color: `var(--${quantity > 0 ? 'info' : 'danger'})`, fontWeight: 700 }}>
+        {quantity}
+      </span>
+    </>
+  );
 };
 
 // Component để render nhiều ticket chips
@@ -175,7 +185,7 @@ export const TicketChipGroup: React.FC<TicketChipGroupProps> = ({
       {tickets.map((t, idx) => (
         <TicketChip
           key={idx}
-          grade={t.grade}
+          grade={t.grade.toUpperCase() as TicketGrade}
           quantity={t.quantity}
           bare={bare}
           showQuantity={showQuantity}

@@ -20,13 +20,15 @@ export default class PointAPI extends BaseAPI {
     }
   };
 
-  getPointList = async (
+  getPointHistoryList = async (
     page: number,
     limit: number,
     filter?: {
       search?: string;
-      type?: string;
-      period?: string;
+      category?: string;
+      days?: number;
+      from_date?: string;
+      to_date?: string;
     }
   ): Promise<ApiPaginatedResponse<IPoint>> => {
     try {
@@ -39,14 +41,32 @@ export default class PointAPI extends BaseAPI {
         requestParam.filter = JSON.stringify(filter);
       }
       const response = await axios.axiosInstanceWithLoading.get(
-        `/${tableName}/admin/get_list_cms`,
+        `/${tableName}/admin/list_point_history`,
         {
           params: requestParam,
         }
       );
       return response.data;
     } catch (error) {
-      console.error('Error fetching point list:', error);
+      console.error('Error fetching point history list:', error);
+      throw error;
+    }
+  };
+
+  addSubPoint = async (data: {
+    user_identifier: string; // user_id 또는 username
+    action: 'ADMIN_ADD' | 'ADMIN_SUB';
+    amount: number;
+    description: string;
+  }): Promise<ApiResponse<any>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.post(
+        `/${tableName}/admin/add_sub_point`,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error adding/subtracting point:', error);
       throw error;
     }
   };

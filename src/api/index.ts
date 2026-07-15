@@ -6,6 +6,7 @@ import TicketAPI from "./ticket-api";
 import RevenueAPI from "./revenue-api";
 import SettlementAPI from "./settlement-api";
 import StatsAPI from "./stats-api";
+import ConfigAPI from "./config-api";
 
 export const userAPI = new UserAPI();
 
@@ -22,3 +23,5 @@ export const revenueAPI = new RevenueAPI();
 export const settlementAPI = new SettlementAPI();
 
 export const statsAPI = new StatsAPI();
+
+export const configAPI = new ConfigAPI();

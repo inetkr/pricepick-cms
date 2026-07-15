@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { toast } from 'sonner';
-import type { ExchangeRate} from 'src/components/point-policy/exchange-rate-card';
+import type { ExchangeRate } from 'src/components/point-policy/exchange-rate-card';
 import { ExchangeRateCard } from 'src/components/point-policy/exchange-rate-card';
 import { PointPolicyCard } from 'src/components/point-policy/point-policy-card';
+import { PointPolicyEditModal } from 'src/components/point-policy/point-policy-edit-modal';
+import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
+import { usePointPolicy } from 'src/sections/point-policy/hooks/use-point-policy';
+import type { IPointPolicyConfigValue } from 'src/types/config/point_policy_config';
 
-// Mock data cho tỷ lệ quy đổi
 const exchangeRateData: ExchangeRate[] = [
   {
     grade: 'bronze',
@@ -28,26 +30,19 @@ const exchangeRateData: ExchangeRate[] = [
   },
 ];
 
-// Mock policy
-const defaultPolicy = {
-  exchangeRate: '10P = 1원',
-  expiryPeriod: '적립일로부터 1년',
-  dailyLimit: '없음',
-  exchangeDirection: '포인트 ↔ 티켓 쌍방 교환',
-  mainEarningPath: '출석체크 (일 100P)',
-};
-
 export const PointPolicySection: React.FC = () => {
-  const [policy] = useState(defaultPolicy);
+  const { showMessageIcon } = useDialogMessage();
+  const { config, isLoading, isSaving, saveConfig } = usePointPolicy();
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
-  const handleEditExchangeRate = () => {
-    // TODO: Open modal for editing exchange rates
-    toast.info('교환 비율 수정 기능은 준비 중입니다.');
-  };
-
-  const handleEditPolicy = () => {
-    // TODO: Open modal for editing policy
-    toast.info('정책 수정 기능은 준비 중입니다.');
+  const handleSave = async (next: IPointPolicyConfigValue) => {
+    const ok = await saveConfig(next);
+    if (ok) {
+      setIsEditOpen(false);
+      showMessageIcon('포인트 정책이 저장되었습니다.', DialogMessageIcon.success);
+    } else {
+      showMessageIcon('포인트 정책 저장에 실패했습니다.', DialogMessageIcon.alert);
+    }
   };
 
   return (
@@ -57,11 +52,23 @@ export const PointPolicySection: React.FC = () => {
         환산가치 1:1 등가입니다.
       </div>
 
-      {/* Bảng tỷ lệ quy đổi */}
-      <ExchangeRateCard data={exchangeRateData} onEdit={handleEditExchangeRate} />
+      <ExchangeRateCard data={exchangeRateData} onEdit={() => setIsEditOpen(true)} />
 
-      {/* Chính sách tích lũy và hết hạn */}
-      <PointPolicyCard policy={policy} onEdit={handleEditPolicy} />
+      {isLoading ? (
+        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-2)' }}>
+          로딩 중...
+        </div>
+      ) : (
+        <PointPolicyCard config={config} />
+      )}
+
+      <PointPolicyEditModal
+        open={isEditOpen}
+        config={config}
+        isSaving={isSaving}
+        onClose={() => setIsEditOpen(false)}
+        onSubmit={handleSave}
+      />
     </div>
   );
 };

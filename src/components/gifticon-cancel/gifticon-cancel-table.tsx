@@ -1,6 +1,6 @@
 // src/components/gifticon/GifticonCancelTable.tsx
 import React from 'react';
-import type { Column} from '../common/table-pagination-row-per-page';
+import type { Column } from '../common/table-pagination-row-per-page';
 import { TablePaginationRowPerPage } from '../common/table-pagination-row-per-page';
 import { TicketChipGroup } from '../common/ticket-chip';
 import type { PaginationProps } from '../common/pagination';
@@ -97,7 +97,10 @@ const columns: Column<GifticonCancelItem>[] = [
     label: '환불 티켓',
     render: (item) => (
       <TicketChipGroup
-        tickets={[item.refundTicket].map((t) => ({ ...t, grade: t.grade }))}
+        tickets={[item.refundTicket].map((t) => ({
+          ...t,
+          grade: t.grade.toUpperCase() as 'BRONZE' | 'SILVER' | 'GOLD',
+        }))}
         bare
         showName
         showQuantity
@@ -110,7 +113,10 @@ const columns: Column<GifticonCancelItem>[] = [
     label: '잔여 티켓',
     render: (item) => (
       <TicketChipGroup
-        tickets={[item.remainingTicket].map((t) => ({ ...t, grade: t.grade }))}
+        tickets={[item.remainingTicket].map((t) => ({
+          ...t,
+          grade: t.grade.toUpperCase() as 'BRONZE' | 'SILVER' | 'GOLD',
+        }))}
         bare
         showName
         showQuantity

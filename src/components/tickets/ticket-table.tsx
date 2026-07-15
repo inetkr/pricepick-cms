@@ -101,14 +101,14 @@ export const TicketTable: React.FC<TicketTableProps> = ({ tickets, pagination })
                   <div
                     style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}
                   >
-                    ({ticket.identified_id ?? '-'})
+                    {ticket.identified_id ?? '-'}
                   </div>
                 </td>
                 <td style={{ textAlign: 'center' }}>
                   <span style={{ color: 'var(--success)' }}>{ticket.description}</span>
                 </td>
                 <td style={{ textAlign: 'center' }}>
-                  <TicketNameByGrade grade={ticket.ticket_type} />
+                  <TicketNameByGrade grade={ticket.ticket_type} quantity={ticket.amount} />
                 </td>
                 <td style={{ textAlign: 'center', fontWeight: 600 }}>
                   {renderStatusBadge(ticket.usage_status)}

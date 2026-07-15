@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Column} from '../common/table';
+import type { Column } from '../common/table';
 import { Table } from '../common/table';
 import { InfoBox } from '../stats/info-box';
 import { TicketChipGroup } from '../common/ticket-chip';
@@ -45,11 +45,14 @@ const columns: Column<DebtItem>[] = [
     label: '부채 티켓',
     render: (item) => (
       <TicketChipGroup
-          tickets={item.debtTicket.map((t) => ({ ...t, grade: t.type }))}
-          bare
-          showName
-          showQuantity
-        />
+        tickets={item.debtTicket.map((t) => ({
+          ...t,
+          grade: t.type.toUpperCase() as 'BRONZE' | 'SILVER' | 'GOLD',
+        }))}
+        bare
+        showName
+        showQuantity
+      />
     ),
     align: 'center',
   },

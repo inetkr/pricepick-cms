@@ -1,6 +1,6 @@
 // src/components/clawback/ClawbackTable.tsx
 import React from 'react';
-import type { Column, PaginationProps} from '../common/table';
+import type { Column, PaginationProps } from '../common/table';
 import { Table } from '../common/table';
 import { TicketChipGroup } from '../common/ticket-chip';
 
@@ -72,7 +72,10 @@ const columns: Column<ClawbackItem>[] = [
     label: '환수 티켓',
     render: (item) => (
       <TicketChipGroup
-        tickets={item.tickets.map((t) => ({ ...t, grade: t.type }))}
+        tickets={item.tickets.map((t) => ({
+          ...t,
+          grade: t.type.toUpperCase() as 'BRONZE' | 'SILVER' | 'GOLD',
+        }))}
         bare
         showName
         showQuantity
