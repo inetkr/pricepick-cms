@@ -3,6 +3,7 @@ import BaseAPI from './base-api';
 import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
 import type { IPointStat } from 'src/types/points/point_stat';
 import type { IPoint } from 'src/types/points/point';
+import type { IAttendanceStat } from 'src/types/points/attendance_stat';
 
 const tableName = 'point';
 export default class PointAPI extends BaseAPI {
@@ -16,6 +17,16 @@ export default class PointAPI extends BaseAPI {
       return response.data;
     } catch (error) {
       console.error('Error fetching point statistics:', error);
+      throw error;
+    }
+  };
+
+  getPointAttendanceStats = async (): Promise<ApiResponse<IAttendanceStat>> => {
+    try {
+      const response = await axios.axiosInstance.get(`/${tableName}/admin/attendance_stats`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching point attendance statistics:', error);
       throw error;
     }
   };

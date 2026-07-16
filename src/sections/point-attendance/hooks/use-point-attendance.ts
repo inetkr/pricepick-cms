@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { configAPI, pointAPI } from 'src/api';
 import type { IAttendanceConfig, IAttendanceConfigValue } from 'src/types/config/attendance_config';
+import type { IAttendanceStat } from 'src/types/points/attendance_stat';
 
 const CONFIG_KEY = 'ATTENDANCE_CONFIG';
 
@@ -23,11 +24,13 @@ const todayStr = () => {
 
 export const usePointAttendance = () => {
   const [config, setConfig] = useState<IAttendanceConfigValue>(defaultConfig);
+  const [stats, setStats] = useState<IAttendanceStat>({
+    checked_in_today: 0,
+    points_granted_today: 0,
+    streak_milestone_today: 0,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-
-  const [todayVisits, setTodayVisits] = useState(0);
-  const [todayPoints, setTodayPoints] = useState(0);
   const [isStatsLoading, setIsStatsLoading] = useState(true);
 
   const loadConfig = async () => {
@@ -47,16 +50,9 @@ export const usePointAttendance = () => {
   const loadTodayStats = async () => {
     setIsStatsLoading(true);
     try {
-      const today = todayStr();
-      const responseData = await pointAPI.getPointHistoryList(1, 1, {
-        category: 'ATTENDANCE',
-        from_date: today,
-        to_date: today,
-      });
+      const responseData = await pointAPI.getPointAttendanceStats();
       if (responseData && responseData.result && responseData.result.object) {
-        const visits = responseData.result.object.count;
-        setTodayVisits(visits);
-        setTodayPoints(visits * config.daily_points);
+        setStats(responseData.result.object);
       }
     } catch (error) {
       console.error('Failed to load today attendance stats:', error);
@@ -95,8 +91,7 @@ export const usePointAttendance = () => {
     isLoading,
     isSaving,
     saveConfig,
-    todayVisits,
-    todayPoints,
+    stats,
     isStatsLoading,
   };
 };

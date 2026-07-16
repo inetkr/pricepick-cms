@@ -11,8 +11,7 @@ import type { IAttendanceConfigValue } from 'src/types/config/attendance_config'
 
 export const PointAttendanceSection: React.FC = () => {
   const { showMessageIcon } = useDialogMessage();
-  const { config, isLoading, isSaving, saveConfig, todayVisits, todayPoints, isStatsLoading } =
-    usePointAttendance();
+  const { config, isLoading, isSaving, saveConfig, stats, isStatsLoading } = usePointAttendance();
 
   const handleSaveSettings = async (data: IAttendanceConfigValue) => {
     const ok = await saveConfig(data);
@@ -31,11 +30,7 @@ export const PointAttendanceSection: React.FC = () => {
         추가 지급.
       </InfoBox>
 
-      <PointAttendanceStats
-        todayVisits={todayVisits}
-        todayPoints={todayPoints}
-        isLoading={isStatsLoading}
-      />
+      <PointAttendanceStats stats={stats} isLoading={isStatsLoading} />
 
       {isLoading ? (
         <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-2)' }}>

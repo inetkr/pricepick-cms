@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { userAPI } from 'src/api';
 import { useDebounce } from 'src/hooks/use-debounce';
 import type { IUser } from 'src/types/users/user';
@@ -23,12 +23,9 @@ const ADMIN_ACTIONS = [
   { value: 'ADMIN_SUB', label: '회수' },
 ];
 
-export const PointManualModal: React.FC<PointManualModalProps> = ({
-  open,
-  onClose,
-  onSubmit,
-}) => {
+export const PointManualModal: React.FC<PointManualModalProps> = ({ open, onClose, onSubmit }) => {
   const [userIdentifier, setUserIdentifier] = useState('');
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
   const [action, setAction] = useState<'ADMIN_ADD' | 'ADMIN_SUB'>('ADMIN_ADD');
   const [amount, setAmount] = useState<number>(0);
   const [description, setDescription] = useState('');
@@ -37,18 +34,17 @@ export const PointManualModal: React.FC<PointManualModalProps> = ({
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const debouncedKeyword = useDebounce(keyword, 500);
-  const lastSelectedKeywordRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (open) {
       setUserIdentifier('');
+      setSelectedUser(null);
       setAction('ADMIN_ADD');
       setAmount(0);
       setDescription('');
       setKeyword('');
       setSearchResults([]);
       setShowResults(false);
-      lastSelectedKeywordRef.current = null;
     }
   }, [open]);
 
@@ -57,9 +53,6 @@ export const PointManualModal: React.FC<PointManualModalProps> = ({
     if (!trimmed) {
       setSearchResults([]);
       setShowResults(false);
-      return;
-    }
-    if (debouncedKeyword === lastSelectedKeywordRef.current) {
       return;
     }
 
@@ -89,12 +82,16 @@ export const PointManualModal: React.FC<PointManualModalProps> = ({
   if (!open) return null;
 
   const handleSelectUser = (user: IUser) => {
-    const label = `${user.username} · ${user.nickname} · ${user.id}`;
-    lastSelectedKeywordRef.current = label;
-    setKeyword(label);
+    setSelectedUser(user);
     setUserIdentifier(user.id);
+    setKeyword('');
     setSearchResults([]);
     setShowResults(false);
+  };
+
+  const handleClearUser = () => {
+    setSelectedUser(null);
+    setUserIdentifier('');
   };
 
   const isValid = userIdentifier.trim() !== '' && amount > 0 && description.trim() !== '';
@@ -145,18 +142,14 @@ export const PointManualModal: React.FC<PointManualModalProps> = ({
             <label className="form-label" htmlFor="point-manual-user-identifier">
               대상 회원
             </label>
-            <div style={{ position: 'relative' }}>
+            <div className="user-search">
               <input
                 id="point-manual-user-identifier"
                 className="form-input"
                 placeholder="대상 회원 닉네임 또는 UID"
                 autoComplete="off"
                 value={keyword}
-                onChange={(e) => {
-                  const { value } = e.target;
-                  setKeyword(value);
-                  setUserIdentifier(value);
-                }}
+                onChange={(e) => setKeyword(e.target.value)}
                 onFocus={() => {
                   if (searchResults.length > 0) setShowResults(true);
                 }}
@@ -214,12 +207,26 @@ export const PointManualModal: React.FC<PointManualModalProps> = ({
                           e.currentTarget.style.background = 'transparent';
                         }}
                       >
-                        {user.username} · {user.nickname} · {user.id}
+                        {user.nickname} ·{' '}
+                        {user.kakao_info ? user.kakao_info.email : '게스트(비연동)'} ·{' '}
+                        {user.identified_id}
                       </div>
                     ))}
                 </div>
               )}
             </div>
+            {selectedUser && (
+              <div className="user-search-chips">
+                <span className="user-search-chip">
+                  {selectedUser.nickname} ·{' '}
+                  {selectedUser.kakao_info ? selectedUser.kakao_info.email : '게스트(비연동)'} ·{' '}
+                  {selectedUser.identified_id}
+                  <button type="button" onClick={handleClearUser} aria-label="선택 해제">
+                    ×
+                  </button>
+                </span>
+              </div>
+            )}
           </div>
           <div className="form-row">
             <div className="form-group">

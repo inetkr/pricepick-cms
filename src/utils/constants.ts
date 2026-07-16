@@ -8,5 +8,5 @@ export const PAGE_LIST = {
 export const ADMIN_ROLE = {
     SUPERADMIN: 'SUPERADMIN',
     OPERATOR: 'OPERATOR',
-    CS: 'CS',
+    // CS: 'CS',
 }

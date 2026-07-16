@@ -30,11 +30,11 @@ const transactionTypeGroupOptions: Option[] = [
 
 const usageStatusOptions: Option[] = [
   { value: '', label: '전체 상태' },
-  // { value: 'PENDING', label: '가지급(대기)' },
   { value: 'HOLDING', label: '보유 중' },
   { value: 'USED', label: '사용 완료' },
-  // { value: 'ADMIN_SUB', label: '회수' },
-  // { value: 'REJECTED', label: '거절' },
+  { value: 'PENDING', label: '가지급(대기)' },
+  { value: 'ADMIN_SUB', label: '회수' },
+  { value: 'REJECTED', label: '거절' },
 ];
 
 export const TicketFilters: React.FC<TicketFiltersProps> = ({
@@ -64,7 +64,7 @@ export const TicketFilters: React.FC<TicketFiltersProps> = ({
         onChange={(e) => setSearch(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && handleApplyFilters()}
       />
-      {/* <select
+      <select
         className="filter-sel"
         value={transactionTypeGroup}
         onChange={(e) => setTransactionTypeGroup(e.target.value)}
@@ -74,7 +74,7 @@ export const TicketFilters: React.FC<TicketFiltersProps> = ({
             {opt.label}
           </option>
         ))}
-      </select> */}
+      </select>
       <select
         className="filter-sel"
         value={usageStatus}

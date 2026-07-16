@@ -1539,6 +1539,45 @@ export const globalStyles = css`
     resize: vertical;
     min-height: 80px;
   }
+  .user-search {
+    position: relative;
+  }
+  .user-search-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .user-search-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 6px 5px 12px;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .user-search-chip button {
+    border: none;
+    background: transparent;
+    color: var(--text-3);
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+  }
+  .user-search-chip button:hover {
+    background: var(--border);
+    color: var(--text);
+  }
   .tm-grade-row {
     display: flex;
     align-items: center;

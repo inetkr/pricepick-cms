@@ -28,6 +28,7 @@ export type IUser = IBase & {
 
 export type IKakaoUserInfo = {
   nickname: string;
+  email: string | null;
   linked_at: string;
 }
 

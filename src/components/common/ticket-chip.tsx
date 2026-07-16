@@ -11,6 +11,7 @@ interface TicketChipProps {
   dim?: boolean;
   bare?: boolean;
   prefix?: string;
+  prefixAfter?: string;
 }
 
 // SVG paths từ file gốc
@@ -41,6 +42,7 @@ export const TicketChip: React.FC<TicketChipProps> = ({
   dim = false,
   bare = false,
   prefix = '',
+  prefixAfter = '',
 }) => {
   const colors = GRADE_COLORS[grade];
   const uid = React.useId();
@@ -112,6 +114,7 @@ export const TicketChip: React.FC<TicketChipProps> = ({
             <span>
               {prefix}
               {quantity}
+              {prefixAfter}
             </span>
           ))}
       </span>
@@ -132,8 +135,89 @@ export const TicketChip: React.FC<TicketChipProps> = ({
           <span>
             {prefix}
             {quantity}
+            {prefixAfter}
           </span>
         ))}
+    </span>
+  );
+};
+
+export const TicketChipOnlyName: React.FC<TicketChipProps> = ({
+  grade,
+  className = '',
+  size = 'small',
+  dim = false,
+  bare = false,
+}) => {
+  const colors = GRADE_COLORS[grade];
+  const uid = React.useId();
+
+  // Size mapping
+  const sizes = {
+    small: { width: 28, height: 28 },
+    large: { width: 60, height: 60 },
+  };
+
+  const { width, height } = sizes[size];
+
+  // Render SVG icon
+  const renderIcon = () => {
+    // Random ticket có thêm dấu ?
+    const questionMark =
+      grade === 'RANDOM'
+        ? `<text x="220" y="370" font-family="Arial Black, Arial" font-size="270" font-weight="900" fill="rgba(255,255,255,0.5)" text-anchor="middle">?</text>`
+        : '';
+
+    return (
+      <svg
+        width={width}
+        height={height}
+        viewBox="0 0 512 512"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ display: 'block', flexShrink: 0 }}
+      >
+        <defs>
+          <linearGradient id={`g${uid}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor={colors.c1} />
+            <stop offset="100%" stopColor={colors.c2} />
+          </linearGradient>
+        </defs>
+        <path d={TK_P1} fill={`url(#g${uid})`} />
+        <path d={TK_P2} fill={colors.icon} />
+        <path d={TK_P3} fill={colors.icon} />
+        {questionMark && (
+          <path
+            d="M220 370h0"
+            fill="none"
+            // Text sẽ được render bằng dangerouslySetInnerHTML trong span riêng
+          />
+        )}
+      </svg>
+    );
+  };
+
+  const renderNameByGrade = {
+    BRONZE: '브론즈',
+    SILVER: '실버',
+    GOLD: '골드',
+    EVENT: '이벤트',
+    RANDOM: '랜덤',
+  };
+
+  // Nếu bare mode: chỉ hiển thị icon + số, không có background
+  if (bare) {
+    return (
+      <span className={`tk-chip bare ${grade.toLowerCase()} ${dim ? 'dim' : ''} ${className}`}>
+        {renderIcon()}
+        <span>{renderNameByGrade[grade]}</span>
+      </span>
+    );
+  }
+
+  return (
+    <span className={`tk-chip ${grade.toLowerCase()} ${dim ? 'dim' : ''} ${className}`}>
+      {renderIcon()}
+      <span>{renderNameByGrade[grade]}</span>
     </span>
   );
 };

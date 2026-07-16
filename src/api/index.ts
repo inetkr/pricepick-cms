@@ -7,6 +7,9 @@ import RevenueAPI from "./revenue-api";
 import SettlementAPI from "./settlement-api";
 import StatsAPI from "./stats-api";
 import ConfigAPI from "./config-api";
+import ActivityLogAPI from "./activity-log-api";
+import PolicyAPI from "./policy-api";
+import QnaAPI from "./qna-api";
 
 export const userAPI = new UserAPI();
 
@@ -25,3 +28,9 @@ export const settlementAPI = new SettlementAPI();
 export const statsAPI = new StatsAPI();
 
 export const configAPI = new ConfigAPI();
+
+export const activityLogAPI = new ActivityLogAPI();
+
+export const policyAPI = new PolicyAPI();
+
+export const qnaAPI = new QnaAPI();

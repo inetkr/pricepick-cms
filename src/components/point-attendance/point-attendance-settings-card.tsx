@@ -13,8 +13,8 @@ interface AttendanceSettingsCardProps {
 
 const linkedStoreOptions = [
   { value: 'COUPANG', label: '쿠팡 (단독)' },
-  { value: 'COUPANG_11ST', label: '쿠팡 + 11번가' },
-  { value: 'ALL', label: '전체 제휴몰' },
+  // { value: 'COUPANG_11ST', label: '쿠팡 + 11번가' },
+  // { value: 'ALL', label: '전체 제휴몰' },
 ];
 
 const streakBonusOptions = [

@@ -23,3 +23,5 @@ export type ITicketType = 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT';
 export type TicketGrade = 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT' | 'RANDOM';
 
 export type IPrizeType = 'EVENT_TICKET' | 'NO_WIN' | 'POINT';
+
+export type IPolicyType = 'TERMS_OF_SERVICE' | 'PRIVACY_POLICY' | 'REWARD_POLICY' | 'TICKET_REWARD_POLICY' | 'MARKETING_CONSENT';
