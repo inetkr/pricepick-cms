@@ -1,4 +1,5 @@
 import type { IBase } from './base';
+import { IKakaoUserInfo } from './users/user';
 
 // 백엔드 QnaState enum 값 추정치(PENDING 기본값만 명세로 확인됨). 실제 enum과 다르면 이 타입과
 // src/constants/qna.ts의 QNA_STATE_OPTIONS만 맞춰서 수정하면 된다.
@@ -20,6 +21,8 @@ export type IQna = IBase & {
   user: {
     id: string;
     nickname: string;
+    identified_id: string | null;
+    kakao_info?: IKakaoUserInfo
   }
 };
 

@@ -7,7 +7,7 @@ import { AnnouncementStats } from 'src/components/announcement/announcement-stat
 import { AnnouncementTable } from 'src/components/announcement/announcement-table';
 import type { PaginationProps } from 'src/components/common/pagination';
 import { useAnnouncement } from 'src/sections/announcement/hooks/use-announcement';
-import type { IAnnouncement } from 'src/types/announcement';
+import type { IAnnouncement, IAnnouncementType } from 'src/types/announcement';
 
 export const AnnouncementSection: React.FC = () => {
   const {
@@ -39,7 +39,10 @@ export const AnnouncementSection: React.FC = () => {
     setEditingAnnouncement(null);
   };
 
-  const handleSaveEdit = async (id: string, data: { title: string; content: string }) => {
+  const handleSaveEdit = async (
+    id: string,
+    data: { title: string; content: string; type: IAnnouncementType; is_published: boolean }
+  ) => {
     const ok = await updateAnnouncement(id, data);
     if (ok) handleCloseEditModal();
   };

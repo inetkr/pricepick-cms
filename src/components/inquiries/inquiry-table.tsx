@@ -40,10 +40,10 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
         <tr>
           <th>제목</th>
           <th>작성자</th>
-          <th>유형</th>
-          <th>작성일</th>
-          <th>상태</th>
-          <th>관리</th>
+          <th style={{ textAlign: 'center' }}>유형</th>
+          <th style={{ textAlign: 'center' }}>작성일</th>
+          <th style={{ textAlign: 'center' }}>상태</th>
+          <th style={{ textAlign: 'center' }}>관리</th>
         </tr>
       </thead>
       <tbody>
@@ -67,51 +67,41 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
           </tr>
         ) : (
           inquiries.map((item) => {
-            const { date, time } = formatDateTime(item.created_at);
+            const { date } = formatDateTime(item.created_at);
+            const isAnswered = item.state === 'COMPLETED';
             return (
               <tr key={item.id}>
+                <td style={{ fontWeight: 500 }}>{item.title || '제목없음'}</td>
                 <td>
-                  <button
-                    type="button"
-                    onClick={() => onOpen(item)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
-                      color: 'var(--text-1)',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                    }}
+                  <div style={{ fontWeight: 500 }}>{item.user?.nickname ?? '-'}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
+                    {item.user?.kakao_info?.nickname ?? '게스트(비연동)'}
+                  </div>
+                  <div
+                    style={{ fontSize: '11px', color: 'var(--text-3)', fontFamily: 'monospace' }}
                   >
-                    {item.title}
-                  </button>
+                    {item.user?.identified_id ?? '-'}
+                  </div>
                 </td>
-                <td style={{ color: 'var(--text-3)', fontSize: '12px' }}>
-                  {item.user?.nickname ?? '-'}
-                </td>
-                <td style={{ color: 'var(--text-3)', fontSize: '12px' }}>
+                <td style={{ textAlign: 'center', color: 'var(--text-3)', fontSize: '12px' }}>
                   {QNA_TYPE_LABELS[item.type] ?? item.type}
                 </td>
-                <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
-                  <div style={{ fontWeight: 700, color: '#333' }}>{date}</div>
-                  <div style={{ color: 'var(--text-3)', fontSize: '11px' }}>{time}</div>
-                </td>
+                <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{date}</td>
                 <td style={{ textAlign: 'center' }}>
                   <InquiryStateBadge state={item.state} />
                 </td>
-                <td>
+                <td style={{ textAlign: 'center' }}>
                   <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
                     <button
                       type="button"
                       className="btn btn-ghost btn-sm"
                       onClick={() => onOpen(item)}
                     >
-                      {item.answer ? '답변 수정' : '답변하기'}
+                      {isAnswered ? '답변 수정' : '답변하기'}
                     </button>
                     <button
                       type="button"
-                      className="btn btn-danger btn-sm"
+                      className="btn btn-ghost btn-sm"
                       onClick={() => onDelete(item)}
                     >
                       삭제

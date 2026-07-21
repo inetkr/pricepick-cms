@@ -26,10 +26,10 @@ export const QNA_STATE_SELECT_OPTIONS: { value: IQnaState; label: string }[] = [
 ];
 
 export const QNA_TYPE_LABELS: Record<IQnaType, string> = {
-  TICKET_EARN: '티켓 적립 문의',
-  GIFT_EXCHANGE: '기프티콘 교환 문의',
-  TICKET_CONVERT: '티켓 전환/복구 문의',
-  ACCOUNT: '계정/로그인 문의',
+  TICKET_EARN: '티켓 적립',
+  GIFT_EXCHANGE: '기프티콘 교환',
+  TICKET_CONVERT: '티켓 교환·환수',
+  ACCOUNT: '계정·로그인',
   OTHER: '기타',
 };
 

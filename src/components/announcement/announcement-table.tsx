@@ -14,8 +14,8 @@ interface AnnouncementTableProps {
 const TYPE_BADGE_CLASS: Record<IAnnouncementType, string> = {
   NORMAL: 'badge-gray',
   MAINTENANCE: 'badge-amber',
-  UPDATE: 'badge-blue',
-  POLICY_CHANGE: 'badge-purple',
+  UPDATE: 'badge-purple',
+  POLICY_CHANGE: 'badge-red',
   EVENT: 'badge-green',
 };
 
@@ -41,11 +41,11 @@ export const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
       <thead>
         <tr>
           <th>제목</th>
-          <th>분류</th>
-          <th>게시일</th>
-          <th>조회수</th>
-          <th>노출</th>
-          <th>관리</th>
+          <th style={{ textAlign: 'center' }}>분류</th>
+          <th style={{ textAlign: 'center' }}>게시일</th>
+          <th style={{ textAlign: 'center' }}>조회수</th>
+          <th style={{ textAlign: 'center' }}>상태</th>
+          <th style={{ textAlign: 'center' }}>관리</th>
         </tr>
       </thead>
       <tbody>
@@ -62,22 +62,26 @@ export const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
           announcements.map((announcement) => (
             <tr key={announcement.id}>
               <td style={{ fontWeight: 500 }}>{announcement.title}</td>
-              <td>
+              <td style={{ textAlign: 'center' }}>
                 <span className={`badge ${TYPE_BADGE_CLASS[announcement.type]}`}>
                   {ANNOUNCEMENT_TYPE_LABEL[announcement.type] || announcement.type}
                 </span>
               </td>
-              <td>{renderDate(announcement.created_at)}</td>
-              <td>{announcement.view_count?.toLocaleString() ?? 0}</td>
-              <td>
+              <td style={{ textAlign: 'center', whiteSpace: 'nowrap', fontWeight: 500 }}>
+                {renderDate(announcement.created_at)}
+              </td>
+              <td style={{ textAlign: 'center' }}>
+                {announcement.view_count?.toLocaleString() ?? 0}
+              </td>
+              <td style={{ textAlign: 'center' }}>
                 <span
-                  className={`badge ${announcement.is_published ? 'badge-green' : 'badge-gray'}`}
+                  className={`badge ${announcement.is_published ? 'badge-green' : 'badge-amber'}`}
                 >
-                  {announcement.is_published ? '노출' : '숨김'}
+                  {announcement.is_published ? '게시' : '임시저장'}
                 </span>
               </td>
-              <td>
-                <div style={{ display: 'flex', gap: '6px' }}>
+              <td style={{ textAlign: 'center' }}>
+                <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
                   <button
                     type="button"
                     className="btn btn-ghost btn-sm"
@@ -88,7 +92,7 @@ export const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                   <button
                     type="button"
                     className="btn btn-ghost btn-sm"
-                    style={{ color: 'var(--danger)' }}
+                    // style={{ color: 'var(--danger)' }}
                     onClick={() => onDelete(announcement)}
                   >
                     삭제

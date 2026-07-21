@@ -16,7 +16,7 @@ export const AnnouncementStats: React.FC<AnnouncementStatsProps> = ({ stats }) =
     />
     <StatCard
       label="전체 공지"
-      value={`${stats.published_diff_vs_last_month?.toLocaleString()}건`}
+      value={`${(stats.published + stats.draft)?.toLocaleString()}건`}
       color="blue"
       change={{ type: 'neutral', text: '등록 누적' }}
     />

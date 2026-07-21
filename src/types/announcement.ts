@@ -33,4 +33,6 @@ export type ICreateAnnouncementPayload = {
 export type IUpdateAnnouncementPayload = {
   title: string;
   content: string;
+  type?: IAnnouncementType;
+  is_published?: boolean;
 };

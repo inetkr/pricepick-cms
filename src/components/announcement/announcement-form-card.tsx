@@ -6,7 +6,12 @@ import type { IAnnouncementType } from 'src/types/announcement';
 
 interface AnnouncementFormCardProps {
   isSaving: boolean;
-  onSubmit: (data: { title: string; content: string; type: IAnnouncementType; isPublished: boolean }) => Promise<boolean>;
+  onSubmit: (data: {
+    title: string;
+    content: string;
+    type: IAnnouncementType;
+    isPublished: boolean;
+  }) => Promise<boolean>;
 }
 
 export const AnnouncementFormCard: React.FC<AnnouncementFormCardProps> = ({
@@ -43,7 +48,7 @@ export const AnnouncementFormCard: React.FC<AnnouncementFormCardProps> = ({
             <input
               id="announcement-title"
               className="form-input"
-              placeholder="공지 제목을 입력하세요"
+              placeholder="공지 제목"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -75,7 +80,7 @@ export const AnnouncementFormCard: React.FC<AnnouncementFormCardProps> = ({
             id="announcement-content"
             className="form-input"
             style={{ minHeight: '140px', resize: 'vertical' }}
-            placeholder="공지 내용을 입력하세요"
+            placeholder="공지 본문 (앱 마이 > 공지사항에 게시됩니다)"
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
