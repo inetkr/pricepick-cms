@@ -19,9 +19,7 @@ export const useAnnouncement = () => {
   const [stats, setStats] = useState<IAnnouncementStat>({
     published: 0,
     draft: 0,
-    published_diff_vs_last_month: 0,
-    published_last_month: 0,
-    published_this_month: 0,
+    total: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);

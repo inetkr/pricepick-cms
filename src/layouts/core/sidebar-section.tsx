@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import {
@@ -256,11 +256,31 @@ export default function SidebarSection() {
   const { theme, setTheme } = useTheme();
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   const [isMini, setIsMini] = useState(false);
-  const [user] = useState({
-    name: admin?.username || '관리자',
-    email: admin?.email || '',
-    avatar: admin?.username ? admin.username.charAt(0).toUpperCase() : 'A',
+  const [user, setUser] = useState({
+    role: admin?.role === 'SUPERADMIN' ? '슈퍼어드민' : '관리자',
+    name: admin?.username ?? '관리자',
+    avatar: (admin?.role === 'SUPERADMIN' ? '슈퍼어드민' : '관리자').charAt(0).toUpperCase() ?? 'A',
   });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMini(window.innerWidth < 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    setUser({
+      role: admin?.role === 'SUPERADMIN' ? '슈퍼어드민' : '관리자',
+      name: admin?.username ?? '관리자',
+      avatar:
+        (admin?.role === 'SUPERADMIN' ? '슈퍼어드민' : '관리자').charAt(0).toUpperCase() ?? 'A',
+    });
+  }, [admin]);
 
   // Toggle group thu gọn
   const toggleGroup = (groupId: string) => {
@@ -366,8 +386,8 @@ export default function SidebarSection() {
         <div className="sb-user">
           <div className="sb-avatar">{user.avatar}</div>
           <div className="sb-user-info">
-            <div className="sb-user-name">{user.name}</div>
-            <div className="sb-user-email">{user.email}</div>
+            <div className="sb-user-name">{user.role}</div>
+            <div className="sb-user-email">{user.name}</div>
           </div>
         </div>
         <div className="sb-footer-btns">

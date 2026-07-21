@@ -18,9 +18,7 @@ export type IAnnouncement = IBase & {
 export type IAnnouncementStat = {
   published: number;
   draft: number;
-  published_this_month: number;
-  published_last_month: number;
-  published_diff_vs_last_month: number;
+  total: number;
 };
 
 export type ICreateAnnouncementPayload = {

@@ -44,8 +44,12 @@ export default function HeaderSection() {
   const pathname = usePathname();
   const [, setCurrentTime] = useState('');
   const { admin } = useAuthContext();
-  const role = admin?.role === 'SUPERADMIN' ? '슈퍼어드민' : '관리자';
+  const [role, setRole] = useState(admin?.role === 'SUPERADMIN' ? '슈퍼어드민' : '관리자');
   const router = useRouter();
+
+  useEffect(() => {
+    setRole(admin?.role === 'SUPERADMIN' ? '슈퍼어드민' : '관리자');
+  }, [admin?.role]);
 
   useEffect(() => {
     const updateClock = () => {
