@@ -14,10 +14,8 @@ const defaultFilters: InquiryFilterValues = { search: '', state: '', type: '' };
 const defaultStats: IQnaStats = {
   pending: 0,
   processing: 0,
-  completed_today: 0,
-  completed_yesterday: 0,
-  completed_diff_vs_yesterday: 0,
-  avg_response_hours_this_month: 0,
+  completed: 0,
+  avg_response_hours: 0,
 };
 
 export const useInquiries = () => {

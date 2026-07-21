@@ -29,19 +29,23 @@ export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
 }) => {
   const [answer, setAnswer] = useState('');
   const [state, setState] = useState<IQnaState>('PENDING');
+  const [attempted, setAttempted] = useState(false);
 
   useEffect(() => {
     if (open && inquiry) {
       setAnswer(inquiry.answer || '');
       setState((inquiry.state as IQnaState) || 'PENDING');
+      setAttempted(false);
     }
   }, [open, inquiry]);
 
   if (!open || !inquiry) return null;
 
   const isValid = answer.trim() !== '';
+  const answerError = attempted && answer.trim() === '' ? '답변 내용을 입력해주세요.' : null;
 
   const handleSubmit = () => {
+    setAttempted(true);
     if (!isValid) return;
     // 답변을 저장하는데 상태가 아직 미처리인 경우, 자동으로 처리 중 이상으로 올려준다.
     const nextState = state === 'PENDING' ? 'PROCESSING' : state;
@@ -121,12 +125,13 @@ export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
             </label>
             <textarea
               id="inq-answer"
-              className="form-input"
+              className={`form-input${answerError ? ' has-error' : ''}`}
               style={{ minHeight: '100px' }}
               placeholder="답변을 입력하세요..."
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
             />
+            {answerError && <div className="field-error">{answerError}</div>}
           </div>
 
           <div className="form-group">
@@ -155,7 +160,7 @@ export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
             type="button"
             className="btn btn-primary"
             onClick={handleSubmit}
-            disabled={!isValid || isSaving}
+            disabled={isSaving}
           >
             {isSaving ? '발송 중...' : '답변 발송'}
           </button>

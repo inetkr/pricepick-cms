@@ -1535,6 +1535,26 @@ export const globalStyles = css`
     color: var(--text-3);
     margin-top: 4px;
   }
+  .field-error {
+    font-size: 11px;
+    color: var(--danger);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .form-input.has-error,
+  .form-select.has-error {
+    border-color: var(--danger);
+  }
+  .form-submit-error {
+    background: var(--danger-soft);
+    border: 1px solid rgba(220, 38, 38, 0.28);
+    border-radius: var(--r-md);
+    padding: 10px 13px;
+    color: var(--danger);
+    font-size: 12px;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
   textarea.form-input {
     resize: vertical;
     min-height: 80px;

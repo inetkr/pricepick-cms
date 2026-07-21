@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { userAPI } from 'src/api';
 import { useDebounce } from 'src/hooks/use-debounce';
 import type { IUser } from 'src/types/users/user';
@@ -48,6 +48,7 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
   onSubmit,
 }) => {
   const [userIdentifier, setUserIdentifier] = useState('');
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
   const [action, setAction] = useState<'ADMIN_ADD' | 'ADMIN_SUB'>('ADMIN_ADD');
   const [quantities, setQuantities] = useState<Record<TicketGrade, number>>(INITIAL_QUANTITIES);
   const [description, setDescription] = useState('');
@@ -55,19 +56,20 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
   const [searchResults, setSearchResults] = useState<IUser[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [attempted, setAttempted] = useState(false);
   const debouncedKeyword = useDebounce(keyword, 500);
-  const lastSelectedKeywordRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (open) {
       setUserIdentifier('');
+      setSelectedUser(null);
       setAction('ADMIN_ADD');
       setQuantities(INITIAL_QUANTITIES);
       setDescription('');
       setKeyword('');
       setSearchResults([]);
       setShowResults(false);
-      lastSelectedKeywordRef.current = null;
+      setAttempted(false);
     }
   }, [open]);
 
@@ -76,9 +78,6 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
     if (!trimmed) {
       setSearchResults([]);
       setShowResults(false);
-      return;
-    }
-    if (debouncedKeyword === lastSelectedKeywordRef.current) {
       return;
     }
 
@@ -108,12 +107,16 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
   if (!open) return null;
 
   const handleSelectUser = (user: IUser) => {
-    const label = `${user.username} · ${user.nickname} · ${user.id}`;
-    lastSelectedKeywordRef.current = label;
-    setKeyword(label);
+    setSelectedUser(user);
     setUserIdentifier(user.id);
+    setKeyword('');
     setSearchResults([]);
     setShowResults(false);
+  };
+
+  const handleClearUser = () => {
+    setSelectedUser(null);
+    setUserIdentifier('');
   };
 
   const stepQty = (grade: TicketGrade, delta: number) => {
@@ -129,7 +132,15 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
   const isValid =
     userIdentifier.trim() !== '' && hasQuantity && description.trim() !== '';
 
+  const userIdentifierError =
+    attempted && userIdentifier.trim() === '' ? '대상 회원을 검색해서 선택해주세요.' : null;
+  const quantityError =
+    attempted && !hasQuantity ? '하나 이상의 등급에 수량을 입력해주세요.' : null;
+  const descriptionError =
+    attempted && description.trim() === '' ? '처리 사유를 입력해주세요.' : null;
+
   const handleSubmit = () => {
+    setAttempted(true);
     if (!isValid) return;
     onSubmit({
       user_identifier: userIdentifier,
@@ -177,18 +188,14 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
             <label className="form-label" htmlFor="ticket-manual-user-identifier">
               대상 회원
             </label>
-            <div style={{ position: 'relative' }}>
+            <div className="user-search">
               <input
                 id="ticket-manual-user-identifier"
-                className="form-input"
+                className={`form-input${userIdentifierError ? ' has-error' : ''}`}
                 placeholder="대상 회원 닉네임 또는 UID"
                 autoComplete="off"
                 value={keyword}
-                onChange={(e) => {
-                  const { value } = e.target;
-                  setKeyword(value);
-                  setUserIdentifier(value);
-                }}
+                onChange={(e) => setKeyword(e.target.value)}
                 onFocus={() => {
                   if (searchResults.length > 0) setShowResults(true);
                 }}
@@ -246,12 +253,26 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
                           e.currentTarget.style.background = 'transparent';
                         }}
                       >
-                        {user.username} · {user.nickname} · {user.id}
+                        {user.nickname} · {user.kakao_info ? user.kakao_info.email : '게스트(비연동)'} ·{' '}
+                        {user.identified_id}
                       </button>
                     ))}
                 </div>
               )}
             </div>
+            {selectedUser && (
+              <div className="user-search-chips">
+                <span className="user-search-chip">
+                  {selectedUser.nickname} ·{' '}
+                  {selectedUser.kakao_info ? selectedUser.kakao_info.email : '게스트(비연동)'} ·{' '}
+                  {selectedUser.identified_id}
+                  <button type="button" onClick={handleClearUser} aria-label="선택 해제">
+                    ×
+                  </button>
+                </span>
+              </div>
+            )}
+            {userIdentifierError && <div className="field-error">{userIdentifierError}</div>}
           </div>
           <div className="form-group">
             <label className="form-label" htmlFor="ticket-manual-action">
@@ -302,6 +323,7 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
                 </div>
               ))}
             </div>
+            {quantityError && <div className="field-error">{quantityError}</div>}
           </div>
           <div className="form-group">
             <label className="form-label" htmlFor="ticket-manual-description">
@@ -309,23 +331,19 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
             </label>
             <input
               id="ticket-manual-description"
-              className="form-input"
+              className={`form-input${descriptionError ? ' has-error' : ''}`}
               placeholder="처리 사유 (필수)"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
+            {descriptionError && <div className="field-error">{descriptionError}</div>}
           </div>
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-ghost" onClick={onClose}>
             취소
           </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleSubmit}
-            disabled={!isValid}
-          >
+          <button type="button" className="btn btn-primary" onClick={handleSubmit}>
             처리하기
           </button>
         </div>

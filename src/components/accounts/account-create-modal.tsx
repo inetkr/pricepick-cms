@@ -26,9 +26,13 @@ export const AccountCreateModal: React.FC<AccountCreateModalProps> = ({
   onSubmit,
 }) => {
   const [form, setForm] = useState<ICreateEmployeePayload>(initialForm);
+  const [attempted, setAttempted] = useState(false);
 
   useEffect(() => {
-    if (open) setForm(initialForm);
+    if (open) {
+      setForm(initialForm);
+      setAttempted(false);
+    }
   }, [open]);
 
   if (!open) return null;
@@ -39,7 +43,15 @@ export const AccountCreateModal: React.FC<AccountCreateModalProps> = ({
     form.password.trim().length >= 6 &&
     form.fullname.trim() !== '';
 
+  const fullnameError = attempted && form.fullname.trim() === '' ? '이름을 입력해주세요.' : null;
+  const usernameError =
+    attempted && form.username.trim() === '' ? '로그인 아이디를 입력해주세요.' : null;
+  const emailError = attempted && form.email.trim() === '' ? '이메일을 입력해주세요.' : null;
+  const passwordError =
+    attempted && form.password.trim().length < 6 ? '비밀번호는 6자 이상 입력해주세요.' : null;
+
   const handleSubmit = () => {
+    setAttempted(true);
     if (!isValid) return;
     onSubmit(form);
   };
@@ -77,11 +89,12 @@ export const AccountCreateModal: React.FC<AccountCreateModalProps> = ({
             </label>
             <input
               id="ac-fullname"
-              className="form-input"
+              className={`form-input${fullnameError ? ' has-error' : ''}`}
               placeholder="예: 홍길동"
               value={form.fullname}
               onChange={(e) => setForm((prev) => ({ ...prev, fullname: e.target.value }))}
             />
+            {fullnameError && <div className="field-error">{fullnameError}</div>}
           </div>
           <div className="form-group">
             <label className="form-label" htmlFor="ac-username">
@@ -89,11 +102,12 @@ export const AccountCreateModal: React.FC<AccountCreateModalProps> = ({
             </label>
             <input
               id="ac-username"
-              className="form-input"
+              className={`form-input${usernameError ? ' has-error' : ''}`}
               placeholder="예: hong (실제 로그인 아이디)"
               value={form.username}
               onChange={(e) => setForm((prev) => ({ ...prev, username: e.target.value }))}
             />
+            {usernameError && <div className="field-error">{usernameError}</div>}
           </div>
           <div className="form-group">
             <label className="form-label" htmlFor="ac-email">
@@ -101,12 +115,13 @@ export const AccountCreateModal: React.FC<AccountCreateModalProps> = ({
             </label>
             <input
               id="ac-email"
-              className="form-input"
+              className={`form-input${emailError ? ' has-error' : ''}`}
               type="email"
               placeholder="예: hong@pricepick.co.kr"
               value={form.email}
               onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
             />
+            {emailError && <div className="field-error">{emailError}</div>}
           </div>
           <div className="form-group">
             <label className="form-label" htmlFor="ac-role">
@@ -137,12 +152,13 @@ export const AccountCreateModal: React.FC<AccountCreateModalProps> = ({
             </label>
             <input
               id="ac-password"
-              className="form-input"
+              className={`form-input${passwordError ? ' has-error' : ''}`}
               type="password"
               placeholder="최초 로그인 후 변경 필요 (6자 이상)"
               value={form.password}
               onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
             />
+            {passwordError && <div className="field-error">{passwordError}</div>}
           </div>
         </div>
         <div className="modal-footer">
@@ -153,7 +169,7 @@ export const AccountCreateModal: React.FC<AccountCreateModalProps> = ({
             type="button"
             className="btn btn-primary"
             onClick={handleSubmit}
-            disabled={!isValid || isSaving}
+            disabled={isSaving}
           >
             {isSaving ? '생성 중...' : '계정 생성'}
           </button>

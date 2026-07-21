@@ -33,6 +33,7 @@ export const PointManualModal: React.FC<PointManualModalProps> = ({ open, onClos
   const [searchResults, setSearchResults] = useState<IUser[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [attempted, setAttempted] = useState(false);
   const debouncedKeyword = useDebounce(keyword, 500);
 
   useEffect(() => {
@@ -45,6 +46,7 @@ export const PointManualModal: React.FC<PointManualModalProps> = ({ open, onClos
       setKeyword('');
       setSearchResults([]);
       setShowResults(false);
+      setAttempted(false);
     }
   }, [open]);
 
@@ -96,7 +98,14 @@ export const PointManualModal: React.FC<PointManualModalProps> = ({ open, onClos
 
   const isValid = userIdentifier.trim() !== '' && amount > 0 && description.trim() !== '';
 
+  const userIdentifierError =
+    attempted && userIdentifier.trim() === '' ? '대상 회원을 검색해서 선택해주세요.' : null;
+  const amountError = attempted && amount <= 0 ? '포인트 금액을 입력해주세요.' : null;
+  const descriptionError =
+    attempted && description.trim() === '' ? '처리 사유를 입력해주세요.' : null;
+
   const handleSubmit = () => {
+    setAttempted(true);
     if (!isValid) return;
     onSubmit({
       user_identifier: userIdentifier,
@@ -145,7 +154,7 @@ export const PointManualModal: React.FC<PointManualModalProps> = ({ open, onClos
             <div className="user-search">
               <input
                 id="point-manual-user-identifier"
-                className="form-input"
+                className={`form-input${userIdentifierError ? ' has-error' : ''}`}
                 placeholder="대상 회원 닉네임 또는 UID"
                 autoComplete="off"
                 value={keyword}
@@ -227,6 +236,7 @@ export const PointManualModal: React.FC<PointManualModalProps> = ({ open, onClos
                 </span>
               </div>
             )}
+            {userIdentifierError && <div className="field-error">{userIdentifierError}</div>}
           </div>
           <div className="form-row">
             <div className="form-group">
@@ -252,13 +262,14 @@ export const PointManualModal: React.FC<PointManualModalProps> = ({ open, onClos
               </label>
               <input
                 id="point-manual-amount"
-                className="form-input"
+                className={`form-input${amountError ? ' has-error' : ''}`}
                 type="number"
                 placeholder="0"
                 min={1}
                 value={amount || ''}
                 onChange={(e) => setAmount(Math.max(0, Number(e.target.value) || 0))}
               />
+              {amountError && <div className="field-error">{amountError}</div>}
             </div>
           </div>
           <div className="form-group">
@@ -267,23 +278,19 @@ export const PointManualModal: React.FC<PointManualModalProps> = ({ open, onClos
             </label>
             <input
               id="point-manual-description"
-              className="form-input"
+              className={`form-input${descriptionError ? ' has-error' : ''}`}
               placeholder="처리 사유 (필수)"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
+            {descriptionError && <div className="field-error">{descriptionError}</div>}
           </div>
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-ghost" onClick={onClose}>
             취소
           </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleSubmit}
-            disabled={!isValid}
-          >
+          <button type="button" className="btn btn-primary" onClick={handleSubmit}>
             처리하기
           </button>
         </div>

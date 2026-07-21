@@ -21,6 +21,7 @@ export const AccountEditModal: React.FC<AccountEditModalProps> = ({
   onSubmit,
 }) => {
   const [form, setForm] = useState<IUpdateEmployeePayload>(initialForm);
+  const [attempted, setAttempted] = useState(false);
 
   useEffect(() => {
     if (open && account) {
@@ -28,14 +29,17 @@ export const AccountEditModal: React.FC<AccountEditModalProps> = ({
         fullname: account.fullname || '',
         role: 'ADMIN',
       });
+      setAttempted(false);
     }
   }, [open, account]);
 
   if (!open || !account) return null;
 
   const isValid = form.fullname.trim() !== '';
+  const fullnameError = attempted && form.fullname.trim() === '' ? '이름을 입력해주세요.' : null;
 
   const handleSubmit = () => {
+    setAttempted(true);
     if (!isValid) return;
     onSubmit(account.id, form);
   };
@@ -87,22 +91,18 @@ export const AccountEditModal: React.FC<AccountEditModalProps> = ({
             </label>
             <input
               id="ae-fullname"
-              className="form-input"
+              className={`form-input${fullnameError ? ' has-error' : ''}`}
               value={form.fullname}
               onChange={(e) => setForm((prev) => ({ ...prev, fullname: e.target.value }))}
             />
+            {fullnameError && <div className="field-error">{fullnameError}</div>}
           </div>
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-ghost" onClick={onClose}>
             취소
           </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleSubmit}
-            disabled={!isValid || isSaving}
-          >
+          <button type="button" className="btn btn-primary" onClick={handleSubmit} disabled={isSaving}>
             {isSaving ? '저장 중...' : '저장'}
           </button>
         </div>

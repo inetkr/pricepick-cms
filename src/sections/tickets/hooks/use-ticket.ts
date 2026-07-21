@@ -6,8 +6,8 @@ import type { ITicketStat } from 'src/types/tickets/ticket_stat';
 
 type IFilters = {
   search: string;
-  transaction_type_group: string;
-  usage_status: string;
+  transaction_type: string;
+  // usage_status: string;
 }
 
 export const useTickets = () => {
@@ -22,7 +22,7 @@ export const useTickets = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState<IFilters>({
-    search: '', transaction_type_group: '', usage_status: '',
+    search: '', transaction_type: ''
   });
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);

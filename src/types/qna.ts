@@ -26,10 +26,8 @@ export type IQna = IBase & {
 export type IQnaStats = {
   pending: number;
   processing: number;
-  completed_today: number;
-  completed_yesterday: number;
-  completed_diff_vs_yesterday: number;
-  avg_response_hours_this_month: number;
+  completed: number;
+  avg_response_hours: number;
 };
 
 export type IUpdateQnaPayload = {
