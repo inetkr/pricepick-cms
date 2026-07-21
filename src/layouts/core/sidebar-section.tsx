@@ -13,14 +13,12 @@ import {
   CancelIcon,
   ChartIcon,
   ChatIcon,
-  ClawbackIcon,
   DashboardIcon,
   DrawIcon,
   EventIcon,
   GiftIcon,
   InviteIcon,
   MembersIcon,
-  NoticeIcon,
   PointsIcon,
   PolicyIcon,
   PostbackIcon,
@@ -35,6 +33,8 @@ import {
   WithdrawIcon,
   AttendanceIcon,
   PointPolicyIcon,
+  AnnouncementIcon,
+  AbuseIcon,
 } from './Icons';
 import { authAPI } from 'src/api';
 import { useAuthContext } from 'src/auth/hooks';
@@ -45,6 +45,7 @@ type MenuItem = {
   icon: React.ReactNode;
   href: string;
   badge?: number;
+  disabled?: boolean;
 };
 
 type MenuGroup = {
@@ -63,9 +64,21 @@ const MENU_GROUPS: MenuGroup[] = [
     id: 'grp-revenue',
     label: '매출 · 수익',
     items: [
-      { id: 'stats', label: '수익 분석', icon: <ChartIcon />, href: '/stats' },
-      { id: 'revenue', label: '매출 내역', icon: <RevenueIcon />, href: '/revenue' },
-      { id: 'settlement', label: '정산 내역', icon: <SettlementIcon />, href: '/settlement' },
+      { id: 'stats', label: '수익 분석', icon: <ChartIcon />, href: '/stats', disabled: true },
+      {
+        id: 'revenue',
+        label: '매출 내역',
+        icon: <RevenueIcon />,
+        href: '/revenue',
+        disabled: true,
+      },
+      {
+        id: 'settlement',
+        label: '정산 내역',
+        icon: <SettlementIcon />,
+        href: '/settlement',
+        disabled: true,
+      },
     ],
   },
   {
@@ -78,13 +91,27 @@ const MENU_GROUPS: MenuGroup[] = [
     label: '티켓 · 보상',
     items: [
       { id: 'tickets', label: '티켓 내역', icon: <TicketIcon />, href: '/tickets' },
-      { id: 'draws', label: '추첨 관리', icon: <DrawIcon />, href: '/draws', badge: 1 },
-      { id: 'prizes', label: '경품/응모 관리', icon: <PrizeIcon />, href: '/prizes' },
+      {
+        id: 'draws',
+        label: '추첨 관리',
+        icon: <DrawIcon />,
+        href: '/draws',
+        badge: 1,
+        disabled: true,
+      },
+      {
+        id: 'prizes',
+        label: '경품/응모 관리',
+        icon: <PrizeIcon />,
+        href: '/prizes',
+        disabled: true,
+      },
       {
         id: 'attendance',
         label: '주간 이벤트 추첨',
         icon: <AttendanceIcon />,
         href: '/attendance',
+        disabled: true,
       },
       {
         id: 'lucky-spin-config',
@@ -92,7 +119,7 @@ const MENU_GROUPS: MenuGroup[] = [
         icon: <LuckySpinIcon />,
         href: '/lucky-spin-config',
       },
-      { id: 'clawback', label: '환수 이력', icon: <ClawbackIcon />, href: '/clawback' },
+      // { id: 'clawback', label: '환수 이력', icon: <ClawbackIcon />, href: '/clawback' },
     ],
   },
   {
@@ -118,19 +145,33 @@ const MENU_GROUPS: MenuGroup[] = [
     id: 'grp-gifticon',
     label: '기프티콘 관리',
     items: [
-      { id: 'gifticons', label: '구매/사용 내역', icon: <GiftIcon />, href: '/gifticons' },
-      { id: 'gifticon-cancel', label: '취소 내역', icon: <CancelIcon />, href: '/gifticon-cancel' },
+      {
+        id: 'gifticons',
+        label: '구매/사용 내역',
+        icon: <GiftIcon />,
+        href: '/gifticons',
+        disabled: true,
+      },
+      {
+        id: 'gifticon-cancel',
+        label: '취소 내역',
+        icon: <CancelIcon />,
+        href: '/gifticon-cancel',
+        disabled: true,
+      },
       {
         id: 'gifticon-products',
         label: '상품 목록',
         icon: <ProductIcon />,
         href: '/gifticon-products',
+        disabled: true,
       },
       {
         id: 'gifticon-bulk',
         label: '상품설명 일괄등록',
         icon: <BulkIcon />,
         href: '/gifticon-bulk',
+        disabled: true,
       },
     ],
   },
@@ -138,10 +179,21 @@ const MENU_GROUPS: MenuGroup[] = [
     id: 'grp-content',
     label: '콘텐츠',
     items: [
-      { id: 'banners', label: '배너 관리', icon: <BannerIcon />, href: '/banners' },
-      { id: 'events', label: '이벤트 관리', icon: <EventIcon />, href: '/events' },
-      { id: 'invite', label: '친구초대 관리', icon: <InviteIcon />, href: '/invite' },
-      { id: 'notice', label: '공지사항 관리', icon: <NoticeIcon />, href: '/notice' },
+      { id: 'banners', label: '배너 관리', icon: <BannerIcon />, href: '/banners', disabled: true },
+      { id: 'events', label: '이벤트 관리', icon: <EventIcon />, href: '/events', disabled: true },
+      {
+        id: 'invite',
+        label: '친구초대 관리',
+        icon: <InviteIcon />,
+        href: '/invite',
+        disabled: true,
+      },
+      {
+        id: 'announcement',
+        label: '공지사항 관리',
+        icon: <AnnouncementIcon />,
+        href: '/announcement',
+      },
       { id: 'notifications', label: '알림 관리', icon: <BellIcon />, href: '/notifications' },
     ],
   },
@@ -151,18 +203,43 @@ const MENU_GROUPS: MenuGroup[] = [
     items: [
       { id: 'op-policy', label: '운영 정책', icon: <PolicyIcon />, href: '/op-policy' },
       { id: 'terms', label: '약관 관리', icon: <TermsIcon />, href: '/terms' },
-      { id: 'inquiries', label: '1:1 문의', icon: <ChatIcon />, href: '/inquiries', badge: 7 },
+      { id: 'inquiries', label: '1:1 문의', icon: <ChatIcon />, href: '/inquiries' },
       { id: 'withdrawal', label: '계정 탈퇴 처리', icon: <WithdrawIcon />, href: '/withdrawal' },
+      {
+        id: 'abuse',
+        label: '어뷰징·이상적립 모니터링',
+        icon: <AbuseIcon />,
+        href: '/abuse',
+        disabled: true,
+      },
     ],
   },
   {
     id: 'grp-system',
     label: '시스템',
     items: [
-      { id: 'postback', label: '포스트백 로그', icon: <PostbackIcon />, href: '/postback' },
-      { id: 'appver', label: '앱 버전 관리', icon: <AppIcon />, href: '/appver' },
-      { id: 'apikeys', label: '제휴몰 API 관리', icon: <ApiIcon />, href: '/apikeys' },
-      { id: 'scheduler', label: '스케줄러', icon: <ScheduleIcon />, href: '/scheduler' },
+      {
+        id: 'postback',
+        label: '포스트백 로그',
+        icon: <PostbackIcon />,
+        href: '/postback',
+        disabled: true,
+      },
+      { id: 'appver', label: '앱 버전 관리', icon: <AppIcon />, href: '/appver', disabled: true },
+      {
+        id: 'apikeys',
+        label: '제휴몰 API 관리',
+        icon: <ApiIcon />,
+        href: '/apikeys',
+        disabled: true,
+      },
+      {
+        id: 'scheduler',
+        label: '스케줄러',
+        icon: <ScheduleIcon />,
+        href: '/scheduler',
+        disabled: true,
+      },
     ],
   },
   {
@@ -266,9 +343,10 @@ export default function SidebarSection() {
                   <button
                     type="button"
                     key={item.id}
-                    className={`sb-item ${isActive ? 'active' : ''}`}
+                    className={`sb-item ${isActive ? 'active' : ''} ${item.disabled ? 'btn-disabled' : ''}`}
                     data-label={item.label}
-                    onClick={() => router.push(item.href)}
+                    disabled={item.disabled}
+                    onClick={() => !item.disabled && router.push(item.href)}
                   >
                     <span className="sb-item-ico">{item.icon}</span>
                     <span className="sb-item-lbl">{item.label}</span>

@@ -14,18 +14,15 @@ export type IAdmin  = IBase & {
     last_online: number;
 }
 
-// role은 SUPERADMIN을 제외하고 CMS에서 생성/수정 가능
-export type IManageableAdminRole = Exclude<IAdminRole, 'SUPERADMIN'>;
-
 export type ICreateEmployeePayload = {
     username: string;
     email: string;
     password: string;
     fullname: string;
-    role: IManageableAdminRole;
+    role: IAdminRole;
 }
 
 export type IUpdateEmployeePayload = {
     fullname: string;
-    role: IManageableAdminRole;
+    role: IAdminRole;
 }

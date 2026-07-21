@@ -10,6 +10,8 @@ import ConfigAPI from "./config-api";
 import ActivityLogAPI from "./activity-log-api";
 import PolicyAPI from "./policy-api";
 import QnaAPI from "./qna-api";
+import AnnouncementAPI from "./announcement-api";
+import NotificationAPI from "./notification-api";
 
 export const userAPI = new UserAPI();
 
@@ -34,3 +36,7 @@ export const activityLogAPI = new ActivityLogAPI();
 export const policyAPI = new PolicyAPI();
 
 export const qnaAPI = new QnaAPI();
+
+export const announcementAPI = new AnnouncementAPI();
+
+export const notificationAPI = new NotificationAPI();

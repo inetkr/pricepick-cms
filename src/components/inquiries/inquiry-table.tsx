@@ -39,6 +39,7 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
       <thead>
         <tr>
           <th>제목</th>
+          <th>작성자</th>
           <th>유형</th>
           <th>작성일</th>
           <th>상태</th>
@@ -48,13 +49,19 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
       <tbody>
         {isLoading ? (
           <tr>
-            <td colSpan={5} style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}>
+            <td
+              colSpan={6}
+              style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}
+            >
               불러오는 중...
             </td>
           </tr>
         ) : inquiries.length === 0 ? (
           <tr>
-            <td colSpan={5} style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}>
+            <td
+              colSpan={6}
+              style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}
+            >
               조건에 맞는 문의가 없습니다.
             </td>
           </tr>
@@ -81,6 +88,9 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
                   </button>
                 </td>
                 <td style={{ color: 'var(--text-3)', fontSize: '12px' }}>
+                  {item.user?.nickname ?? '-'}
+                </td>
+                <td style={{ color: 'var(--text-3)', fontSize: '12px' }}>
                   {QNA_TYPE_LABELS[item.type] ?? item.type}
                 </td>
                 <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
@@ -92,10 +102,18 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
                 </td>
                 <td>
                   <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
-                    <button type="button" className="btn btn-ghost btn-sm" onClick={() => onOpen(item)}>
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm"
+                      onClick={() => onOpen(item)}
+                    >
                       {item.answer ? '답변 수정' : '답변하기'}
                     </button>
-                    <button type="button" className="btn btn-danger btn-sm" onClick={() => onDelete(item)}>
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-sm"
+                      onClick={() => onDelete(item)}
+                    >
                       삭제
                     </button>
                   </div>

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { EMPLOYEE_ROLE_OPTIONS } from 'src/constants/employee';
 import type { IAdmin, IUpdateEmployeePayload } from 'src/types/admin';
 
 interface AccountEditModalProps {
@@ -12,7 +11,7 @@ interface AccountEditModalProps {
   onSubmit: (id: string, payload: IUpdateEmployeePayload) => void;
 }
 
-const initialForm: IUpdateEmployeePayload = { fullname: '', role: 'CS' };
+const initialForm: IUpdateEmployeePayload = { fullname: '', role: 'ADMIN' };
 
 export const AccountEditModal: React.FC<AccountEditModalProps> = ({
   open,
@@ -27,7 +26,7 @@ export const AccountEditModal: React.FC<AccountEditModalProps> = ({
     if (open && account) {
       setForm({
         fullname: account.fullname || '',
-        role: account.role === 'SUPERADMIN' ? 'CS' : account.role,
+        role: 'ADMIN',
       });
     }
   }, [open, account]);
@@ -92,28 +91,6 @@ export const AccountEditModal: React.FC<AccountEditModalProps> = ({
               value={form.fullname}
               onChange={(e) => setForm((prev) => ({ ...prev, fullname: e.target.value }))}
             />
-          </div>
-          <div className="form-group">
-            <label className="form-label" htmlFor="ae-role">
-              역할
-            </label>
-            <select
-              id="ae-role"
-              className="form-select"
-              value={form.role}
-              onChange={(e) =>
-                setForm((prev) => ({
-                  ...prev,
-                  role: e.target.value as IUpdateEmployeePayload['role'],
-                }))
-              }
-            >
-              {EMPLOYEE_ROLE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
         <div className="modal-footer">

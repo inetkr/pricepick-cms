@@ -52,14 +52,14 @@ export const PointPolicySection: React.FC = () => {
         환산가치 1:1 등가입니다.
       </div>
 
-      <ExchangeRateCard data={exchangeRateData} onEdit={() => setIsEditOpen(true)} />
+      <ExchangeRateCard data={exchangeRateData} />
 
       {isLoading ? (
         <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-2)' }}>
           로딩 중...
         </div>
       ) : (
-        <PointPolicyCard config={config} />
+        <PointPolicyCard config={config} onEdit={() => setIsEditOpen(true)} />
       )}
 
       <PointPolicyEditModal

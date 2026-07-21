@@ -53,7 +53,7 @@ export const DialogMessageView = ({ icon, isConfirm, message, onConfirm, hideMes
           color: 'text.primary',
         }}
       >
-        <span dangerouslySetInnerHTML={{ __html: message }} />
+        <span>{message}</span>
       </Typography>
       <Stack direction="row" justifyContent="center" width="100%" spacing={2} mt={2}>
         <Button

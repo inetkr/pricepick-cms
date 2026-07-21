@@ -138,7 +138,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                       K
                     </span>
                     <span style={{ fontSize: '12px', color: 'var(--text2)' }}>
-                      {member.username}
+                      {member.kakao_info?.email || '(카카오 로그인ID 미등록)'}
                     </span>
                   </div>
                 ) : (

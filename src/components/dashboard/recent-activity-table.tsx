@@ -41,10 +41,7 @@ export const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data, 
               <td>{item.nickname}</td>
               <td>{item.amount}</td>
               <td style={{ color: 'var(--success)' }}>{item.tickets}</td>
-              <td
-                style={{ color: 'var(--text-2)', fontSize: '12px' }}
-                dangerouslySetInnerHTML={{ __html: item.datetime }}
-              />
+              <td style={{ color: 'var(--text-2)', fontSize: '12px' }}>{item.datetime}</td>
             </tr>
           ))}
         </tbody>

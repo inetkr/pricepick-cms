@@ -16,7 +16,7 @@ const initialForm: ICreateEmployeePayload = {
   email: '',
   password: '',
   fullname: '',
-  role: 'CS',
+  role: 'ADMIN',
 };
 
 export const AccountCreateModal: React.FC<AccountCreateModalProps> = ({

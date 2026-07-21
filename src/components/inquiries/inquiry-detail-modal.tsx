@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { QNA_STATE_SELECT_OPTIONS } from 'src/constants/qna';
+import { QNA_STATE_SELECT_OPTIONS, QNA_TYPE_LABELS } from 'src/constants/qna';
 import type { IQna, IQnaState, IUpdateQnaPayload } from 'src/types/qna';
-import { InquiryStateBadge } from './inquiry-state-badge';
 
 interface InquiryDetailModalProps {
   open: boolean;
@@ -18,7 +17,7 @@ const formatDateTime = (value?: string | null) => {
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return '-';
   const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
 };
 
 export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
@@ -77,10 +76,10 @@ export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
         </div>
         <div className="modal-body">
           <div className="info-box">
-            <strong>{inquiry.title}</strong> &nbsp;·&nbsp; {formatDateTime(inquiry.created_at)}{' '}
-            &nbsp;·&nbsp; {inquiry.type}
+            <strong>{inquiry.user?.nickname ?? '-'}</strong> &nbsp;·&nbsp;{' '}
+            {formatDateTime(inquiry.created_at)} &nbsp;·&nbsp; {inquiry.title}
             <br />
-            현재 상태: <InquiryStateBadge state={inquiry.state} />
+            <strong>유형:</strong> {QNA_TYPE_LABELS[inquiry.type] ?? inquiry.type}
           </div>
 
           <div
@@ -97,6 +96,24 @@ export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
           >
             {inquiry.content}
           </div>
+
+          {inquiry.answer && (
+            <div className="form-group">
+              <div className="form-label">기존 답변</div>
+              <div
+                style={{
+                  background: 'var(--main-soft)',
+                  borderRadius: 'var(--r-md)',
+                  padding: '12px',
+                  fontSize: '13px',
+                  lineHeight: 1.6,
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {inquiry.answer}
+              </div>
+            </div>
+          )}
 
           <div className="form-group">
             <label className="form-label" htmlFor="inq-answer">
@@ -140,7 +157,7 @@ export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
             onClick={handleSubmit}
             disabled={!isValid || isSaving}
           >
-            {isSaving ? '저장 중...' : '답변 저장'}
+            {isSaving ? '발송 중...' : '답변 발송'}
           </button>
         </div>
       </div>

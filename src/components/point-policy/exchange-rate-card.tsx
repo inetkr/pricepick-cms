@@ -10,7 +10,6 @@ export interface ExchangeRate {
 
 interface ExchangeRateCardProps {
   data: ExchangeRate[];
-  onEdit?: () => void;
 }
 
 const gradeLabels = {
@@ -19,16 +18,11 @@ const gradeLabels = {
   gold: '골드',
 };
 
-export const ExchangeRateCard: React.FC<ExchangeRateCardProps> = ({ data, onEdit }) => {
+export const ExchangeRateCard: React.FC<ExchangeRateCardProps> = ({ data }) => {
   return (
     <div className="card">
       <div className="card-header">
         <div className="card-title">포인트 → 티켓 교환 비율</div>
-        {onEdit && (
-          <button type="button" className="btn btn-ghost btn-sm" onClick={onEdit}>
-            수정
-          </button>
-        )}
       </div>
       <table>
         <thead>

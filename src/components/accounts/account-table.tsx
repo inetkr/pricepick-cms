@@ -1,6 +1,5 @@
 import React from 'react';
 import type { IAdmin } from 'src/types/admin';
-import { AccountRoleBadge } from './account-role-badge';
 import { AccountStatusBadge } from './account-status-badge';
 
 interface AccountTableProps {
@@ -42,7 +41,6 @@ export const AccountTable: React.FC<AccountTableProps> = ({
         <tr>
           <th>이름</th>
           <th>이메일</th>
-          <th>역할</th>
           <th>최종 로그인</th>
           <th>상태</th>
           <th>관리</th>
@@ -61,7 +59,7 @@ export const AccountTable: React.FC<AccountTableProps> = ({
         ) : (
           accounts.map((account) => {
             const isSelf = account.id === currentAdminId;
-            const canManage = isSuperAdmin && account.role !== 'SUPERADMIN';
+            const canManage = isSuperAdmin;
             return (
               <tr key={account.id}>
                 <td>
@@ -73,9 +71,6 @@ export const AccountTable: React.FC<AccountTableProps> = ({
                   )}
                 </td>
                 <td>{account.email}</td>
-                <td>
-                  <AccountRoleBadge role={account.role} />
-                </td>
                 <td style={{ color: 'var(--text-3)', fontSize: '12px' }}>
                   {formatLastOnline(account.last_online)}
                 </td>

@@ -17,6 +17,10 @@ export type IQna = IBase & {
   is_published: boolean;
   state: IQnaState;
   processed_at: string | null;
+  user: {
+    id: string;
+    nickname: string;
+  }
 };
 
 export type IQnaStats = {

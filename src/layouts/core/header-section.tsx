@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 // Map đường dẫn đến breadcrumb và title
 const PAGE_META: Record<string, { title: string; bc: string }> = {
@@ -11,7 +11,7 @@ const PAGE_META: Record<string, { title: string; bc: string }> = {
   '/draws': { title: '추첨 관리', bc: '티켓 · 보상' },
   '/prizes': { title: '경품/응모 관리', bc: '티켓 · 보상' },
   '/attendance': { title: '주간 이벤트 추첨', bc: '티켓 · 보상' },
-  '/clawback': { title: '환수 이력', bc: '티켓 · 보상' },
+  // '/clawback': { title: '환수 이력', bc: '티켓 · 보상' },
   '/lucky-spin-config': { title: '행운룰렛 설정', bc: '티켓 · 보상' },
   '/points': { title: '포인트 내역', bc: '포인트 관리' },
   '/point-attendance': { title: '출석체크 설정', bc: '포인트 관리' },
@@ -23,7 +23,7 @@ const PAGE_META: Record<string, { title: string; bc: string }> = {
   '/banners': { title: '배너 관리', bc: '콘텐츠' },
   '/events': { title: '이벤트 관리', bc: '콘텐츠' },
   '/invite': { title: '친구초대 관리', bc: '콘텐츠' },
-  '/notice': { title: '공지사항 관리', bc: '콘텐츠' },
+  '/announcement': { title: '공지사항 관리', bc: '콘텐츠' },
   '/notifications': { title: '알림 관리', bc: '콘텐츠' },
   '/op-policy': { title: '운영 정책', bc: '운영' },
   '/terms': { title: '약관 관리', bc: '운영' },
@@ -43,6 +43,7 @@ export default function HeaderSection() {
   const pathname = usePathname();
   const [, setCurrentTime] = useState('');
   const [role] = useState('슈퍼어드민'); // sẽ lấy từ context/auth
+  const router = useRouter();
 
   useEffect(() => {
     const updateClock = () => {
@@ -64,6 +65,7 @@ export default function HeaderSection() {
 
   const handleNotificationClick = () => {
     // TODO: navigate to notifications
+    router.push('/notifications');
   };
 
   return (

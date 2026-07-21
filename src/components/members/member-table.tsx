@@ -20,7 +20,7 @@ const renderMemberInfo: (member: IUser) => JSX.Element = (member) => {
       <>
         <div style={{ fontWeight: 500 }}>{member.nickname}</div>
         <div style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}>
-          {member.username}
+          {member.kakao_info?.email}
         </div>
       </>
     );

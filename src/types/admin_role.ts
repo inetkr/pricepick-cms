@@ -1,1 +1,1 @@
-export type IAdminRole = 'SUPERADMIN' | 'OPERATOR' | 'CS';
+export type IAdminRole = 'ADMIN' | 'SUPERADMIN';

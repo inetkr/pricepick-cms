@@ -2,6 +2,7 @@ import axios from 'src/utils/axios';
 import BaseAPI from './base-api';
 import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
 import type { IUserStat } from 'src/types/users/user_stat';
+import type { IWithdrawalStat } from 'src/types/users/withdrawal_stat';
 import type { IUser } from 'src/types/users/user';
 
 const tableName = 'user';
@@ -48,6 +49,47 @@ export default class UserAPI extends BaseAPI {
       return response.data;
     } catch (error) {
       console.error('Error fetching user list:', error);
+      throw error;
+    }
+  };
+
+  getDeletedUserStat = async (): Promise<ApiResponse<IWithdrawalStat>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.get(
+        `/${tableName}/admin/deleted_account_stats`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching withdrawal statistics:', error);
+      throw error;
+    }
+  };
+
+  getDeletedUserList = async (
+    page: number,
+    limit: number,
+    filter?: {
+      search?: string;
+    }
+  ): Promise<ApiPaginatedResponse<IUser>> => {
+    try {
+      const requestParam: any = {
+        page,
+        limit,
+        order: JSON.stringify([['deleted_at', 'desc']]),
+      };
+      if (filter) {
+        requestParam.filter = JSON.stringify(filter);
+      }
+      const response = await axios.axiosInstanceWithLoading.get(
+        `/${tableName}/admin/list_deleted`,
+        {
+          params: requestParam,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching withdrawn user list:', error);
       throw error;
     }
   };

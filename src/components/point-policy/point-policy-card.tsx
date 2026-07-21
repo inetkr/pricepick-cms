@@ -4,6 +4,7 @@ import { PolicyItem } from '../common/policy-item';
 
 interface PointPolicyCardProps {
   config: IPointPolicyConfigValue;
+  onEdit?: () => void;
 }
 
 const expiryLabels: Record<IPointPolicyConfigValue['expiry_policy'], string> = {
@@ -30,11 +31,16 @@ const formatScheduledAt = (value: string | null) => {
   });
 };
 
-export const PointPolicyCard: React.FC<PointPolicyCardProps> = ({ config }) => {
+export const PointPolicyCard: React.FC<PointPolicyCardProps> = ({ config, onEdit }) => {
   return (
     <div className="card" style={{ marginTop: '16px' }}>
       <div className="card-header">
         <div className="card-title">적립·만료 정책</div>
+        {onEdit && (
+          <button type="button" className="btn btn-ghost btn-sm" onClick={onEdit}>
+            수정
+          </button>
+        )}
       </div>
       <div>
         <PolicyItem

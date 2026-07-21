@@ -41,7 +41,7 @@ const columns: Column<ClawbackItem>[] = [
   {
     key: 'datetime',
     label: '처리일시',
-    render: (item) => <span dangerouslySetInnerHTML={{ __html: item.datetime }} />,
+    render: (item) => <span>{item.datetime}</span>,
     align: 'center',
   },
   {
