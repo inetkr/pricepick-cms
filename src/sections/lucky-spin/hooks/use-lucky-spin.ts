@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { ticketAPI } from 'src/api';
-import { useDialogMessage } from 'src/context/dialog-message-context';
-import { ILuckySpinConfigSlot } from 'src/types/tickets/lucky_spin';
-
+import type { ILuckySpinConfigSlot } from 'src/types/tickets/lucky_spin';
 
 export const useLuckySpin = () => {
   const [slots, setSlots] = useState<ILuckySpinConfigSlot[]>([]);
@@ -11,7 +9,6 @@ export const useLuckySpin = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [hasSavedConfig, setHasSavedConfig] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
-  const { showMessageIcon } = useDialogMessage();
 
   const loadConfig = useCallback(async () => {
     setIsLoading(true);

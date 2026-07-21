@@ -190,7 +190,9 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               />
             </div>
             <div className="form-group">
-              <label className="form-label">식별 아이디</label>
+              <label className="form-label" htmlFor="m-doc-id">
+                식별 아이디
+              </label>
               <input
                 className="form-input"
                 id="m-doc-id"
@@ -378,7 +380,9 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   지급
                 </button>
               </div>
-              <div className="form-hint">지급 이력은 티켓 내역에 '관리자 지급'으로 기록됩니다.</div>
+              <div className="form-hint">
+                지급 이력은 티켓 내역에 &apos;관리자 지급&apos;으로 기록됩니다.
+              </div>
             </div>
           )}
         </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TicketGrade } from 'src/types/common';
+import type { TicketGrade } from 'src/types/common';
 
 interface TicketChipProps {
   grade: TicketGrade;
@@ -13,6 +13,11 @@ interface TicketChipProps {
   prefix?: string;
   prefixAfter?: string;
 }
+
+type TicketChipOnlyNameProps = Pick<
+  TicketChipProps,
+  'grade' | 'className' | 'size' | 'dim' | 'bare'
+>;
 
 // SVG paths từ file gốc
 const TK_P1 =
@@ -142,7 +147,7 @@ export const TicketChip: React.FC<TicketChipProps> = ({
   );
 };
 
-export const TicketChipOnlyName: React.FC<TicketChipProps> = ({
+export const TicketChipOnlyName: React.FC<TicketChipOnlyNameProps> = ({
   grade,
   className = '',
   size = 'small',

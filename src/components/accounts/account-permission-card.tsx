@@ -1,11 +1,4 @@
 import React from 'react';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
-import {
-  EMPLOYEE_ROLE_LABELS,
-  EMPLOYEE_ROLE_PERMISSIONS,
-  EMPLOYEE_ROLE_TAG_CLASS,
-} from 'src/constants/employee';
 
 export const AccountPermissionCard: React.FC = () => (
   <div className="card">

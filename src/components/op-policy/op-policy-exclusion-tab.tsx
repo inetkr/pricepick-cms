@@ -35,7 +35,7 @@ export const OpPolicyExclusionTab: React.FC = () => (
         <div className="policy-label">개별 상품 제외</div>
         <div className="policy-value">운영자 지정</div>
         <div className="policy-desc">
-          고가 가전 등 마진 이슈 상품. 앱에는 "일부 고가 가전(운영자 지정)"으로 통합 표시.
+          고가 가전 등 마진 이슈 상품. 앱에는 &quot;일부 고가 가전(운영자 지정)&quot;으로 통합 표시.
         </div>
       </div>
       <div className="policy-item">
@@ -48,7 +48,7 @@ export const OpPolicyExclusionTab: React.FC = () => (
     </div>
 
     <div className="info-box" style={{ marginTop: '14px' }}>
-      제외 대상 카테고리·상품은 적립 계산에서 제외되며, 앱 10e 화면에 "적립 제외 상품"으로
+      제외 대상 카테고리·상품은 적립 계산에서 제외되며, 앱 10e 화면에 &quot;적립 제외 상품&quot;으로
       안내됩니다.
     </div>
   </div>

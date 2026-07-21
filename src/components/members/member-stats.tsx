@@ -38,7 +38,7 @@ export const MemberStats: React.FC<MemberStatsProps> = ({ stats }) => {
       ) : (
         <span style={{ color: labelColor }}>
           {label}
-          <strong style={{ color: color, paddingLeft: '4px' }} id="mem-mkt">
+          <strong style={{ color, paddingLeft: '4px' }} id="mem-mkt">
             운영 데이터 없음
           </strong>
         </span>

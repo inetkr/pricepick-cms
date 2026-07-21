@@ -1,9 +1,10 @@
 // src/components/gifticons/GifticonTable.tsx
 import React from 'react';
 import { TicketChip } from '../common/ticket-chip';
-import type { Column} from '../common/table-pagination-row-per-page';
+import type { Column } from '../common/table-pagination-row-per-page';
 import { TablePaginationRowPerPage } from '../common/table-pagination-row-per-page';
 import type { PaginationProps } from '../common/pagination';
+import type { TicketGrade } from 'src/types/common';
 
 export interface GifticonItem {
   id: number;
@@ -18,7 +19,7 @@ export interface GifticonItem {
   productCode: string;
   expiryDate: string;
   status: 'used' | 'unused' | 'expired';
-  ticketGrade: 'bronze' | 'silver' | 'gold';
+  ticketGrade: TicketGrade;
   ticketQuantity: number;
 }
 

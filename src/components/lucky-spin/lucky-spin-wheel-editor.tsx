@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { IPrizeType } from 'src/types/common';
-import { ILuckySpinConfigSlot } from 'src/types/tickets/lucky_spin';
+import type { IPrizeType } from 'src/types/common';
+import type { ILuckySpinConfigSlot } from 'src/types/tickets/lucky_spin';
 
 const TYPE_OPTIONS: { value: IPrizeType; label: string }[] = [
   { value: 'NO_WIN', label: '꽝' },

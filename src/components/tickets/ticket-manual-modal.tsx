@@ -185,7 +185,7 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
                 autoComplete="off"
                 value={keyword}
                 onChange={(e) => {
-                  const value = e.target.value;
+                  const { value } = e.target;
                   setKeyword(value);
                   setUserIdentifier(value);
                 }}
@@ -222,16 +222,22 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
                   )}
                   {!isSearching &&
                     searchResults.map((user) => (
-                      <div
+                      <button
                         key={user.id}
+                        type="button"
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => handleSelectUser(user)}
                         style={{
+                          display: 'block',
+                          width: '100%',
+                          textAlign: 'left',
                           padding: '9px 12px',
                           fontSize: '13px',
                           color: 'var(--text)',
-                          cursor: 'pointer',
+                          background: 'transparent',
+                          border: 'none',
                           borderBottom: '1px solid var(--border-soft)',
+                          cursor: 'pointer',
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.background = 'var(--surface-2)';
@@ -241,7 +247,7 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
                         }}
                       >
                         {user.username} · {user.nickname} · {user.id}
-                      </div>
+                      </button>
                     ))}
                 </div>
               )}
@@ -265,7 +271,7 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label">티켓 수량 (등급별, 0보다 큰 것만 처리)</label>
+            <div className="form-label">티켓 수량 (등급별, 0보다 큰 것만 처리)</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {TICKET_GRADES.map((g) => (
                 <div key={g.value} className="tm-grade-row">

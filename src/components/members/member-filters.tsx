@@ -66,7 +66,7 @@ export const MemberFilters: React.FC<MemberFiltersProps> = ({ onApplyFilters }) 
           </option>
         ))}
       </select>
-      <button className="btn btn-primary btn-sm" onClick={handleApplyFilters}>
+      <button type="button" className="btn btn-primary btn-sm" onClick={handleApplyFilters}>
         검색
       </button>
     </>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatCard } from '../common/stat-card';
-import { IAttendanceStat } from 'src/types/points/attendance_stat';
+import type { IAttendanceStat } from 'src/types/points/attendance_stat';
 
 interface PointAttendanceStatsProps {
   stats: IAttendanceStat;

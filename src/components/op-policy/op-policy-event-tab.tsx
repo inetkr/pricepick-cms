@@ -6,34 +6,6 @@ const acquisitionRows = [
   { path: '온보딩 가입', reward: '+1장', condition: '신규 가입 시 (카카오 연동 후 지급)' },
 ];
 
-const referralRows = [
-  { label: '성사 기준', value: '피초대자의 첫 픽구매 완료' },
-  { label: '인당 초대 한도', value: '월 최대 50명' },
-  { label: '초대자 보상', value: '성사 건당 500P (포인트)' },
-  {
-    label: '피초대자 보상',
-    value: '500P (포인트) — 성사(첫 픽구매 완료) 시점에 지급, 가입 즉시 아님',
-  },
-];
-
-const limitRows = [
-  { label: '1일 발급 한도', value: '5장 / 일' },
-  { label: '월 발급 한도', value: '30장 / 월' },
-  { label: '1회 추첨 응모 한도', value: '최대 10장' },
-];
-
-const onboardingRows = [
-  { label: '가입 즉시', value: '이벤트 티켓 1장 + 200P' },
-  { label: '첫 쿠팡 구경하기', value: '100P' },
-  { label: '첫 경제 구매 (7일 내)', value: '브론즈 티켓 1장' },
-  { label: '친구초대', value: '양쪽 각 500P' },
-];
-
-const drawRows = [
-  { label: '응모 조건', value: '이벤트 티켓 1장, 1회 추첨 최대 10장' },
-  { label: '당첨 확률', value: '1등 5% · 2등 15% · 3등(꽝) 80%' },
-];
-
 export const OpPolicyEventTab: React.FC = () => (
   <div>
     <div className="info-box">

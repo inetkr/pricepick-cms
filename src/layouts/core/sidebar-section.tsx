@@ -36,7 +36,6 @@ import {
   AttendanceIcon,
   PointPolicyIcon,
 } from './Icons';
-import { CalendarIcon } from '@mui/x-date-pickers/icons';
 import { authAPI } from 'src/api';
 import { useAuthContext } from 'src/auth/hooks';
 

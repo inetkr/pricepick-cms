@@ -1,5 +1,5 @@
 import type { IBase } from '../base';
-import type { IPrizeType, IUsageStatus, TicketGrade } from '../common';
+import type { IUsageStatus, TicketGrade } from '../common';
 
 export type ITicket = IBase & {
   id: string;

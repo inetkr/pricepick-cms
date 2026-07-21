@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { InfoBox } from 'src/components/common/info-box';
 import type { PaginationProps } from 'src/components/common/pagination';
-import type { GifticonItem} from 'src/components/gifticons/gifticon-table';
+import type { GifticonItem } from 'src/components/gifticons/gifticon-table';
 import { GifticonTable } from 'src/components/gifticons/gifticon-table';
 import { GifticonToolbar } from 'src/components/gifticons/gifticon-toolbar';
 
@@ -23,7 +23,7 @@ const gifticonData: GifticonItem[] = [
     productCode: '46073',
     expiryDate: '2026/06/27',
     status: 'used',
-    ticketGrade: 'gold',
+    ticketGrade: 'GOLD',
     ticketQuantity: 1,
   },
   {
@@ -39,7 +39,7 @@ const gifticonData: GifticonItem[] = [
     productCode: '46073',
     expiryDate: '2026/06/27',
     status: 'unused',
-    ticketGrade: 'gold',
+    ticketGrade: 'GOLD',
     ticketQuantity: 1,
   },
   {
@@ -55,7 +55,7 @@ const gifticonData: GifticonItem[] = [
     productCode: '71229',
     expiryDate: '2026/06/26',
     status: 'used',
-    ticketGrade: 'gold',
+    ticketGrade: 'GOLD',
     ticketQuantity: 1,
   },
   {
@@ -71,7 +71,7 @@ const gifticonData: GifticonItem[] = [
     productCode: '46073',
     expiryDate: '2026/06/26',
     status: 'used',
-    ticketGrade: 'gold',
+    ticketGrade: 'GOLD',
     ticketQuantity: 1,
   },
   {
@@ -87,7 +87,7 @@ const gifticonData: GifticonItem[] = [
     productCode: '46073',
     expiryDate: '2026/06/26',
     status: 'used',
-    ticketGrade: 'gold',
+    ticketGrade: 'GOLD',
     ticketQuantity: 1,
   },
   {
@@ -103,7 +103,7 @@ const gifticonData: GifticonItem[] = [
     productCode: '46076',
     expiryDate: '2026/06/25',
     status: 'used',
-    ticketGrade: 'gold',
+    ticketGrade: 'GOLD',
     ticketQuantity: 2,
   },
 ];

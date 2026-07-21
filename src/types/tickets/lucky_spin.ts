@@ -1,4 +1,4 @@
-import { IPrizeType } from "../common";
+import type { IPrizeType } from '../common';
 
 export type ILuckySpinSegmentType = 'MISS' | 'EVENT_TICKET' | 'POINT';
 
