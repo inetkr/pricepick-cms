@@ -16,7 +16,7 @@ export type ITicketStatus = 'APPROVED' | 'REJECTED' | 'PENDING' | 'USED' | 'EXPI
 
 export type ITransactionTypeGroup = 'ADMIN_ADD' | 'COUPANG_PURCHASE' | 'ATTENDANCE' | 'AD_WATCH' | 'FRIEND_INVITE' | 'WEEKLY_TASK';
 
-export type IUsageStatus = 'HOLDING' | 'USED' | 'PENDING' | 'ADMIN_SUB' | 'REJECTED';
+export type IUsageStatus = 'HOLDING' | 'USED' | 'EXPIRED' | 'PENDING' | 'REVOKED';
 
 export type ITicketType = 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT';
 
