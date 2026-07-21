@@ -251,15 +251,15 @@ const MENU_GROUPS: MenuGroup[] = [
 
 export default function SidebarSection() {
   const pathname = usePathname();
-  const { logout } = useAuthContext();
+  const { logout, admin } = useAuthContext();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   const [isMini, setIsMini] = useState(false);
   const [user] = useState({
-    name: '슈퍼어드민',
-    email: 'admin@pricepick.co.kr',
-    avatar: 'S',
+    name: admin?.username || '관리자',
+    email: admin?.email || '',
+    avatar: admin?.username ? admin.username.charAt(0).toUpperCase() : 'A',
   });
 
   // Toggle group thu gọn

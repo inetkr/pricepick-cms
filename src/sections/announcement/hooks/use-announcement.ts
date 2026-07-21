@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { announcementAPI } from 'src/api';
 import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 import type {
@@ -13,7 +14,7 @@ type IFilters = {
 };
 
 export const useAnnouncement = () => {
-  const { showMessageIcon, showConfirmMessageIcon } = useDialogMessage();
+  const { showConfirmMessageIcon } = useDialogMessage();
   const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
   const [stats, setStats] = useState<IAnnouncementStat>({
     published: 0,
@@ -80,16 +81,15 @@ export const useAnnouncement = () => {
     try {
       const responseData = await announcementAPI.createAnnouncement(payload);
       if (responseData && responseData.result && responseData.result.object) {
-        showMessageIcon('공지사항이 등록되었습니다.', DialogMessageIcon.success, () => {
-          setPage(1);
-          reload();
-        });
+        toast.success('공지사항이 등록되었습니다.');
+        setPage(1);
+        reload();
         return true;
       }
       return false;
     } catch (error) {
       console.error('Failed to create announcement:', error);
-      showMessageIcon('공지사항 등록에 실패했습니다.', DialogMessageIcon.alert);
+      toast.error('공지사항 등록에 실패했습니다.');
       return false;
     } finally {
       setIsSaving(false);
@@ -101,15 +101,14 @@ export const useAnnouncement = () => {
     try {
       const responseData = await announcementAPI.updateAnnouncement(id, payload);
       if (responseData && responseData.result && responseData.result.object) {
-        showMessageIcon('공지사항이 수정되었습니다.', DialogMessageIcon.success, () => {
-          reload();
-        });
+        toast.success('공지사항이 수정되었습니다.');
+        reload();
         return true;
       }
       return false;
     } catch (error) {
       console.error('Failed to update announcement:', error);
-      showMessageIcon('공지사항 수정에 실패했습니다.', DialogMessageIcon.alert);
+      toast.error('공지사항 수정에 실패했습니다.');
       return false;
     } finally {
       setIsSaving(false);
@@ -123,12 +122,11 @@ export const useAnnouncement = () => {
       async () => {
         try {
           await announcementAPI.deleteAnnouncement(announcement.id);
-          showMessageIcon('공지사항이 삭제되었습니다.', DialogMessageIcon.success, () => {
-            reload();
-          });
+          toast.success('공지사항이 삭제되었습니다.');
+          reload();
         } catch (error) {
           console.error('Failed to delete announcement:', error);
-          showMessageIcon('공지사항 삭제에 실패했습니다.', DialogMessageIcon.alert);
+          toast.error('공지사항 삭제에 실패했습니다.');
         }
       }
     );

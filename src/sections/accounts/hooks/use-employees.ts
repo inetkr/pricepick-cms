@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { employeeAPI } from 'src/api';
 import { useAuthContext } from 'src/auth/hooks';
 import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
@@ -6,7 +7,7 @@ import type { IAdmin, ICreateEmployeePayload, IUpdateEmployeePayload } from 'src
 
 export const useEmployees = () => {
   const { admin } = useAuthContext();
-  const { showMessageIcon, showConfirmMessageIcon } = useDialogMessage();
+  const { showConfirmMessageIcon } = useDialogMessage();
   const [employees, setEmployees] = useState<IAdmin[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -34,15 +35,14 @@ export const useEmployees = () => {
     try {
       const responseData = await employeeAPI.createEmployee(payload);
       if (responseData && responseData.result && responseData.result.object) {
-        showMessageIcon('관리자 계정이 생성되었습니다.', DialogMessageIcon.success, () => {
-          loadEmployees();
-        });
+        toast.success('관리자 계정이 생성되었습니다.');
+        loadEmployees();
         return true;
       }
       return false;
     } catch (error) {
       console.error('Failed to create employee:', error);
-      showMessageIcon('계정 생성에 실패했습니다.', DialogMessageIcon.alert);
+      toast.error('계정 생성에 실패했습니다.');
       return false;
     } finally {
       setIsSaving(false);
@@ -54,15 +54,14 @@ export const useEmployees = () => {
     try {
       const responseData = await employeeAPI.updateEmployee(id, payload);
       if (responseData && responseData.result && responseData.result.object) {
-        showMessageIcon('관리자 계정이 수정되었습니다.', DialogMessageIcon.success, () => {
-          loadEmployees();
-        });
+        toast.success('관리자 계정이 수정되었습니다.');
+        loadEmployees();
         return true;
       }
       return false;
     } catch (error) {
       console.error('Failed to update employee:', error);
-      showMessageIcon('계정 수정에 실패했습니다.', DialogMessageIcon.alert);
+      toast.error('계정 수정에 실패했습니다.');
       return false;
     } finally {
       setIsSaving(false);
@@ -76,12 +75,11 @@ export const useEmployees = () => {
       async () => {
         try {
           await employeeAPI.deleteEmployee(employee.id);
-          showMessageIcon('관리자 계정이 삭제되었습니다.', DialogMessageIcon.success, () => {
-            loadEmployees();
-          });
+          toast.success('관리자 계정이 삭제되었습니다.');
+          loadEmployees();
         } catch (error) {
           console.error('Failed to delete employee:', error);
-          showMessageIcon('계정 삭제에 실패했습니다.', DialogMessageIcon.alert);
+          toast.error('계정 삭제에 실패했습니다.');
         }
       }
     );

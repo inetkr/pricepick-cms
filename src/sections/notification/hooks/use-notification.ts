@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { notificationAPI } from 'src/api';
 import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 import type {
@@ -13,7 +14,7 @@ type IFilters = {
 };
 
 export const useNotification = () => {
-  const { showMessageIcon, showConfirmMessageIcon } = useDialogMessage();
+  const { showConfirmMessageIcon } = useDialogMessage();
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [stats, setStats] = useState<INotificationStat>({
     sent_this_month: 0,
@@ -81,16 +82,15 @@ export const useNotification = () => {
         const successMessage = payload.scheduled_at
           ? '알림이 예약되었습니다.'
           : '알림이 발송되었습니다.';
-        showMessageIcon(successMessage, DialogMessageIcon.success, () => {
-          setPage(1);
-          reload();
-        });
+        toast.success(successMessage);
+        setPage(1);
+        reload();
         return true;
       }
       return false;
     } catch (error) {
       console.error('Failed to create notification:', error);
-      showMessageIcon('알림 발송에 실패했습니다.', DialogMessageIcon.alert);
+      toast.error('알림 발송에 실패했습니다.');
       return false;
     } finally {
       setIsSaving(false);
@@ -100,11 +100,11 @@ export const useNotification = () => {
   const sendTestNotification = async (payload: ISendTestNotificationPayload) => {
     try {
       await notificationAPI.sendTestNotification(payload);
-      showMessageIcon('테스트 발송이 완료되었습니다. (본인)', DialogMessageIcon.success);
+      toast.success('테스트 발송이 완료되었습니다. (본인)');
       return true;
     } catch (error) {
       console.error('Failed to send test notification:', error);
-      showMessageIcon('테스트 발송에 실패했습니다.', DialogMessageIcon.alert);
+      toast.error('테스트 발송에 실패했습니다.');
       return false;
     }
   };
@@ -116,12 +116,11 @@ export const useNotification = () => {
       async () => {
         try {
           await notificationAPI.cancelNotification(notification.id);
-          showMessageIcon('예약 발송이 취소되었습니다.', DialogMessageIcon.success, () => {
-            reload();
-          });
+          toast.success('예약 발송이 취소되었습니다.');
+          reload();
         } catch (error) {
           console.error('Failed to cancel notification:', error);
-          showMessageIcon('예약 취소에 실패했습니다.', DialogMessageIcon.alert);
+          toast.error('예약 취소에 실패했습니다.');
         }
       }
     );

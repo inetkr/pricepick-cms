@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { qnaAPI } from 'src/api';
 import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 import type { IQna, IQnaStats, IUpdateQnaPayload } from 'src/types/qna';
@@ -19,7 +20,7 @@ const defaultStats: IQnaStats = {
 };
 
 export const useInquiries = () => {
-  const { showMessageIcon, showConfirmMessageIcon } = useDialogMessage();
+  const { showConfirmMessageIcon } = useDialogMessage();
 
   const [inquiries, setInquiries] = useState<IQna[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -93,16 +94,15 @@ export const useInquiries = () => {
     try {
       const responseData = await qnaAPI.updateQna(id, payload);
       if (responseData && responseData.result && responseData.result.object) {
-        showMessageIcon('답변이 저장되었습니다.', DialogMessageIcon.success, () => {
-          loadInquiries();
-          loadStats();
-        });
+        toast.success('답변이 저장되었습니다.');
+        loadInquiries();
+        loadStats();
         return true;
       }
       return false;
     } catch (error) {
       console.error('Failed to answer inquiry:', error);
-      showMessageIcon('답변 저장에 실패했습니다.', DialogMessageIcon.alert);
+      toast.error('답변 저장에 실패했습니다.');
       return false;
     } finally {
       setIsSaving(false);
@@ -116,13 +116,12 @@ export const useInquiries = () => {
       async () => {
         try {
           await qnaAPI.deleteQna(inquiry.id);
-          showMessageIcon('문의가 삭제되었습니다.', DialogMessageIcon.success, () => {
-            loadInquiries();
-            loadStats();
-          });
+          toast.success('문의가 삭제되었습니다.');
+          loadInquiries();
+          loadStats();
         } catch (error) {
           console.error('Failed to delete inquiry:', error);
-          showMessageIcon('문의 삭제에 실패했습니다.', DialogMessageIcon.alert);
+          toast.error('문의 삭제에 실패했습니다.');
         }
       }
     );

@@ -1,24 +1,23 @@
 'use client';
 
 import React from 'react';
+import { toast } from 'sonner';
 import { InfoBox } from 'src/components/common/info-box';
 import { AttendancePolicyCard } from 'src/components/point-attendance/point-attendance-policy-card';
 import { AttendanceSettingsCard } from 'src/components/point-attendance/point-attendance-settings-card';
 import { PointAttendanceStats } from 'src/components/point-attendance/point-attendance-stats';
-import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 import { usePointAttendance } from 'src/sections/point-attendance/hooks/use-point-attendance';
 import type { IAttendanceConfigValue } from 'src/types/config/attendance_config';
 
 export const PointAttendanceSection: React.FC = () => {
-  const { showMessageIcon } = useDialogMessage();
   const { config, isLoading, isSaving, saveConfig, stats, isStatsLoading } = usePointAttendance();
 
   const handleSaveSettings = async (data: IAttendanceConfigValue) => {
     const ok = await saveConfig(data);
     if (ok) {
-      showMessageIcon('출석체크 설정이 저장되었습니다.', DialogMessageIcon.success);
+      toast.success('출석체크 설정이 저장되었습니다.');
     } else {
-      showMessageIcon('출석체크 설정 저장에 실패했습니다.', DialogMessageIcon.alert);
+      toast.error('출석체크 설정 저장에 실패했습니다.');
     }
   };
 

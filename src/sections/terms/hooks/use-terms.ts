@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { policyAPI } from 'src/api';
-import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 import type { IPolicyType } from 'src/types/common';
 import type { IPolicy } from 'src/types/policy';
 
 export const useTerms = (type: IPolicyType, title: string) => {
-  const { showMessageIcon } = useDialogMessage();
   const [policy, setPolicy] = useState<IPolicy | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -35,15 +34,14 @@ export const useTerms = (type: IPolicyType, title: string) => {
         : await policyAPI.createPolicy({ title, content, type, is_published: isPublished });
 
       if (responseData && responseData.result && responseData.result.object) {
-        showMessageIcon('약관이 저장되었습니다.', DialogMessageIcon.success, () => {
-          loadPolicy();
-        });
+        toast.success('약관이 저장되었습니다.');
+        loadPolicy();
         return true;
       }
       return false;
     } catch (error) {
       console.error(`Failed to save terms policy (${type}):`, error);
-      showMessageIcon('약관 저장에 실패했습니다.', DialogMessageIcon.alert);
+      toast.error('약관 저장에 실패했습니다.');
       return false;
     } finally {
       setIsSaving(false);

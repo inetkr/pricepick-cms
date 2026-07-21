@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import { toast } from 'sonner';
 import { ticketAPI } from 'src/api';
-import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 import type { ITicket } from 'src/types/tickets/ticket';
 import type { ITicketStat } from 'src/types/tickets/ticket_stat';
 
@@ -11,7 +11,6 @@ type IFilters = {
 }
 
 export const useTickets = () => {
-  const { showMessageIcon } = useDialogMessage();
   const [tickets, setTickets] = useState<ITicket[]>([]);
   const [stats, setStats] = useState<ITicketStat>({
     total_transactions: 0,
@@ -86,14 +85,13 @@ export const useTickets = () => {
         });
 
         if (responseData && responseData.result && responseData.result.object) {
-          showMessageIcon('티켓이 성공적으로 처리되었습니다.', DialogMessageIcon.success, () => {
-            loadTickets();
-            loadStats();
-          });
+          toast.success('티켓이 성공적으로 처리되었습니다.');
+          loadTickets();
+          loadStats();
         }
       } catch (error) {
         console.error('Failed to process manual ticket action:', error);
-        showMessageIcon('티켓 처리에 실패했습니다.', DialogMessageIcon.alert);
+        toast.error('티켓 처리에 실패했습니다.');
       }
     },
     []

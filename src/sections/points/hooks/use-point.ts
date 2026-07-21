@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import { toast } from 'sonner';
 import { pointAPI } from 'src/api';
-import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 import type { IPoint } from 'src/types/points/point';
 import type { IPointStat } from 'src/types/points/point_stat';
 
@@ -11,7 +11,6 @@ type IFilters = {
 };
 
 export const usePoints = () => {
-  const { showMessageIcon } = useDialogMessage();
   const [points, setPoints] = useState<IPoint[]>([]);
   const [stats, setStats] = useState<IPointStat>({
     total_accumulated: 0,
@@ -87,14 +86,13 @@ export const usePoints = () => {
       try {
         const responseData = await pointAPI.addSubPoint(data);
         if (responseData && responseData.result) {
-          showMessageIcon('포인트가 성공적으로 처리되었습니다.', DialogMessageIcon.success, () => {
-            loadPoints();
-            loadStats();
-          });
+          toast.success('포인트가 성공적으로 처리되었습니다.');
+          loadPoints();
+          loadStats();
         }
       } catch (error) {
         console.error('Failed to process manual point action:', error);
-        showMessageIcon('포인트 처리에 실패했습니다.', DialogMessageIcon.alert);
+        toast.error('포인트 처리에 실패했습니다.');
       }
     },
     []

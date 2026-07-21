@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import type { ExchangeRate } from 'src/components/point-policy/exchange-rate-card';
 import { ExchangeRateCard } from 'src/components/point-policy/exchange-rate-card';
 import { PointPolicyCard } from 'src/components/point-policy/point-policy-card';
 import { PointPolicyEditModal } from 'src/components/point-policy/point-policy-edit-modal';
-import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 import { usePointPolicy } from 'src/sections/point-policy/hooks/use-point-policy';
 import type { IPointPolicyConfigValue } from 'src/types/config/point_policy_config';
 
@@ -31,7 +31,6 @@ const exchangeRateData: ExchangeRate[] = [
 ];
 
 export const PointPolicySection: React.FC = () => {
-  const { showMessageIcon } = useDialogMessage();
   const { config, isLoading, isSaving, saveConfig } = usePointPolicy();
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -39,9 +38,9 @@ export const PointPolicySection: React.FC = () => {
     const ok = await saveConfig(next);
     if (ok) {
       setIsEditOpen(false);
-      showMessageIcon('포인트 정책이 저장되었습니다.', DialogMessageIcon.success);
+      toast.success('포인트 정책이 저장되었습니다.');
     } else {
-      showMessageIcon('포인트 정책 저장에 실패했습니다.', DialogMessageIcon.alert);
+      toast.error('포인트 정책 저장에 실패했습니다.');
     }
   };
 

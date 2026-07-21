@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { useAuthContext } from 'src/auth/hooks';
 
 // Map đường dẫn đến breadcrumb và title
 const PAGE_META: Record<string, { title: string; bc: string }> = {
@@ -42,7 +43,8 @@ const PAGE_META: Record<string, { title: string; bc: string }> = {
 export default function HeaderSection() {
   const pathname = usePathname();
   const [, setCurrentTime] = useState('');
-  const [role] = useState('슈퍼어드민'); // sẽ lấy từ context/auth
+  const { admin } = useAuthContext();
+  const role = admin?.role === 'SUPERADMIN' ? '슈퍼어드민' : '관리자';
   const router = useRouter();
 
   useEffect(() => {

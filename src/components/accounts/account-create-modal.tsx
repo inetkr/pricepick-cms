@@ -124,29 +124,6 @@ export const AccountCreateModal: React.FC<AccountCreateModalProps> = ({
             {emailError && <div className="field-error">{emailError}</div>}
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="ac-role">
-              역할
-            </label>
-            <select
-              id="ac-role"
-              className="form-select"
-              value={form.role}
-              onChange={(e) =>
-                setForm((prev) => ({
-                  ...prev,
-                  role: e.target.value as ICreateEmployeePayload['role'],
-                }))
-              }
-            >
-              {EMPLOYEE_ROLE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <div className="form-hint">슈퍼어드민 계정은 추가할 수 없습니다.</div>
-          </div>
-          <div className="form-group">
             <label className="form-label" htmlFor="ac-password">
               임시 비밀번호
             </label>

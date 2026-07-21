@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import { toast } from 'sonner';
 import { ticketAPI, userAPI } from 'src/api';
-import { DialogMessageIcon, useDialogMessage } from 'src/context/dialog-message-context';
 import type { IUser } from 'src/types/users/user';
 import type { IUserStat } from 'src/types/users/user_stat';
 
@@ -13,7 +13,6 @@ type IFilters = {
 
 export const useMembers = () => {
   const [members, setMembers] = useState<IUser[]>([]);
-  const { showMessageIcon } = useDialogMessage();
   const [stats, setStats] = useState<IUserStat>({
     total_users: 0,
     total_kakao_linked: 0,
@@ -77,13 +76,12 @@ export const useMembers = () => {
         account_status: updatedMember.account_status,
       });
       if (responseData && responseData.result && responseData.result.object) {
-        showMessageIcon('회원 정보가 업데이트되었습니다.', DialogMessageIcon.success, () => {
-          loadMembers();
-        });
+        toast.success('회원 정보가 업데이트되었습니다.');
+        loadMembers();
       }
     } catch (error) {
       console.error('Failed to update member:', error);
-      showMessageIcon('회원 업데이트에 실패했습니다.', DialogMessageIcon.alert);
+      toast.error('회원 업데이트에 실패했습니다.');
     }
   };
 
@@ -117,13 +115,12 @@ export const useMembers = () => {
     try {
       const responseData = await ticketAPI.addSubTicket(data);
       if (responseData && responseData.result && responseData.result.object) {
-        showMessageIcon('티켓이 성공적으로 부여되었습니다.', DialogMessageIcon.success, () => {
-          loadMembers();
-        });
+        toast.success('티켓이 성공적으로 부여되었습니다.');
+        loadMembers();
       }
     } catch (error) {
       console.error('Failed to grant ticket:', error);
-      showMessageIcon('티켓 부여에 실패했습니다.', DialogMessageIcon.alert);
+      toast.error('티켓 부여에 실패했습니다.');
     }
   }, []);
 
