@@ -13,13 +13,15 @@ import type { IPoint, IPointTransactionType } from 'src/types/points/point';
 import { formatDate } from 'src/utils/helper';
 
 const transactionTypeCsvLabels: Record<IPointTransactionType, string> = {
-  ATTENDANCE: '출석 적립',
-  CONVERT_TO_TICKET: '티켓 전환(사용)',
-  CONVERT_FROM_TICKET: '티켓 전환(적립)',
+  ATTENDANCE: '출석(쿠팡 구경하기)',
+  FRIEND_INVITE: '친구초대 보상',
+  ONBOARDING: '온보딩 보상',
+  LUCKY_SPIN: '행운룰렛 당첨',
+  CONVERT_FROM_TICKET: '티켓→포인트 전환',
+  EXPIRED: '만료 소멸',
   ADMIN_ADD: '관리자 지급',
   ADMIN_SUB: '관리자 회수',
-  USED: '사용 차감',
-  EXPIRED: '만료 소멸',
+  CONVERT_TO_TICKET: '포인트→티켓 전환',
 };
 
 const pointsCsvColumns: CsvColumn<IPoint>[] = [
