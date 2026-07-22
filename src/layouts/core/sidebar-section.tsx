@@ -225,7 +225,7 @@ const MENU_GROUPS: MenuGroup[] = [
         href: '/postback',
         disabled: true,
       },
-      { id: 'appver', label: '앱 버전 관리', icon: <AppIcon />, href: '/appver', disabled: true },
+      { id: 'app-version', label: '앱 버전 관리', icon: <AppIcon />, href: '/app-version' },
       {
         id: 'apikeys',
         label: '제휴몰 API 관리',

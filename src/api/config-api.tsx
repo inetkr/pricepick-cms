@@ -24,4 +24,14 @@ export default class ConfigAPI {
       throw error;
     }
   };
+
+  getAppVersion = async <T = any,>(): Promise<ApiResponse<T>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.get('/config/admin/app_version');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching app version config:', error);
+      throw error;
+    }
+  };
 }
