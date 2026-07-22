@@ -52,7 +52,13 @@ export const MemberModal: React.FC<MemberModalProps> = ({
 
   if (!isOpen || !member) return null;
 
+  const isDeletedMember = member.account_status === 'DELETE';
+  const isSuspendedMember = member.account_status === 'BLOCK';
+  const canEdit = isEditable && !isDeletedMember;
+  const canEditTickets = canEdit && !isSuspendedMember;
+
   const handleStatusChange = (newStatus: IAccountStatus) => {
+    if (!canEdit) return;
     setFormData({ ...formData, account_status: newStatus });
   };
 
@@ -102,6 +108,14 @@ export const MemberModal: React.FC<MemberModalProps> = ({
           </button>
         </div>
         <div className="modal-body">
+          {isDeletedMember && (
+            <div className="warn-box">탈퇴한 회원입니다. 정보를 수정할 수 없습니다.</div>
+          )}
+          {isSuspendedMember && (
+            <div className="amber-box">
+              차단된 회원입니다. 닉네임과 상태만 변경할 수 있습니다.
+            </div>
+          )}
           <div className="form-row">
             <div className="form-group">
               <label className="form-label" htmlFor="member-nickname">
@@ -112,7 +126,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                 className="form-input"
                 value={formData.nickname || ''}
                 onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
-                disabled={!isEditable}
+                disabled={!canEdit}
               />
             </div>
             <div className="form-group">
@@ -169,7 +183,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                 className="form-select"
                 value={formData.account_status || 'NORMAL'}
                 onChange={(e) => handleStatusChange(e.target.value as IAccountStatus)}
-                disabled={!isEditable}
+                disabled={!canEdit}
               >
                 {MEMBER_STATUS_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -346,7 +360,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
             </div>
           </div>
 
-          {isEditable && (
+          {canEditTickets && (
             <div className="form-group">
               <label className="form-label" htmlFor="member-ticket-grade">
                 티켓 수동 지급
@@ -390,7 +404,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
           <button type="button" className="btn btn-ghost" onClick={onClose}>
             닫기
           </button>
-          {isEditable && (
+          {canEdit && (
             <button type="button" className="btn btn-primary" onClick={handleSave}>
               저장
             </button>
