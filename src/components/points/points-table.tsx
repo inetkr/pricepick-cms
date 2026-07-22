@@ -9,13 +9,15 @@ interface PointsTableProps {
 }
 
 const transactionTypeConfig: Record<IPointTransactionType, { color: string; label: string }> = {
-  ATTENDANCE: { color: '#c084fc', label: '출석 적립' },
-  CONVERT_TO_TICKET: { color: 'var(--danger)', label: '티켓 전환(사용)' },
-  CONVERT_FROM_TICKET: { color: 'var(--success)', label: '티켓 전환(적립)' },
+  ATTENDANCE: { color: '#c084fc', label: '출석(쿠팡 구경하기)' },
+  FRIEND_INVITE: { color: '#c084fc', label: '친구초대 보상' },
+  ONBOARDING: { color: '#c084fc', label: '온보딩 보상' },
+  LUCKY_SPIN: { color: '#c084fc', label: '행운룰렛 당첨' },
+  CONVERT_FROM_TICKET: { color: 'var(--success)', label: '티켓→포인트 전환' },
+  EXPIRED: { color: 'var(--text-2)', label: '만료 소멸' },
   ADMIN_ADD: { color: 'var(--success)', label: '관리자 지급' },
   ADMIN_SUB: { color: 'var(--danger)', label: '관리자 회수' },
-  USED: { color: 'var(--danger)', label: '사용 차감' },
-  EXPIRED: { color: 'var(--text-2)', label: '만료 소멸' },
+  CONVERT_TO_TICKET: { color: 'var(--danger)', label: '포인트→티켓 전환' },
 };
 
 const renderTransactionTypeBadge = (type: IPointTransactionType) => {

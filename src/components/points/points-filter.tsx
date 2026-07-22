@@ -27,20 +27,20 @@ const categoryGroups: OptionGroup[] = [
   {
     label: '적립',
     options: [
-      { value: 'attendance', label: '출석(쿠팡 구경하기)' },
-      { value: 'referral', label: '친구초대 보상' },
-      { value: 'onboarding', label: '온보딩 보상' },
-      { value: 'roulette', label: '행운룰렛 당첨' },
-      { value: 'ticket_to_point', label: '티켓→포인트 전환' },
-      { value: 'admin_grant', label: '관리자 지급' },
+      { value: 'ATTENDANCE', label: '출석(쿠팡 구경하기)' },
+      { value: 'FRIEND_INVITE', label: '친구초대 보상' },
+      { value: 'ONBOARDING', label: '온보딩 보상' },
+      { value: 'LUCKY_SPIN', label: '행운룰렛 당첨' },
+      { value: 'CONVERT_FROM_TICKET', label: '티켓→포인트 전환' },
+      { value: 'ADMIN_ADD', label: '관리자 지급' },
     ],
   },
   {
     label: '사용·차감',
     options: [
-      { value: 'point_to_ticket', label: '포인트→티켓 전환' },
-      { value: 'expire', label: '만료 소멸' },
-      { value: 'admin_revoke', label: '관리자 회수' },
+      { value: 'CONVERT_TO_TICKET', label: '포인트→티켓 전환' },
+      { value: 'EXPIRED', label: '만료 소멸' },
+      { value: 'ADMIN_SUB', label: '관리자 회수' },
     ],
   },
 ];
@@ -75,11 +75,7 @@ export const PointsFilter: React.FC<PointsFilterProps> = ({
         onChange={(e) => setSearch(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && handleApplyFilters()}
       />
-      <select
-        className="filter-sel"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-      >
+      <select className="filter-sel" value={category} onChange={(e) => setCategory(e.target.value)}>
         <option value="">전체 유형</option>
         {categoryGroupsProp.map((group) => (
           <optgroup key={group.label} label={group.label}>

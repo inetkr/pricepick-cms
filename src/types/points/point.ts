@@ -1,11 +1,13 @@
 export type IPointTransactionType =
   | 'ATTENDANCE'
-  | 'CONVERT_TO_TICKET'
+  | 'FRIEND_INVITE'
+  | 'ONBOARDING'
+  | 'LUCKY_SPIN'
   | 'CONVERT_FROM_TICKET'
   | 'ADMIN_ADD'
-  | 'ADMIN_SUB'
-  | 'USED'
-  | 'EXPIRED';
+  | 'CONVERT_TO_TICKET'
+  | 'EXPIRED'
+  | 'ADMIN_SUB';
 
 export type IPoint = {
   id: string;
