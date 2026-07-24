@@ -1,13 +1,8 @@
 import axios from 'src/utils/axios';
 import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
-import type {
-  ICreateNotificationPayload,
-  INotification,
-  INotificationStat,
-  ISendTestNotificationPayload,
-} from 'src/types/notification';
+import type { INotification, INotificationStat, ISendNotificationPayload } from 'src/types/notification';
 
-const tableName = 'notification';
+const tableName = 'push_campaign';
 
 export default class NotificationAPI {
   getNotificationStats = async (): Promise<ApiResponse<INotificationStat>> => {
@@ -23,7 +18,7 @@ export default class NotificationAPI {
   getNotificationList = async (
     page: number,
     limit: number,
-    filter?: { title?: string; channel?: string; target?: string; status?: string }
+    filter?: { title?: string; target_audience?: string; status?: string }
   ): Promise<ApiPaginatedResponse<INotification>> => {
     try {
       const requestParam: any = {
@@ -45,37 +40,12 @@ export default class NotificationAPI {
     }
   };
 
-  createNotification = async (
-    body: ICreateNotificationPayload
-  ): Promise<ApiResponse<INotification>> => {
+  sendNotification = async (body: ISendNotificationPayload): Promise<ApiResponse<INotification>> => {
     try {
-      const res = await axios.axiosInstanceWithLoading.post(`/${tableName}/admin/create`, body);
+      const res = await axios.axiosInstanceWithLoading.post(`/${tableName}/admin/send`, body);
       return res.data;
     } catch (error) {
-      console.error('Failed to create notification:', error);
-      throw error;
-    }
-  };
-
-  sendTestNotification = async (
-    body: ISendTestNotificationPayload
-  ): Promise<ApiResponse<any>> => {
-    try {
-      const res = await axios.axiosInstanceWithLoading.post(`/${tableName}/admin/test`, body);
-      return res.data;
-    } catch (error) {
-      console.error('Failed to send test notification:', error);
-      throw error;
-    }
-  };
-
-  // 예약 발송 취소. announcement와 동일하게 /admin 접두사 없이 /notification/:id 로 호출된다.
-  cancelNotification = async (id: string): Promise<ApiResponse<any>> => {
-    try {
-      const res = await axios.axiosInstanceWithLoading.delete(`/${tableName}/${id}`);
-      return res.data;
-    } catch (error) {
-      console.error('Failed to cancel notification:', error);
+      console.error('Failed to send push campaign:', error);
       throw error;
     }
   };

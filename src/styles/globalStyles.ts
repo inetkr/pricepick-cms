@@ -1487,6 +1487,58 @@ export const globalStyles = css`
     gap: 10px;
     justify-content: flex-end;
   }
+  .push-preview {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px 16px;
+    box-shadow: var(--shadow-md);
+    max-width: 360px;
+    margin: 0 auto;
+  }
+  .push-preview-app {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .push-preview-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: var(--main);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .push-preview-appname {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .push-preview-time {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-left: auto;
+  }
+  .push-preview-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .push-preview-body {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
   .form-group {
     margin-bottom: 14px;
   }
@@ -2015,6 +2067,33 @@ export const globalStyles = css`
   .toast.show {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* ── Sonner 토스트 ── */
+  /* sonner 기본 스타일은 :where()로 감싸져 있어 위의 전역 * 리셋(padding:0)에
+     밀릴 수 있다. 속성 선택자로 명시해 우선순위를 확보한다. */
+  [data-sonner-toaster] [data-sonner-toast] {
+    padding: 14px 16px;
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-lg);
+    font-size: 13px;
+  }
+  [data-sonner-toaster] [data-sonner-toast] [data-content] {
+    gap: 2px;
+  }
+  [data-sonner-toaster] [data-sonner-toast] [data-title] {
+    font-weight: 600;
+  }
+  [data-sonner-toaster] [data-sonner-toast] [data-description] {
+    font-size: 12px;
+    opacity: 0.85;
+  }
+  [data-sonner-toaster] [data-sonner-toast] [data-close-button] {
+    padding: 0;
+  }
+  [data-sonner-toaster] [data-sonner-toast] [data-button] {
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   /* ── 약관 탭 ── */

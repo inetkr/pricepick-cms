@@ -2,28 +2,27 @@ import React from 'react';
 import {
   NOTIFICATION_CHANNEL_LABEL,
   NOTIFICATION_STATUS_LABEL,
-  NOTIFICATION_TARGET_LABEL,
+  NOTIFICATION_TARGET_AUDIENCE_LABEL,
 } from 'src/constants/notification';
-import type { INotification, INotificationStatus } from 'src/types/notification';
+import type { INotification, INotificationStatusValue } from 'src/types/notification';
 import type { PaginationProps } from '../common/pagination';
 import { Pagination } from '../common/pagination';
 
 interface NotificationTableProps {
   notifications: INotification[];
   pagination?: PaginationProps;
-  onCancel: (notification: INotification) => void;
 }
 
-const STATUS_BADGE_CLASS: Record<INotificationStatus, string> = {
+const STATUS_BADGE_CLASS: Record<INotificationStatusValue, string> = {
   SENT: 'badge-green',
   SCHEDULED: 'badge-amber',
-  TEST: 'badge-gray',
   FAILED: 'badge-red',
+  TEST: 'badge-gray',
 };
 
-const renderDateTime = (date: string | null) => {
+const renderDateTime = (date: string | number | null) => {
   if (!date) return '-';
-  const d = new Date(date);
+  const d = typeof date === 'number' ? new Date(date * 1000) : new Date(date);
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
@@ -35,15 +34,12 @@ const renderDateTime = (date: string | null) => {
 export const NotificationTable: React.FC<NotificationTableProps> = ({
   notifications,
   pagination,
-  onCancel,
 }) => (
   <div className="card">
     <div className="card-header">
       <div>
         <div className="card-title">알림 발송 내역</div>
-        <div className="card-sub">
-          발송 완료 건은 불변 로그 · &apos;예약&apos; 상태만 발송 전 취소·수정 가능
-        </div>
+        <div className="card-sub">발송 완료 건은 불변 로그입니다.</div>
       </div>
     </div>
     <table>
@@ -54,7 +50,7 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
           <th>제목</th>
           <th style={{ textAlign: 'center' }}>대상</th>
           <th style={{ textAlign: 'center' }}>발송 수</th>
-          <th style={{ textAlign: 'center' }}>오픈율</th>
+          <th style={{ textAlign: 'center' }}>열람율</th>
           <th style={{ textAlign: 'center' }}>상태 / 액션</th>
         </tr>
       </thead>
@@ -78,32 +74,23 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
               </td>
               <td style={{ fontWeight: 500 }}>{notification.title}</td>
               <td style={{ textAlign: 'center' }}>
-                {NOTIFICATION_TARGET_LABEL[notification.target] || notification.target}
+                {notification.target_audience === 'TEST'
+                  ? '테스트(본인)'
+                  : NOTIFICATION_TARGET_AUDIENCE_LABEL[notification.target_audience] ||
+                    notification.target_audience}
               </td>
               <td style={{ textAlign: 'center' }}>
-                {notification.recipient_count?.toLocaleString() ?? 0}명
+                {notification.sent_count?.toLocaleString() ?? 0}명
               </td>
               <td style={{ textAlign: 'center' }}>
                 {notification.open_rate != null ? `${notification.open_rate}%` : '-'}
               </td>
               <td style={{ textAlign: 'center' }}>
-                <div
-                  style={{ display: 'flex', gap: '6px', justifyContent: 'center', alignItems: 'center' }}
-                >
-                  <span className={`badge ${STATUS_BADGE_CLASS[notification.status]}`}>
-                    {NOTIFICATION_STATUS_LABEL[notification.status] || notification.status}
-                  </span>
-                  {notification.status === 'SCHEDULED' && (
-                    <button
-                      type="button"
-                      className="btn btn-ghost btn-sm"
-                      style={{ color: 'var(--danger)' }}
-                      onClick={() => onCancel(notification)}
-                    >
-                      취소
-                    </button>
-                  )}
-                </div>
+                <span className={`badge ${STATUS_BADGE_CLASS[notification.status]}`}>
+                  {notification.status === 'TEST'
+                    ? '테스트'
+                    : NOTIFICATION_STATUS_LABEL[notification.status] || notification.status}
+                </span>
               </td>
             </tr>
           ))
