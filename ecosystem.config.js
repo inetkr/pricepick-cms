@@ -25,7 +25,7 @@ module.exports = {
       env: { NODE_ENV: "production" },
     },
     {
-      name: "pricepick-cms-6003",
+      name: "pricepick-cms-prod-6003",
       script: "node_modules/.bin/next",
       args: "start -p 6003",
       cwd: "/home/sindykorea/pricepick/pricepick-cms-prod",
