@@ -22,8 +22,9 @@ export const usePointPolicy = () => {
     setIsLoading(true);
     try {
       const responseData = await configAPI.getConfig<IPointPolicyConfig>(CONFIG_KEY);
-      if (responseData && responseData.result && responseData.result.object) {
-        setConfig(responseData.result.object.value);
+      const value = responseData?.result?.object?.value;
+      if (value && value.exchange_rate) {
+        setConfig(value);
       }
     } catch (error) {
       console.error('Failed to load point policy config:', error);
