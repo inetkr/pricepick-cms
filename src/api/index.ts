@@ -12,8 +12,11 @@ import PolicyAPI from "./policy-api";
 import QnaAPI from "./qna-api";
 import AnnouncementAPI from "./announcement-api";
 import NotificationAPI from "./notification-api";
+import InviteAPI from "./invite-api";
 
 export const userAPI = new UserAPI();
+
+export const inviteAPI = new InviteAPI();
 
 export const authAPI = new AuthAPI();
 

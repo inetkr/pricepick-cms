@@ -93,26 +93,26 @@ const MENU_GROUPS: MenuGroup[] = [
       { id: 'tickets', label: '티켓 내역', icon: <TicketIcon />, href: '/tickets' },
       {
         id: 'draws',
-        label: '추첨 관리',
+        label: '경품 추첨 관리',
         icon: <DrawIcon />,
         href: '/draws',
         badge: 1,
         disabled: true,
       },
-      {
-        id: 'prizes',
-        label: '경품/응모 관리',
-        icon: <PrizeIcon />,
-        href: '/prizes',
-        disabled: true,
-      },
-      {
-        id: 'attendance',
-        label: '주간 이벤트 추첨',
-        icon: <AttendanceIcon />,
-        href: '/attendance',
-        disabled: true,
-      },
+      // {
+      //   id: 'prizes',
+      //   label: '경품/응모 관리',
+      //   icon: <PrizeIcon />,
+      //   href: '/prizes',
+      //   disabled: true,
+      // },
+      // {
+      //   id: 'attendance',
+      //   label: '주간 이벤트 추첨',
+      //   icon: <AttendanceIcon />,
+      //   href: '/attendance',
+      //   disabled: true,
+      // },
       {
         id: 'lucky-spin-config',
         label: '행운룰렛 설정',
@@ -180,13 +180,13 @@ const MENU_GROUPS: MenuGroup[] = [
     label: '콘텐츠',
     items: [
       { id: 'banners', label: '배너 관리', icon: <BannerIcon />, href: '/banners', disabled: true },
-      { id: 'events', label: '이벤트 관리', icon: <EventIcon />, href: '/events', disabled: true },
+      // { id: 'events', label: '이벤트 관리', icon: <EventIcon />, href: '/events', disabled: true },
       {
         id: 'invite',
         label: '친구초대 관리',
         icon: <InviteIcon />,
         href: '/invite',
-        disabled: true,
+        disabled: false,
       },
       {
         id: 'announcement',
