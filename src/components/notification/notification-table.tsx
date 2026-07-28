@@ -39,7 +39,9 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
     <div className="card-header">
       <div>
         <div className="card-title">알림 발송 내역</div>
-        <div className="card-sub">발송 완료 건은 불변 로그입니다.</div>
+        <div className="card-sub">
+          발송 완료 건은 불변 로그 · '예약' 상태만 발송 전 취소·수정 가능
+        </div>
       </div>
     </div>
     <table>
@@ -57,7 +59,10 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
       <tbody>
         {notifications.length === 0 ? (
           <tr>
-            <td colSpan={7} style={{ textAlign: 'center', padding: '32px', color: 'var(--text-2)' }}>
+            <td
+              colSpan={7}
+              style={{ textAlign: 'center', padding: '32px', color: 'var(--text-2)' }}
+            >
               발송 내역이 없습니다.
             </td>
           </tr>

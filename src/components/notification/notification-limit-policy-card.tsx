@@ -15,7 +15,7 @@ export const NotificationLimitPolicyCard: React.FC = () => (
         <div className="policy-item">
           <div className="policy-label">거래 알림 (구매·확정·환불)</div>
           <div className="policy-value">상한 없음</div>
-          <div className="policy-desc">서비스 필수 알림 → 발송 제한 없음.</div>
+          <div className="policy-desc">서비스 필수 알림 — 발송 제한 없음.</div>
         </div>
         <div className="policy-item">
           <div className="policy-label">기타 알림 (미션·만료·추첨)</div>

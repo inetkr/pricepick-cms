@@ -25,7 +25,7 @@ export const InquiryStats: React.FC<InquiryStatsProps> = ({ stats, isLoading = f
       <StatCard
         label="오늘 완료"
         value={isLoading ? '—' : `${stats.completed.toLocaleString()}건`}
-        change={{ type: 'neutral', text: '이번 달 기준' }}
+        change={{ type: 'neutral', text: '누적' }}
         color="green"
       />
       <StatCard

@@ -30,13 +30,13 @@ export const TicketStats: React.FC<TicketStatsProps> = ({ stats }) => {
       <StatCard
         label="만료 소멸"
         value={`${stats.total_expired.toLocaleString()}`}
-        change={{ type: 'neutral', text: '이벤트 티켓' }}
+        change={{ type: 'neutral', text: '유효기간 경과' }}
         color="blue"
       />
       <StatCard
         label="부정행위 회수"
         value={`${stats.total_admin_sub.toLocaleString()}`}
-        change={{ type: 'neutral', text: '이번달 누적' }}
+        change={{ type: 'neutral', text: '취소·반품' }}
         color="red"
       />
     </div>
