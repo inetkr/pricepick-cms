@@ -33,6 +33,7 @@ const categoryGroups: OptionGroup[] = [
       { value: 'LUCKY_SPIN', label: '행운룰렛 당첨' },
       { value: 'CONVERT_FROM_TICKET', label: '티켓→포인트 전환' },
       { value: 'ADMIN_ADD', label: '관리자 지급' },
+      { value: 'COUPANG_FIRST_VIEW', label: '쿠팡 첫 방문 보상' },
     ],
   },
   {

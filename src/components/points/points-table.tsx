@@ -18,6 +18,7 @@ const transactionTypeConfig: Record<IPointTransactionType, { color: string; labe
   ADMIN_ADD: { color: 'var(--success)', label: '관리자 지급' },
   ADMIN_SUB: { color: 'var(--danger)', label: '관리자 회수' },
   CONVERT_TO_TICKET: { color: 'var(--danger)', label: '포인트→티켓 전환' },
+  COUPANG_FIRST_VIEW: { color: '#c084fc', label: '쿠팡 첫 방문 보상' },
 };
 
 const renderTransactionTypeBadge = (type: IPointTransactionType) => {

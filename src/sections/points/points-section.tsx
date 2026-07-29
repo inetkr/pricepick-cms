@@ -22,6 +22,7 @@ const transactionTypeCsvLabels: Record<IPointTransactionType, string> = {
   ADMIN_ADD: '관리자 지급',
   ADMIN_SUB: '관리자 회수',
   CONVERT_TO_TICKET: '포인트→티켓 전환',
+  COUPANG_FIRST_VIEW: '쿠팡 첫 방문 보상',
 };
 
 const pointsCsvColumns: CsvColumn<IPoint>[] = [

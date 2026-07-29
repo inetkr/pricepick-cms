@@ -2,6 +2,7 @@ import React from 'react';
 import type { ITicket } from 'src/types/tickets/ticket';
 import type { PaginationProps } from '../common/pagination';
 import { Pagination } from '../common/pagination';
+import { transactionTypeGroupOptions } from './ticket-filters';
 import { TicketNameByGrade } from '../common/ticket-chip';
 import type { IUsageStatus } from 'src/types/common';
 
@@ -9,6 +10,10 @@ interface TicketTableProps {
   tickets: ITicket[];
   pagination?: PaginationProps;
 }
+
+const transactionTypeLabels: Record<string, string> = Object.fromEntries(
+  transactionTypeGroupOptions.filter((opt) => opt.value).map((opt) => [opt.value, opt.label])
+);
 
 const usageStatusBadgeMap: Record<
   IUsageStatus,
@@ -105,7 +110,9 @@ export const TicketTable: React.FC<TicketTableProps> = ({ tickets, pagination })
                   </div>
                 </td>
                 <td style={{ textAlign: 'center' }}>
-                  <span style={{ color: 'var(--success)' }}>{ticket.description}</span>
+                  <span style={{ color: 'var(--success)' }}>
+                    {transactionTypeLabels[ticket.description] ?? ticket.description}
+                  </span>
                 </td>
                 <td style={{ textAlign: 'center' }}>
                   <TicketNameByGrade grade={ticket.ticket_type} quantity={ticket.amount} />

@@ -7,7 +7,8 @@ export type IPointTransactionType =
   | 'ADMIN_ADD'
   | 'CONVERT_TO_TICKET'
   | 'EXPIRED'
-  | 'ADMIN_SUB';
+  | 'ADMIN_SUB'
+  | 'COUPANG_FIRST_VIEW';
 
 export type IPoint = {
   id: string;
