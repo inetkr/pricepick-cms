@@ -1,4 +1,6 @@
 import React from 'react';
+import type { PaginationProps } from 'src/components/common/pagination';
+import { Pagination } from 'src/components/common/pagination';
 import type { Column } from 'src/components/common/table';
 import { Table } from 'src/components/common/table';
 import type { IDrawRound } from 'src/types/weekly-draws/weekly-draw';
@@ -9,6 +11,7 @@ interface WeeklyDrawRoundTableProps {
   description?: string;
   rounds: IDrawRound[];
   emptyMessage: string;
+  pagination?: PaginationProps;
   showViewEntrants?: boolean;
   showEditPrizes?: boolean;
   onViewEntrants: (round: IDrawRound) => void;
@@ -54,6 +57,7 @@ export const WeeklyDrawRoundTable: React.FC<WeeklyDrawRoundTableProps> = ({
   description,
   rounds,
   emptyMessage,
+  pagination,
   showViewEntrants = true,
   showEditPrizes = true,
   onViewEntrants,
@@ -114,6 +118,11 @@ export const WeeklyDrawRoundTable: React.FC<WeeklyDrawRoundTableProps> = ({
         keyExtractor={(r) => r.id}
         emptyMessage={emptyMessage}
       />
+      {pagination && pagination.totalItems > 0 && (
+        <div style={{ padding: '0 18px 14px' }}>
+          <Pagination {...pagination} />
+        </div>
+      )}
     </div>
   );
 };

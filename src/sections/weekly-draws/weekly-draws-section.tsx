@@ -80,6 +80,13 @@ export const WeeklyDrawsSection: React.FC = () => {
           title="종료된 주간 이벤트"
           rounds={ended.rounds}
           emptyMessage={ended.isLoading ? '불러오는 중...' : '종료된 회차가 없습니다.'}
+          pagination={{
+            currentPage: ended.page,
+            totalPages: ended.totalPages,
+            onPageChange: ended.setPage,
+            totalItems: ended.totalItems,
+            showTotal: true,
+          }}
           showEditPrizes={false}
           onViewEntrants={(round) => setEntrantsRoundId(round.id)}
           onEditPrizes={(round) => setEditingRoundId(round.id)}
