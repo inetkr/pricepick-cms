@@ -6,7 +6,6 @@ import { useTheme } from 'next-themes';
 import {
   AdminIcon,
   ApiIcon,
-  AppIcon,
   BannerIcon,
   BellIcon,
   BulkIcon,
@@ -15,7 +14,6 @@ import {
   ChatIcon,
   DashboardIcon,
   DrawIcon,
-  EventIcon,
   GiftIcon,
   InviteIcon,
   MembersIcon,
@@ -23,7 +21,6 @@ import {
   PolicyIcon,
   PostbackIcon,
   LuckySpinIcon,
-  PrizeIcon,
   ProductIcon,
   RevenueIcon,
   ScheduleIcon,
@@ -92,12 +89,10 @@ const MENU_GROUPS: MenuGroup[] = [
     items: [
       { id: 'tickets', label: '티켓 내역', icon: <TicketIcon />, href: '/tickets' },
       {
-        id: 'draws',
-        label: '경품 추첨 관리',
+        id: 'weekly-draws',
+        label: '주간 이벤트 추첨 관리',
         icon: <DrawIcon />,
-        href: '/draws',
-        badge: 1,
-        disabled: true,
+        href: '/weekly-draws',
       },
       // {
       //   id: 'prizes',

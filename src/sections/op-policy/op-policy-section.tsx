@@ -19,6 +19,10 @@ export const OpPolicySection: React.FC = () => {
   return (
     <div className="section active" id="sec-op-policy">
       <div className="info-box">
+        운영 정책은 <strong>조회 전용</strong>입니다 — 정책 수치·기준 변경은 별도 승인 절차로
+        반영되며 이 화면에서 직접 수정하지 않습니다.
+      </div>
+      <div className="info-box">
         <strong>조회 전용</strong> — 앱·서비스 운영의 핵심 정책 기준을 한곳에서 확인하는
         페이지입니다. 정책 수치·기준 변경은 별도 승인 절차를 거쳐 반영되며, 이 화면에서 직접
         수정하지 않습니다. (이용약관·개인정보처리방침 등 앱 노출용 약관은 <strong>약관 관리</strong>

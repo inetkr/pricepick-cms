@@ -40,7 +40,7 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
       <div>
         <div className="card-title">알림 발송 내역</div>
         <div className="card-sub">
-          발송 완료 건은 불변 로그 · '예약' 상태만 발송 전 취소·수정 가능
+          발송 완료 건은 불변 로그 · &apos;예약&apos; 상태만 발송 전 취소·수정 가능
         </div>
       </div>
     </div>

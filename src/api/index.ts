@@ -13,6 +13,7 @@ import QnaAPI from "./qna-api";
 import AnnouncementAPI from "./announcement-api";
 import NotificationAPI from "./notification-api";
 import InviteAPI from "./invite-api";
+import WeeklyDrawAPI from "./weekly-draw-api";
 
 export const userAPI = new UserAPI();
 
@@ -43,3 +44,5 @@ export const qnaAPI = new QnaAPI();
 export const announcementAPI = new AnnouncementAPI();
 
 export const notificationAPI = new NotificationAPI();
+
+export const weeklyDrawAPI = new WeeklyDrawAPI();

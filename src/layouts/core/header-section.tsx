@@ -9,7 +9,7 @@ const PAGE_META: Record<string, { title: string; bc: string }> = {
   '/': { title: '대시보드', bc: '개요' },
   '/members': { title: '회원 목록', bc: '회원 관리' },
   '/tickets': { title: '티켓 내역', bc: '티켓 · 보상' },
-  '/draws': { title: '추첨 관리', bc: '티켓 · 보상' },
+  '/weekly-draws': { title: '주간 이벤트 추첨 관리', bc: '티켓 · 보상' },
   '/prizes': { title: '경품/응모 관리', bc: '티켓 · 보상' },
   '/attendance': { title: '주간 이벤트 추첨', bc: '티켓 · 보상' },
   // '/clawback': { title: '환수 이력', bc: '티켓 · 보상' },
