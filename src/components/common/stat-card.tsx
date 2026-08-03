@@ -5,7 +5,7 @@ interface StatCardProps {
   value: string | number;
   change?: {
     type: 'up' | 'down' | 'neutral';
-    text: string;
+    text: React.ReactNode;
   };
   color?: 'purple' | 'green' | 'amber' | 'red' | 'blue';
   className?: string;

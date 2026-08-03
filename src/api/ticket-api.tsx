@@ -3,7 +3,14 @@ import BaseAPI from './base-api';
 import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
 import type { ITicketStat } from 'src/types/tickets/ticket_stat';
 import type { ITicket } from 'src/types/tickets/ticket';
-import type { ILuckySpinConfig, ILuckySpinConfigSlot } from 'src/types/tickets/lucky_spin';
+import type {
+  ILuckySpinConfig,
+  ILuckySpinConfigSlot,
+  ILuckySpinJackpotPolicy,
+  ILuckySpinLog,
+  ILuckySpinStats,
+  ILuckySpinType,
+} from 'src/types/tickets/roulette';
 
 const tableName = 'ticket';
 export default class TicketAPI extends BaseAPI {
@@ -94,7 +101,9 @@ export default class TicketAPI extends BaseAPI {
 
   getLuckySpinConfig = async (): Promise<ApiResponse<ILuckySpinConfig>> => {
     try {
-      const response = await axios.axiosInstanceWithLoading.get(`/${tableName}/lucky_spin_config`);
+      const response = await axios.axiosInstanceWithLoading.get(
+        `/${tableName}/admin/lucky_spin_config`
+      );
       return response.data;
     } catch (error) {
       console.error('Error fetching lucky spin configuration:', error);
@@ -103,18 +112,116 @@ export default class TicketAPI extends BaseAPI {
   };
 
   updateLuckySpinConfig = async (
-    configData: ILuckySpinConfigSlot[]
+    slots: ILuckySpinConfigSlot[]
   ): Promise<ApiResponse<ILuckySpinConfig>> => {
     try {
       const response = await axios.axiosInstanceWithLoading.post(
         `/${tableName}/admin/lucky_spin_config`,
-        {
-          slots: configData,
-        }
+        { slots }
       );
       return response.data;
     } catch (error) {
       console.error('Error updating lucky spin configuration:', error);
+      throw error;
+    }
+  };
+
+  getLuckySpinStats = async (): Promise<ApiResponse<ILuckySpinStats>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.get(
+        `/${tableName}/admin/lucky_spin_stats`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching lucky spin stats:', error);
+      throw error;
+    }
+  };
+
+  getLuckySpinJackpotConfig = async (): Promise<ApiResponse<ILuckySpinConfig>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.get(
+        `/${tableName}/admin/lucky_spin_jackpot_config`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching jackpot lucky spin configuration:', error);
+      throw error;
+    }
+  };
+
+  updateLuckySpinJackpotConfig = async (
+    slots: ILuckySpinConfigSlot[]
+  ): Promise<ApiResponse<ILuckySpinConfig>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.post(
+        `/${tableName}/admin/lucky_spin_jackpot_config`,
+        { slots }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error updating jackpot lucky spin configuration:', error);
+      throw error;
+    }
+  };
+
+  getLuckySpinJackpotStats = async (): Promise<ApiResponse<ILuckySpinStats>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.get(
+        `/${tableName}/admin/lucky_spin_jackpot_stats`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching jackpot lucky spin stats:', error);
+      throw error;
+    }
+  };
+
+  getLuckySpinJackpotPolicy = async (): Promise<ApiResponse<ILuckySpinJackpotPolicy>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.get(
+        `/${tableName}/admin/lucky_spin_jackpot_policy`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching jackpot lucky spin policy:', error);
+      throw error;
+    }
+  };
+
+  updateLuckySpinJackpotPolicy = async (policy: {
+    daily_limit: number;
+    event_ticket_daily_cap: number;
+    event_ticket_monthly_cap: number;
+  }): Promise<ApiResponse<ILuckySpinJackpotPolicy>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.post(
+        `/${tableName}/admin/lucky_spin_jackpot_policy`,
+        policy
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error updating jackpot lucky spin policy:', error);
+      throw error;
+    }
+  };
+
+  getLuckySpinLogs = async (
+    page: number,
+    limit: number,
+    spinType: ILuckySpinType
+  ): Promise<ApiPaginatedResponse<ILuckySpinLog>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.get(`/${tableName}/admin/lucky_spin_log`, {
+        params: {
+          page,
+          limit,
+          filter: JSON.stringify({ spin_type: spinType }),
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching lucky spin logs:', error);
       throw error;
     }
   };

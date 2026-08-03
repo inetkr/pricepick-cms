@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { EMPLOYEE_ROLE_OPTIONS } from 'src/constants/employee';
 import type { ICreateEmployeePayload } from 'src/types/admin';
 
 interface AccountCreateModalProps {

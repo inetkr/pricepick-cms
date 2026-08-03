@@ -1,4 +1,4 @@
-import { IKakaoUserInfo } from "../users/user";
+import { type IKakaoUserInfo } from "../users/user";
 
 export type IInvite = {
   user_id: string;

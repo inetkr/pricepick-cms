@@ -13,7 +13,6 @@ import {
   ChartIcon,
   ChatIcon,
   DashboardIcon,
-  DrawIcon,
   GiftIcon,
   InviteIcon,
   MembersIcon,
@@ -88,12 +87,12 @@ const MENU_GROUPS: MenuGroup[] = [
     label: '티켓 · 보상',
     items: [
       { id: 'tickets', label: '티켓 내역', icon: <TicketIcon />, href: '/tickets' },
-      {
-        id: 'weekly-draws',
-        label: '주간 이벤트 추첨 관리',
-        icon: <DrawIcon />,
-        href: '/weekly-draws',
-      },
+      // {
+      //   id: 'weekly-draws',
+      //   label: '주간 이벤트 추첨 관리',
+      //   icon: <DrawIcon />,
+      //   href: '/weekly-draws',
+      // },
       // {
       //   id: 'prizes',
       //   label: '경품/응모 관리',
@@ -109,10 +108,16 @@ const MENU_GROUPS: MenuGroup[] = [
       //   disabled: true,
       // },
       {
-        id: 'lucky-spin-config',
-        label: '행운룰렛 설정',
+        id: 'daily-lucky-roulette',
+        label: '매일 행운 룰렛',
         icon: <LuckySpinIcon />,
-        href: '/lucky-spin-config',
+        href: '/daily-lucky-roulette',
+      },
+      {
+        id: 'jackpot-roulette',
+        label: '잭팟 룰렛',
+        icon: <LuckySpinIcon />,
+        href: '/jackpot-roulette',
       },
       // { id: 'clawback', label: '환수 이력', icon: <ClawbackIcon />, href: '/clawback' },
     ],
