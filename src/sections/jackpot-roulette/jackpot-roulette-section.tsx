@@ -202,7 +202,7 @@ export const JackpotRouletteSection: React.FC = () => {
           <InfoBox type="info">
             구매로 발급된 티켓은 등급 티켓·이벤트 티켓 모두 승인 대기 상태로 발급되고, 카카오 연동
             D+7 / 미연동 D+30 경과 또는 쿠팡 구매 확정 시 승인됩니다. 승인 전에는 잭팟 룰렛에 쓸 수
-            없으므로 "돌리고 환불" 악용은 티켓 단계에서 이미 차단됩니다. 별도 설정 항목을 두지
+            없으므로 &ldquo;돌리고 환불&rdquo; 악용은 티켓 단계에서 이미 차단됩니다. 별도 설정 항목을 두지
             않습니다.
           </InfoBox>
           <div className="form-group">

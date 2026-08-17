@@ -201,9 +201,19 @@ export const TicketAccrualLogoModal: React.FC<TicketAccrualLogoModalProps> = ({
         </div>
 
         <div className="form-group">
-          <label className="form-label">로고 파일 업로드</label>
+          <label className="form-label" htmlFor="ta-logo-file">
+            로고 파일 업로드
+          </label>
           <div
+            role="button"
+            tabIndex={0}
             onClick={() => fileInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }
+            }}
             onDragOver={(e) => {
               e.preventDefault();
               setDragOver(true);
@@ -230,6 +240,7 @@ export const TicketAccrualLogoModal: React.FC<TicketAccrualLogoModalProps> = ({
           >
             <input
               ref={fileInputRef}
+              id="ta-logo-file"
               type="file"
               accept="image/png,image/jpeg"
               style={{ display: 'none' }}
