@@ -2782,4 +2782,81 @@ export const globalStyles = css`
       border-right-color: #252836;
     }
   }
+
+  /* ── 티켓 적립 설정: 제휴몰(링크프라이스) 목록 스크롤 영역 ── */
+  .ta-scroll-table thead th {
+    position: sticky;
+    top: 0;
+    background: var(--surface-2);
+    z-index: 1;
+  }
+  .ta-name-link {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    font-weight: 700;
+    color: var(--main);
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.15s;
+  }
+  .ta-name-link:hover {
+    text-decoration-color: var(--main);
+  }
+  .ta-row-dim {
+    opacity: 0.5;
+    transition: opacity 0.15s;
+  }
+  .ta-row-dim:hover {
+    opacity: 0.75;
+  }
+  .ta-sim-amount-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 14px 16px;
+    background: var(--surface);
+  }
+  .ta-sim-amount-box input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    width: 100%;
+    font-family: var(--font);
+  }
+  .ta-sim-amount-box input::-webkit-outer-spin-button,
+  .ta-sim-amount-box input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .ta-sim-amount-box input[type='number'] {
+    -moz-appearance: textfield;
+  }
+  .ta-sim-amount-unit {
+    color: var(--text-3);
+    font-size: 14px;
+    font-weight: 500;
+    margin-left: 8px;
+    white-space: nowrap;
+  }
+  .ta-sim-bar {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--main);
+    overflow: hidden;
+    margin: 12px 0 6px;
+  }
+  .ta-sim-bar-fill {
+    height: 100%;
+    background: var(--main-line);
+    border-radius: 999px;
+  }
 `;

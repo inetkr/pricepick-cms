@@ -481,6 +481,34 @@ export const LuckySpinIcon = ({ className = '' }: { className?: string }) => (
   </svg>
 );
 
+export const TicketValueIcon = ({ className = '' }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+  >
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7v5l3 3" />
+  </svg>
+);
+
+export const TicketAccrualIcon = ({ className = '' }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+  >
+    <path d="M3 17 9 11l4 4 8-8" />
+    <path d="M17 7h4v4" />
+  </svg>
+);
+
 export const AdminIcon = ({ className = '' }: { className?: string }) => (
   <svg
     className={className}

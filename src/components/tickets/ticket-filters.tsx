@@ -20,8 +20,8 @@ interface TicketFiltersProps {
 
 export const transactionTypeGroupOptions: Option[] = [
   { value: '', label: '전체 거래유형' },
-  { value: 'COUPANG_PURCHASE', label: '구매 적립' },
-  { value: 'COUPANG_PURCHASE_PENDING', label: '구매 대기(등급 미정)' },
+  { value: 'PURCHASE', label: '구매 적립' },
+  { value: 'PURCHASE_PENDING', label: '구매 대기(등급 미정)' },
   { value: 'ATTENDANCE', label: '출석 보너스' },
   { value: 'LUCKY_SPIN', label: '룰렛 당첨' },
   { value: 'KAKAO_LINK', label: '카카오 연동 보상' },
@@ -33,8 +33,8 @@ export const transactionTypeGroupOptions: Option[] = [
   { value: 'ADMIN_SUB', label: '관리자 회수' },
   { value: 'PURCHASE_REFUND', label: '환불(취소·반품)' },
   { value: 'EXPIRED', label: '만료 소멸' },
-  { value: 'FIRST_PURCHASE_BONUS', label: '쿠팡 첫 구매 보너스' },
-  { value: 'PURCHASE_MISSION', label: '연속 구매 미션' },
+  // { value: 'FIRST_PURCHASE_BONUS', label: '쿠팡 첫 구매 보너스' },
+  // { value: 'PURCHASE_MISSION', label: '연속 구매 미션' },
 ];
 
 // const usageStatusOptions: Option[] = [

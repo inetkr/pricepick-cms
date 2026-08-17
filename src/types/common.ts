@@ -14,7 +14,7 @@ export type ILoginType = 'INAPP' | 'KAKAO';
 
 export type ITicketStatus = 'APPROVED' | 'REJECTED' | 'PENDING' | 'USED' | 'EXPIRED' | 'CLAIMED';
 
-export type ITransactionTypeGroup = 'ADMIN_ADD' | 'COUPANG_PURCHASE' | 'ATTENDANCE' | 'AD_WATCH' | 'FRIEND_INVITE' | 'WEEKLY_TASK';
+export type ITransactionTypeGroup = 'ADMIN_ADD' | 'PURCHASE' | 'ATTENDANCE' | 'AD_WATCH' | 'FRIEND_INVITE' | 'WEEKLY_TASK';
 
 export type IUsageStatus = 'HOLDING' | 'USED' | 'EXPIRED' | 'PENDING' | 'REVOKED';
 

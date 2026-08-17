@@ -14,6 +14,7 @@ import AnnouncementAPI from "./announcement-api";
 import NotificationAPI from "./notification-api";
 import InviteAPI from "./invite-api";
 import WeeklyDrawAPI from "./weekly-draw-api";
+import MerchantAPI from "./merchant-api";
 
 export const userAPI = new UserAPI();
 
@@ -46,3 +47,5 @@ export const announcementAPI = new AnnouncementAPI();
 export const notificationAPI = new NotificationAPI();
 
 export const weeklyDrawAPI = new WeeklyDrawAPI();
+
+export const merchantAPI = new MerchantAPI();

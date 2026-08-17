@@ -25,7 +25,9 @@ import {
   ScheduleIcon,
   SettlementIcon,
   TermsIcon,
+  TicketAccrualIcon,
   TicketIcon,
+  TicketValueIcon,
   WithdrawIcon,
   AttendanceIcon,
   PointPolicyIcon,
@@ -86,6 +88,18 @@ const MENU_GROUPS: MenuGroup[] = [
     id: 'grp-ticket',
     label: '티켓 · 보상',
     items: [
+      {
+        id: 'ticket-value',
+        label: '티켓 가치 설정',
+        icon: <TicketValueIcon />,
+        href: '/ticket-value',
+      },
+      {
+        id: 'ticket-accrual',
+        label: '티켓 적립 설정',
+        icon: <TicketAccrualIcon />,
+        href: '/ticket-accrual',
+      },
       { id: 'tickets', label: '티켓 내역', icon: <TicketIcon />, href: '/tickets' },
       // {
       //   id: 'weekly-draws',

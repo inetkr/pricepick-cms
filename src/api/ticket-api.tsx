@@ -11,6 +11,10 @@ import type {
   ILuckySpinStats,
   ILuckySpinType,
 } from 'src/types/tickets/roulette';
+import type {
+  ITicketValueConfigApiValues,
+  ITicketValueConfigData,
+} from 'src/types/config/ticket_value_config';
 
 const tableName = 'ticket';
 export default class TicketAPI extends BaseAPI {
@@ -222,6 +226,33 @@ export default class TicketAPI extends BaseAPI {
       return response.data;
     } catch (error) {
       console.error('Error fetching lucky spin logs:', error);
+      throw error;
+    }
+  };
+
+  getTicketValueConfig = async (): Promise<ApiResponse<ITicketValueConfigData>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.get(
+        `/${tableName}/admin/ticket_value_config`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching ticket value configuration:', error);
+      throw error;
+    }
+  };
+
+  updateTicketValueConfig = async (
+    values: ITicketValueConfigApiValues
+  ): Promise<ApiResponse<ITicketValueConfigData>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.post(
+        `/${tableName}/admin/ticket_value_config`,
+        values
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error updating ticket value configuration:', error);
       throw error;
     }
   };

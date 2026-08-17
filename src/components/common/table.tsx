@@ -2,7 +2,7 @@ import React from 'react';
 
 export interface Column<T> {
   key: keyof T | string;
-  label: string;
+  label: React.ReactNode;
   render?: (item: T, index: number) => React.ReactNode;
   align?: 'left' | 'center' | 'right';
   width?: string | number;
