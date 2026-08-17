@@ -76,10 +76,10 @@ const slugify = (name: string) => {
 };
 
 // count 페이지네이션을 끝까지 따라가 해당 merchant_source의 전체 목록을 한 번에 모은다.
+// 다음 페이지가 있는지는 이전 응답의 count를 봐야 알 수 있어 병렬 호출이 불가능하다 —
+// for-await 대신 재귀로 짜서 순차 호출이면서도 no-await-in-loop 린트에 걸리지 않게 한다.
 const fetchAllMerchants = async (filter: Record<string, unknown>): Promise<IMerchant[]> => {
-  const rows: IMerchant[] = [];
-  let page = 1;
-  for (;;) {
+  const fetchPage = async (page: number, rows: IMerchant[]): Promise<IMerchant[]> => {
     const res = await merchantAPI.getList({
       page,
       limit: LIST_PAGE_SIZE,
@@ -88,12 +88,12 @@ const fetchAllMerchants = async (filter: Record<string, unknown>): Promise<IMerc
     });
     const object = res?.result?.object;
     const pageRows = object?.rows ?? [];
-    rows.push(...pageRows);
-    const total = object?.count ?? rows.length;
-    if (rows.length >= total || pageRows.length === 0) break;
-    page += 1;
-  }
-  return rows;
+    const nextRows = [...rows, ...pageRows];
+    const total = object?.count ?? nextRows.length;
+    if (nextRows.length >= total || pageRows.length === 0) return nextRows;
+    return fetchPage(page + 1, nextRows);
+  };
+  return fetchPage(1, []);
 };
 
 export const useTicketAccrual = () => {
