@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { ticketAPI } from 'src/api';
 import type { ILuckySpinStats, IRouletteSlot } from 'src/types/tickets/roulette';
+import type { RouletteValueOverrides } from 'src/utils/roulette';
 import {
   DEFAULT_JACKPOT_ROULETTE_SLOTS,
   getProbabilitySum,
@@ -29,6 +30,7 @@ export const useJackpotRoulette = () => {
   const [savedSlots, setSavedSlots] = useState<IRouletteSlot[]>(DEFAULT_JACKPOT_ROULETTE_SLOTS);
   const [defaultSlots, setDefaultSlots] = useState<IRouletteSlot[]>(DEFAULT_JACKPOT_ROULETTE_SLOTS);
   const [stats, setStats] = useState<ILuckySpinStats>(DEFAULT_STATS);
+  const [valueOverrides, setValueOverrides] = useState<RouletteValueOverrides>();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [hasSavedConfig, setHasSavedConfig] = useState(false);
@@ -43,7 +45,10 @@ export const useJackpotRoulette = () => {
   const [isSavingLimits, setIsSavingLimits] = useState(false);
 
   const probabilitySum = useMemo(() => getProbabilitySum(slots), [slots]);
-  const totalExpectedValue = useMemo(() => getTotalExpectedValue(slots), [slots]);
+  const totalExpectedValue = useMemo(
+    () => getTotalExpectedValue(slots, valueOverrides),
+    [slots, valueOverrides]
+  );
   const isProbabilityValid = Math.abs(probabilitySum - 100) < 0.001;
   const hasInvalidQty = slots.some((s) => s.type !== 'MISS' && s.qty <= 0);
   const isDirty = useMemo(
@@ -84,6 +89,25 @@ export const useJackpotRoulette = () => {
     }
   }, []);
 
+  // 슬롯 가치·기댓값 계산에 쓰는 실제 티켓 환산가치 — 티켓 가치 설정 화면에서 바뀌면 여기도
+  // 반영되도록 매번 최신값을 불러온다.
+  const loadTicketValueConfig = useCallback(async () => {
+    try {
+      const responseData = await ticketAPI.getTicketValueConfig();
+      const values = responseData?.result?.object?.values;
+      if (values) {
+        setValueOverrides({
+          BRONZE_TICKET: values.BRONZE,
+          SILVER_TICKET: values.SILVER,
+          GOLD_TICKET: values.GOLD,
+          EVENT_TICKET: values.EVENT,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load ticket value config for roulette:', error);
+    }
+  }, []);
+
   const loadPolicy = useCallback(async () => {
     setIsLoadingLimits(true);
     try {
@@ -103,9 +127,10 @@ export const useJackpotRoulette = () => {
 
   useEffect(() => {
     loadConfig();
+    loadTicketValueConfig();
     loadStats();
     loadPolicy();
-  }, [loadConfig, loadStats, loadPolicy]);
+  }, [loadConfig, loadTicketValueConfig, loadStats, loadPolicy]);
 
   const updateSlot = useCallback((index: number, patch: Partial<IRouletteSlot>) => {
     setSlots((prev) => prev.map((slot, i) => (i === index ? { ...slot, ...patch } : slot)));
@@ -171,6 +196,7 @@ export const useJackpotRoulette = () => {
   return {
     slots,
     stats,
+    valueOverrides,
     isLoading,
     isSaving,
     hasSavedConfig,

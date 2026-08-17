@@ -33,6 +33,7 @@ import {
   PointPolicyIcon,
   AnnouncementIcon,
   AbuseIcon,
+  JackpotLuckySpinIcon,
 } from './Icons';
 import { authAPI } from 'src/api';
 import { useAuthContext } from 'src/auth/hooks';
@@ -130,7 +131,7 @@ const MENU_GROUPS: MenuGroup[] = [
       {
         id: 'jackpot-roulette',
         label: '잭팟 룰렛',
-        icon: <LuckySpinIcon />,
+        icon: <JackpotLuckySpinIcon />,
         href: '/jackpot-roulette',
       },
       // { id: 'clawback', label: '환수 이력', icon: <ClawbackIcon />, href: '/clawback' },

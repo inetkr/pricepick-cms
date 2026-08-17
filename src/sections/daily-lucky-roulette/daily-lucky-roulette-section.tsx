@@ -7,11 +7,13 @@ import { RouletteSlotEditor } from 'src/components/roulette/roulette-slot-editor
 import { RouletteLogTable } from 'src/components/roulette/roulette-log-table';
 import { useDailyLuckyRoulette } from 'src/sections/daily-lucky-roulette/hooks/use-daily-lucky-roulette';
 import { useRouletteLogs } from 'src/sections/roulette/hooks/use-roulette-logs';
+import { POINTS_PER_WON } from 'src/utils/ticket-value';
 
 export const DailyLuckyRouletteSection: React.FC = () => {
   const {
     slots,
     stats,
+    valueOverrides,
     isLoading,
     isSaving,
     hasSavedConfig,
@@ -24,6 +26,10 @@ export const DailyLuckyRouletteSection: React.FC = () => {
     resetToDefault,
     saveConfig,
   } = useDailyLuckyRoulette();
+
+  // 티켓 환산가치는 티켓 가치 설정 화면 값을 그대로 따른다 — valueOverrides가 아직 로딩 전이면
+  // 옛 값을 추측해 보여주지 않고 "—"로 비워 둔다(getSlotValue와 같은 기준).
+  const fmtTicketValue = (v: number | undefined) => (v === undefined ? '—' : `${v.toLocaleString()}원`);
 
   const {
     logs,
@@ -43,7 +49,7 @@ export const DailyLuckyRouletteSection: React.FC = () => {
       : justSaved
         ? '저장 완료 · 앱에서 다음 진입 시 반영됩니다.'
         : hasSavedConfig
-          ? '저장된 설정을 불러왔습니다.'
+          ? '저장된 구성을 불러왔습니다 · 슬롯 6개.'
           : '기본값(예시) 표시 중 · 저장하면 이 설정이 앱에 적용됩니다.';
 
   // 확률·수량 유효성은 여기서 버튼을 막지 않고 saveConfig 내부에서 토스트로 안내한다 —
@@ -117,6 +123,7 @@ export const DailyLuckyRouletteSection: React.FC = () => {
           probabilitySum={probabilitySum}
           isProbabilityValid={isProbabilityValid}
           totalExpectedValue={totalExpectedValue}
+          valueOverrides={valueOverrides}
           showJackpotBadge
         />
         <div
@@ -130,8 +137,15 @@ export const DailyLuckyRouletteSection: React.FC = () => {
           {statusText}
         </div>
         <div style={{ padding: '0 16px 14px', fontSize: '12px', color: 'var(--text-3)' }}>
-          가치 환산 기준 — 포인트 10P = 1원 · 이벤트 티켓 40원 · 브론즈 티켓 100원 · 실버 티켓
-          1,000원 · 골드 티켓 2,000원. 기댓값 기여 = 가치 × 확률.
+          가치 환산 기준 — 포인트 {POINTS_PER_WON}P = 1원 · 이벤트 티켓{' '}
+          {fmtTicketValue(valueOverrides?.EVENT_TICKET)} · 브론즈 티켓{' '}
+          {fmtTicketValue(valueOverrides?.BRONZE_TICKET)} · 실버 티켓{' '}
+          {fmtTicketValue(valueOverrides?.SILVER_TICKET)} · 골드 티켓{' '}
+          {fmtTicketValue(valueOverrides?.GOLD_TICKET)}. 기대값 기여 = 가치 × 확률.
+        </div>
+        <div style={{ padding: '0 16px 16px', fontSize: '12px', color: 'var(--text-3)' }}>
+          여기서 저장한 슬롯 구성·보상·확률을 데모 앱 룰렛 화면이 그대로 읽어 렌더링하고 추첨·지급합니다.
+          등급 티켓(브론즈·실버·골드) 슬롯도 앱에서 정상 표시·지급됩니다. 앱을 새로고침하면 반영됩니다.
         </div>
       </div>
 

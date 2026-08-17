@@ -1,5 +1,6 @@
 import React from 'react';
 import type { IRouletteRewardType, IRouletteSlot } from 'src/types/tickets/roulette';
+import type { RouletteValueOverrides } from 'src/utils/roulette';
 import { REWARD_TYPE_META, getSlotExpectedValue, getSlotValue } from 'src/utils/roulette';
 
 interface RouletteSlotEditorProps {
@@ -10,6 +11,8 @@ interface RouletteSlotEditorProps {
   isProbabilityValid: boolean;
   totalExpectedValue: number;
   showJackpotBadge?: boolean;
+  // 티켓 가치 설정 화면에서 실시간으로 불러온 환산가치 — 있으면 가치·기댓값 계산에 우선 적용한다.
+  valueOverrides?: RouletteValueOverrides;
 }
 
 export const RouletteSlotEditor: React.FC<RouletteSlotEditorProps> = ({
@@ -20,6 +23,7 @@ export const RouletteSlotEditor: React.FC<RouletteSlotEditorProps> = ({
   isProbabilityValid,
   totalExpectedValue,
   showJackpotBadge,
+  valueOverrides,
 }) => {
   const handleTypeChange = (index: number, type: IRouletteRewardType) => {
     if (type === 'MISS') {
@@ -34,7 +38,10 @@ export const RouletteSlotEditor: React.FC<RouletteSlotEditorProps> = ({
 
   const jackpotIndex = showJackpotBadge
     ? slots.reduce<number>(
-        (best, slot, i) => (best === -1 || getSlotValue(slot) > getSlotValue(slots[best]) ? i : best),
+        (best, slot, i) =>
+          best === -1 || getSlotValue(slot, valueOverrides) > getSlotValue(slots[best], valueOverrides)
+            ? i
+            : best,
         -1
       )
     : -1;
@@ -92,7 +99,7 @@ export const RouletteSlotEditor: React.FC<RouletteSlotEditorProps> = ({
                 </div>
               </td>
               <td style={{ color: 'var(--text-2)' }}>
-                {isMiss ? '—' : `${getSlotValue(slot).toLocaleString()}원`}
+                {isMiss ? '—' : `${getSlotValue(slot, valueOverrides).toLocaleString()}원`}
                 {showJackpotBadge && (
                   <span
                     className="rlt-jackpot-badge"
@@ -119,7 +126,9 @@ export const RouletteSlotEditor: React.FC<RouletteSlotEditorProps> = ({
                 </div>
               </td>
               <td style={{ fontWeight: 600 }}>
-                {getSlotExpectedValue(slot).toLocaleString(undefined, { maximumFractionDigits: 2 })}원
+                {getSlotExpectedValue(slot, valueOverrides).toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                })}원
               </td>
             </tr>
           );

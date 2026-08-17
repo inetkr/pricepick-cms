@@ -21,6 +21,9 @@ export type ILuckySpinConfigSlot = {
   amount: number;
   position?: number; // GET 응답에만 존재, 슬롯 순서
   rate?: number; // 확률(%)
+  won_value?: number; // GET 응답에만 존재, 서버가 계산한 당첨 가치(원) 스냅샷 — 편집 중에는
+  // 클라이언트가 티켓 가치 설정을 다시 읽어 같은 공식으로 재계산한다(src/utils/roulette.ts 참고).
+  expected_value?: number; // GET 응답에만 존재, won_value × rate/100 스냅샷
 };
 
 export type ILuckySpinConfig = {

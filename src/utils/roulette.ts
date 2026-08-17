@@ -5,16 +5,20 @@ import type {
   IRouletteSlot,
 } from 'src/types/tickets/roulette';
 
+// unitValue는 label·unit과 달리 MISS·POINT에만 있다 — 이 둘은 "10P = 1원" 같은 정책상
+// 고정 환율이라 하드코딩해도 되지만, 티켓 종류(브론즈/실버/골드/이벤트)는 티켓 가치 설정
+// 화면에서 실시간으로 바뀌는 값이라 여기에 하드코딩하지 않는다. 반드시 valueOverrides
+// (getTicketValueConfig로 불러온 실제 값)로만 계산한다 — getSlotValue 참고.
 export const REWARD_TYPE_META: Record<
   IRouletteRewardType,
-  { label: string; unit: string; unitValue: number }
+  { label: string; unit: string; unitValue?: number }
 > = {
   MISS: { label: '꽝', unit: '', unitValue: 0 },
   POINT: { label: '포인트', unit: 'P', unitValue: 0.1 },
-  EVENT_TICKET: { label: '이벤트 티켓', unit: '장', unitValue: 40 },
-  BRONZE_TICKET: { label: '브론즈 티켓', unit: '장', unitValue: 100 },
-  SILVER_TICKET: { label: '실버 티켓', unit: '장', unitValue: 1000 },
-  GOLD_TICKET: { label: '골드 티켓', unit: '장', unitValue: 2000 },
+  EVENT_TICKET: { label: '이벤트 티켓', unit: '장' },
+  BRONZE_TICKET: { label: '브론즈 티켓', unit: '장' },
+  SILVER_TICKET: { label: '실버 티켓', unit: '장' },
+  GOLD_TICKET: { label: '골드 티켓', unit: '장' },
 };
 
 export const DEFAULT_DAILY_ROULETTE_SLOTS: IRouletteSlot[] = [
@@ -35,16 +39,32 @@ export const DEFAULT_JACKPOT_ROULETTE_SLOTS: IRouletteSlot[] = [
   { type: 'MISS', qty: 0, prob: 31.6 },
 ];
 
-export const getSlotValue = (slot: IRouletteSlot) =>
-  slot.type === 'MISS' ? 0 : REWARD_TYPE_META[slot.type].unitValue * slot.qty;
+// 티켓 종류(브론즈/실버/골드/이벤트) 슬롯의 1개당 가치(원) — 티켓 가치 설정 화면에서 실시간으로
+// 관리하는 값이라 여기서 하드코딩하지 않고, getTicketValueConfig로 불러온 이 값만 계산에 쓴다.
+export type RouletteValueOverrides = Partial<Record<IRouletteRewardType, number>>;
 
-export const getSlotExpectedValue = (slot: IRouletteSlot) => (getSlotValue(slot) * slot.prob) / 100;
+export const getSlotValue = (slot: IRouletteSlot, valueOverrides?: RouletteValueOverrides) => {
+  if (slot.type === 'MISS') return 0;
+  // 포인트는 "10P = 1원" 고정 환율(정책 상수)이라 하드코딩된 값을 그대로 쓴다. 티켓 종류는
+  // 실제 값이 아직 로딩 전이면(캐시 없는 상태) 옛 값을 추측해 보여주지 않고 0으로 둔다 —
+  // valueOverrides가 도착하는 즉시 재계산된다.
+  const unitValue =
+    slot.type === 'POINT' ? (REWARD_TYPE_META.POINT.unitValue ?? 0) : (valueOverrides?.[slot.type] ?? 0);
+  return unitValue * slot.qty;
+};
+
+export const getSlotExpectedValue = (
+  slot: IRouletteSlot,
+  valueOverrides?: RouletteValueOverrides
+) => (getSlotValue(slot, valueOverrides) * slot.prob) / 100;
 
 export const getProbabilitySum = (slots: IRouletteSlot[]) =>
   Math.round(slots.reduce((sum, s) => sum + s.prob, 0) * 10) / 10;
 
-export const getTotalExpectedValue = (slots: IRouletteSlot[]) =>
-  slots.reduce((sum, s) => sum + getSlotExpectedValue(s), 0);
+export const getTotalExpectedValue = (
+  slots: IRouletteSlot[],
+  valueOverrides?: RouletteValueOverrides
+) => slots.reduce((sum, s) => sum + getSlotExpectedValue(s, valueOverrides), 0);
 
 const API_TO_UI_PRIZE_TYPE: Record<ILuckySpinPrizeType, IRouletteRewardType> = {
   NO_WIN: 'MISS',
