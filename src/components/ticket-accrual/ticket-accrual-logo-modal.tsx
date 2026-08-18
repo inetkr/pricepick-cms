@@ -230,7 +230,12 @@ export const TicketAccrualLogoModal: React.FC<TicketAccrualLogoModalProps> = ({
               type="file"
               accept="image/png,image/jpeg"
               style={{ display: 'none' }}
-              onChange={(e) => handleFile(e.target.files?.[0])}
+              onChange={(e) => {
+                // 같은 파일을 다시 선택해도 input의 value가 바뀌지 않으면 change 이벤트가
+                // 재발화되지 않는다 — 선택 직후 비워서 동일 파일 재업로드도 항상 감지되게 한다.
+                handleFile(e.target.files?.[0]);
+                e.target.value = '';
+              }}
             />
             <span>파일 선택 또는 여기에 끌어다 놓기</span>
           </div>
