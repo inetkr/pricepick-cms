@@ -6,7 +6,9 @@ import type { IAffiliateMall } from 'src/types/config/ticket_accrual_config';
 
 interface TicketAccrualLogoModalProps {
   mall: IAffiliateMall | null;
-  onApply: (id: string, logoUrl: string) => void;
+  // isUpload: 파일 업로드로 적용됐는지 여부 — true면 재선택한 파일의 base64가 기존 저장값과
+  // 우연히 바이트까지 같아도(같은 원본을 재업로드한 경우) 변경으로 잡아 저장되게 한다.
+  onApply: (id: string, logoUrl: string, isUpload: boolean) => void;
   onClose: () => void;
 }
 
@@ -123,7 +125,7 @@ export const TicketAccrualLogoModal: React.FC<TicketAccrualLogoModalProps> = ({
   };
 
   const handleApply = () => {
-    onApply(mall.id, previewSrc.trim());
+    onApply(mall.id, previewSrc.trim(), !!pendingUpload);
     onClose();
   };
 

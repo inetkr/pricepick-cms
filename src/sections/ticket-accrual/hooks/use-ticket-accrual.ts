@@ -53,14 +53,20 @@ type MallPatch = {
 };
 
 // saved 스냅샷과 달라진 필드만 골라 PUT 페이로드를 만든다 — 대표 제휴몰·카탈로그 저장 함수가
-// 공통으로 쓴다.
-const buildMallPatch = (current: IAffiliateMall, saved: IAffiliateMall | undefined): MallPatch => {
+// 공통으로 쓴다. forceLogo가 true면 logoUrl 문자열이 saved와 같아도 img_url을 patch에 넣는다 —
+// 같은 원본 파일을 재업로드한 경우 base64가 우연히 바이트까지 같을 수 있는데, 그때도 사용자가
+// 방금 로고 모달에서 "적용"을 누른 행위 자체는 저장되어야 하기 때문이다.
+const buildMallPatch = (
+  current: IAffiliateMall,
+  saved: IAffiliateMall | undefined,
+  forceLogo: boolean
+): MallPatch => {
   const patch: MallPatch = {};
   if (!saved || saved.feeRate !== current.feeRate) patch.commission_rate = current.feeRate;
   if (!saved || saved.accrualRate !== current.accrualRate) patch.accrual_rate = current.accrualRate;
   if (!saved || saved.applied !== current.applied) patch.is_applied = current.applied;
   if (!saved || saved.approvalStatus !== current.approvalStatus) patch.lp_status = current.approvalStatus;
-  if (!saved || saved.logoUrl !== current.logoUrl) patch.img_url = current.logoUrl;
+  if (!saved || saved.logoUrl !== current.logoUrl || forceLogo) patch.img_url = current.logoUrl;
   return patch;
 };
 
@@ -117,6 +123,11 @@ export const useTicketAccrual = () => {
   const [isSavingCatalog, setIsSavingCatalog] = useState(false);
   const [isSearchingCatalog, setIsSearchingCatalog] = useState(false);
 
+  // 로고 모달에서 파일 업로드로 "적용"한 행의 id — base64가 saved 스냅샷과 문자열까지 같아도
+  // (동일 원본 재업로드) 저장 대상에서 빠지지 않도록 dirty 판정·patch 생성에서 강제로 포함시킨다.
+  // 저장이 끝나면 그 시점에 반영된 id는 여기서 지운다.
+  const [logoUploadIds, setLogoUploadIds] = useState<Set<string>>(new Set());
+
   const [filters, setFilters] = useState<TicketAccrualFilters>(DEFAULT_FILTERS);
   const [selectMode, setSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -151,6 +162,7 @@ export const useTicketAccrual = () => {
       setCatalogMalls(loadedCatalog);
       setSavedCatalogMalls(loadedCatalog);
       setTotalCatalogCount(loadedCatalog.length);
+      setLogoUploadIds(new Set());
 
       const loadedApiValue = valueRes?.result?.object?.values;
       if (loadedApiValue && typeof loadedApiValue.BRONZE === 'number') {
@@ -221,14 +233,27 @@ export const useTicketAccrual = () => {
   }, []);
 
   // 로고 모달의 "적용"이 호출하는 함수 — id는 두 목록 사이에서 겹치지 않으므로 어느 쪽 소속인지
-  // 가리지 않고 두 setter에 모두 매핑을 걸어도 안전하다.
-  const updateMallLogo = useCallback((id: string, logoUrl: string) => {
+  // 가리지 않고 두 setter에 모두 매핑을 걸어도 안전하다. isUpload가 true면(파일 업로드로 적용)
+  // logoUploadIds에 등록해 문자열 동일 여부와 무관하게 저장 대상으로 강제한다 — URL 직접 입력은
+  // 값이 다르면 어차피 정상적으로 dirty가 잡히므로 강제할 필요가 없다.
+  const updateMallLogo = useCallback((id: string, logoUrl: string, isUpload: boolean) => {
     setPrimaryMalls((prev) =>
       prev.some((m) => m.id === id) ? prev.map((m) => (m.id === id ? { ...m, logoUrl } : m)) : prev
     );
     setCatalogMalls((prev) =>
       prev.some((m) => m.id === id) ? prev.map((m) => (m.id === id ? { ...m, logoUrl } : m)) : prev
     );
+    setLogoUploadIds((prev) => {
+      if (!isUpload) {
+        if (!prev.has(id)) return prev;
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      }
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
   }, []);
 
   const toggleApplied = useCallback((id: string) => {
@@ -352,14 +377,20 @@ export const useTicketAccrual = () => {
     [selectedIds]
   );
 
-  const primaryDirtyIds = useMemo(
-    () => diffMallIds(primaryMalls, savedPrimaryMalls),
-    [primaryMalls, savedPrimaryMalls]
-  );
-  const catalogDirtyIds = useMemo(
-    () => diffMallIds(catalogMalls, savedCatalogMalls),
-    [catalogMalls, savedCatalogMalls]
-  );
+  const primaryDirtyIds = useMemo(() => {
+    const ids = diffMallIds(primaryMalls, savedPrimaryMalls);
+    primaryMalls.forEach((m) => {
+      if (logoUploadIds.has(m.id)) ids.add(m.id);
+    });
+    return ids;
+  }, [primaryMalls, savedPrimaryMalls, logoUploadIds]);
+  const catalogDirtyIds = useMemo(() => {
+    const ids = diffMallIds(catalogMalls, savedCatalogMalls);
+    catalogMalls.forEach((m) => {
+      if (logoUploadIds.has(m.id)) ids.add(m.id);
+    });
+    return ids;
+  }, [catalogMalls, savedCatalogMalls, logoUploadIds]);
   const dirtyMallIds = useMemo(
     () => new Set(Array.from(primaryDirtyIds).concat(Array.from(catalogDirtyIds))),
     [primaryDirtyIds, catalogDirtyIds]
@@ -407,10 +438,16 @@ export const useTicketAccrual = () => {
         Array.from(primaryDirtyIds).map((id) => {
           const current = primaryMalls.find((m) => m.id === id);
           if (!current) return Promise.resolve();
-          return merchantAPI.update(id, buildMallPatch(current, savedById.get(id)));
+          return merchantAPI.update(id, buildMallPatch(current, savedById.get(id), logoUploadIds.has(id)));
         })
       );
       setSavedPrimaryMalls(primaryMalls);
+      setLogoUploadIds((prev) => {
+        if (prev.size === 0) return prev;
+        const next = new Set(prev);
+        primaryDirtyIds.forEach((id) => next.delete(id));
+        return next;
+      });
       toast.success('대표 제휴몰 수수료·적립률이 저장되었습니다.');
     } catch (error) {
       console.error('Failed to save primary malls:', error);
@@ -418,7 +455,7 @@ export const useTicketAccrual = () => {
     } finally {
       setIsSavingPrimary(false);
     }
-  }, [invalidPrimaryIds, primaryDirtyIds, primaryMalls, savedPrimaryMalls]);
+  }, [invalidPrimaryIds, primaryDirtyIds, primaryMalls, savedPrimaryMalls, logoUploadIds]);
 
   // 제휴몰(링크프라이스)만 저장한다 — 대표 제휴몰 쪽 미저장 변경은 그대로 dirty로 남겨 둔다.
   const saveCatalogMalls = useCallback(async () => {
@@ -437,12 +474,18 @@ export const useTicketAccrual = () => {
         Array.from(catalogDirtyIds).map((id) => {
           const current = catalogMalls.find((m) => m.id === id);
           if (!current) return Promise.resolve();
-          return merchantAPI.update(id, buildMallPatch(current, savedById.get(id)));
+          return merchantAPI.update(id, buildMallPatch(current, savedById.get(id), logoUploadIds.has(id)));
         })
       );
       setSavedCatalogMalls(catalogMalls);
       setSelectedIds(new Set());
       setSelectMode(false);
+      setLogoUploadIds((prev) => {
+        if (prev.size === 0) return prev;
+        const next = new Set(prev);
+        catalogDirtyIds.forEach((id) => next.delete(id));
+        return next;
+      });
       toast.success('제휴몰(링크프라이스) 수수료·적립률이 저장되었습니다.');
     } catch (error) {
       console.error('Failed to save catalog malls:', error);
@@ -450,7 +493,7 @@ export const useTicketAccrual = () => {
     } finally {
       setIsSavingCatalog(false);
     }
-  }, [catalogDirtyIds, catalogMalls, invalidCatalogIds, savedCatalogMalls]);
+  }, [catalogDirtyIds, catalogMalls, invalidCatalogIds, savedCatalogMalls, logoUploadIds]);
 
   return {
     primaryMalls,
