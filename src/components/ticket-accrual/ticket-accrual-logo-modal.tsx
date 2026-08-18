@@ -10,7 +10,6 @@ interface TicketAccrualLogoModalProps {
   onClose: () => void;
 }
 
-const LOGO_MAX_DIM = 128;
 const LOGO_MAX_SRC_BYTES = 8 * 1024 * 1024;
 const LOGO_ALLOWED_TYPES = new Set(['image/png', 'image/jpeg']);
 
@@ -21,8 +20,8 @@ const UPLOAD_TONE_COLOR: Record<UploadTone, string> = {
   error: 'var(--danger)',
 };
 
-// 파일을 128×128 이내로 축소한 data URL로 바꾼다 — 정사각형이 아니어도 막지 않고 경고만 준다
-// (등록 자체를 차단하면 로고가 비정사각형인 몰을 아예 등록할 수 없게 되므로).
+// 정사각형 여부만 확인하고 리사이즈는 하지 않는다 — 원본 파일 그대로 data URL로 바꿔 보내면
+// 백엔드가 알아서 조정한다.
 const processLogoFile = (file: File): Promise<{ dataUrl: string; square: boolean }> =>
   new Promise((resolve, reject) => {
     if (!LOGO_ALLOWED_TYPES.has(file.type)) {
@@ -36,26 +35,13 @@ const processLogoFile = (file: File): Promise<{ dataUrl: string; square: boolean
     const reader = new FileReader();
     reader.onerror = () => reject(new Error('파일을 읽을 수 없습니다.'));
     reader.onload = () => {
+      const dataUrl = reader.result as string;
       const img = new Image();
       img.onerror = () => reject(new Error('이미지를 열 수 없습니다.'));
       img.onload = () => {
-        const w = img.naturalWidth || 1;
-        const h = img.naturalHeight || 1;
-        const scale = Math.min(1, LOGO_MAX_DIM / Math.max(w, h));
-        const cw = Math.max(1, Math.round(w * scale));
-        const ch = Math.max(1, Math.round(h * scale));
-        const canvas = document.createElement('canvas');
-        canvas.width = cw;
-        canvas.height = ch;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject(new Error('이미지를 처리할 수 없습니다.'));
-          return;
-        }
-        ctx.drawImage(img, 0, 0, cw, ch);
-        resolve({ dataUrl: canvas.toDataURL(file.type), square: w === h });
+        resolve({ dataUrl, square: img.naturalWidth === img.naturalHeight });
       };
-      img.src = reader.result as string;
+      img.src = dataUrl;
     };
     reader.readAsDataURL(file);
   });
@@ -111,7 +97,7 @@ export const TicketAccrualLogoModal: React.FC<TicketAccrualLogoModalProps> = ({
                 tone: 'neutral',
               }
             : {
-                text: `정사각형이 아닙니다 — 그대로 적용할 수 있습니다(약 ${kb.toLocaleString()}KB). 적용을 눌러 반영하세요.`,
+                text: `정사각형이 아닙니다 — 원본 그대로 적용할 수 있습니다(약 ${kb.toLocaleString()}KB). 적용을 눌러 반영하세요.`,
                 tone: 'warning',
               }
         );
