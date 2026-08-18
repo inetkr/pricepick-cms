@@ -124,6 +124,10 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
     () => new Map(savedMalls.map((m) => [m.id, m.approvalStatus])),
     [savedMalls]
   );
+  const savedLogoById = useMemo(
+    () => new Map(savedMalls.map((m) => [m.id, m.logoUrl])),
+    [savedMalls]
+  );
 
   const columns: Column<IAffiliateMall>[] = [];
 
@@ -156,7 +160,11 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
     label: '로고',
     align: 'center',
     width: '70px',
-    render: (m) => <LogoCell mall={m} onEdit={onEditLogo} />,
+    render: (m) => {
+      const savedLogoUrl = savedLogoById.get(m.id);
+      const changed = savedLogoUrl !== undefined && savedLogoUrl !== m.logoUrl;
+      return <LogoCell mall={m} onEdit={onEditLogo} changed={changed} />;
+    },
   });
 
   columns.push({

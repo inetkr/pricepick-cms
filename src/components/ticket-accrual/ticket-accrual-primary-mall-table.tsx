@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { Column } from 'src/components/common/table';
 import { Table } from 'src/components/common/table';
 import {
@@ -12,6 +12,9 @@ import type { IAffiliateMall } from 'src/types/config/ticket_accrual_config';
 
 interface TicketAccrualPrimaryMallTableProps {
   malls: IAffiliateMall[];
+  // 마지막 저장 시점 스냅샷 — 로고가 저장 전 값과 달라졌는지 판단하는 기준이다(카탈로그 테이블의
+  // savedMalls와 같은 용도).
+  savedMalls: IAffiliateMall[];
   onChangeField: (id: string, patch: Partial<Pick<IAffiliateMall, 'feeRate' | 'accrualRate'>>) => void;
   onOpenSimulator: (mall: IAffiliateMall) => void;
   onEditLogo: (mall: IAffiliateMall) => void;
@@ -25,19 +28,29 @@ interface TicketAccrualPrimaryMallTableProps {
 // 테이블 — 승인 상태·적용 토글·선택 열이 필요 없어 카탈로그 테이블과 별도 컴포넌트로 둔다.
 export const TicketAccrualPrimaryMallTable: React.FC<TicketAccrualPrimaryMallTableProps> = ({
   malls,
+  savedMalls,
   onChangeField,
   onOpenSimulator,
   onEditLogo,
   dirtyCount,
   headerActions,
 }) => {
+  const savedLogoById = useMemo(
+    () => new Map(savedMalls.map((m) => [m.id, m.logoUrl])),
+    [savedMalls]
+  );
+
   const columns: Column<IAffiliateMall>[] = [
     {
       key: 'logo',
       label: '로고',
       align: 'center',
       width: '70px',
-      render: (m) => <LogoCell mall={m} onEdit={onEditLogo} />,
+      render: (m) => {
+        const savedLogoUrl = savedLogoById.get(m.id);
+        const changed = savedLogoUrl !== undefined && savedLogoUrl !== m.logoUrl;
+        return <LogoCell mall={m} onEdit={onEditLogo} changed={changed} />;
+      },
     },
     {
       key: 'name',

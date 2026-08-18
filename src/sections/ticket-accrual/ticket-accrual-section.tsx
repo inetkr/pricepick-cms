@@ -15,6 +15,7 @@ import { DEFAULT_ACCRUAL_RATIO } from 'src/utils/ticket-accrual';
 export const TicketAccrualSection: React.FC = () => {
   const {
     primaryMalls,
+    savedPrimaryMalls,
     catalogMalls,
     savedCatalogMalls,
     totalCatalogCount,
@@ -74,6 +75,7 @@ export const TicketAccrualSection: React.FC = () => {
 
       <TicketAccrualPrimaryMallTable
         malls={primaryMalls}
+        savedMalls={savedPrimaryMalls}
         onChangeField={updateMallField}
         onOpenSimulator={setSimulatorMall}
         onEditLogo={setLogoModalMall}

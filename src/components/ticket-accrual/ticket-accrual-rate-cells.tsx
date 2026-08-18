@@ -68,11 +68,13 @@ export const SimulatorButtonCell: React.FC<{
 );
 
 // 로고 이미지가 없거나 깨진 URL이면 몰 이름 첫 글자 배지로 대신 보여준다. logoUrl이 바뀌면(등록·
-// 삭제·다른 몰로 재사용되는 셀 등) 이전 에러 상태가 남아있지 않도록 다시 시도한다.
+// 삭제·다른 몰로 재사용되는 셀 등) 이전 에러 상태가 남아있지 않도록 다시 시도한다. changed는
+// 저장 스냅샷과 달라졌는지 여부 — 링크프라이스 상태 select와 같은 방식으로 박스섀도로 강조한다.
 export const LogoCell: React.FC<{
   mall: IAffiliateMall;
   onEdit: (mall: IAffiliateMall) => void;
-}> = ({ mall, onEdit }) => {
+  changed?: boolean;
+}> = ({ mall, onEdit, changed = false }) => {
   const [imgError, setImgError] = React.useState(false);
 
   React.useEffect(() => {
@@ -81,6 +83,7 @@ export const LogoCell: React.FC<{
 
   const initial = (mall.name.trim().charAt(0) || '?').toUpperCase();
   const showImage = !!mall.logoUrl && !imgError;
+  const changedShadow = changed ? '0 0 0 2px var(--warning)' : 'none';
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
@@ -98,6 +101,7 @@ export const LogoCell: React.FC<{
             border: '1px solid var(--border)',
             display: 'block',
             flexShrink: 0,
+            boxShadow: changedShadow,
           }}
         />
       ) : (
@@ -114,6 +118,7 @@ export const LogoCell: React.FC<{
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0,
+            boxShadow: changedShadow,
           }}
         >
           {initial}

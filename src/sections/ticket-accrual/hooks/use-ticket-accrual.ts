@@ -497,6 +497,7 @@ export const useTicketAccrual = () => {
 
   return {
     primaryMalls,
+    savedPrimaryMalls,
     catalogMalls,
     savedCatalogMalls,
     totalCatalogCount,
