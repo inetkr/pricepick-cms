@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { configAPI } from 'src/api';
-import type { IPointPolicyConfig, IPointPolicyConfigValue } from 'src/types/config/point_policy_config';
+import { configAPI, pointAPI } from 'src/api';
+import type { IPointPolicyConfigValue } from 'src/types/config/point_policy_config';
 
 const CONFIG_KEY = 'POINT_POLICY';
+const DEFAULT_DAILY_POINTS = 100;
 
 const defaultConfig: IPointPolicyConfigValue = {
   exchange_rate: { point: 10, won: 1 },
@@ -15,16 +16,20 @@ const defaultConfig: IPointPolicyConfigValue = {
 
 export const usePointPolicy = () => {
   const [config, setConfig] = useState<IPointPolicyConfigValue>(defaultConfig);
+  const [dailyPoints, setDailyPoints] = useState(DEFAULT_DAILY_POINTS);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   const loadConfig = async () => {
     setIsLoading(true);
     try {
-      const responseData = await configAPI.getConfig<IPointPolicyConfig>(CONFIG_KEY);
-      const value = responseData?.result?.object?.value;
-      if (value && value.exchange_rate) {
-        setConfig(value);
+      const responseData = await pointAPI.getPointPolicy();
+      const object = responseData?.result?.object;
+      if (object?.value?.exchange_rate) {
+        setConfig(object.value);
+      }
+      if (object?.daily_points !== undefined) {
+        setDailyPoints(object.daily_points);
       }
     } catch (error) {
       console.error('Failed to load point policy config:', error);
@@ -51,5 +56,5 @@ export const usePointPolicy = () => {
     loadConfig();
   }, []);
 
-  return { config, isLoading, isSaving, saveConfig, reload: loadConfig };
+  return { config, dailyPoints, isLoading, isSaving, saveConfig, reload: loadConfig };
 };

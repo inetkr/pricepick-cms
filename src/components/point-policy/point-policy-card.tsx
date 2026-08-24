@@ -4,6 +4,7 @@ import { PolicyItem } from '../common/policy-item';
 
 interface PointPolicyCardProps {
   config: IPointPolicyConfigValue;
+  attendanceDailyPoints: number;
   onEdit?: () => void;
 }
 
@@ -31,7 +32,11 @@ const formatScheduledAt = (value: string | null) => {
   });
 };
 
-export const PointPolicyCard: React.FC<PointPolicyCardProps> = ({ config, onEdit }) => {
+export const PointPolicyCard: React.FC<PointPolicyCardProps> = ({
+  config,
+  attendanceDailyPoints,
+  onEdit,
+}) => {
   return (
     <div className="card" style={{ marginTop: '16px' }}>
       <div className="card-header">
@@ -50,7 +55,7 @@ export const PointPolicyCard: React.FC<PointPolicyCardProps> = ({ config, onEdit
         <PolicyItem
           label="만료 기간"
           value={expiryLabels[config.expiry_policy] || config.expiry_policy}
-          description="선입선출(FIFO) 소멸. 매일 04:00 만료 배치 실행"
+          description="먼저 적립된 것부터 소멸. 매일 04:00 만료 배치 실행"
         />
         <PolicyItem
           label="일일 적립 한도"
@@ -63,9 +68,9 @@ export const PointPolicyCard: React.FC<PointPolicyCardProps> = ({ config, onEdit
         <PolicyItem
           label="교환 방향"
           value={directionLabels[config.conversion_direction] || config.conversion_direction}
-          description="어느 방향으로 바꿔도 보유 가치는 동일"
+          description="티켓 → 포인트 역방향은 2026-08 확정으로 중단 — 앱은 숨김 처리만 했고 로직은 남아 있어 필요 시 복구 가능"
         />
-        <PolicyItem label="주 적립 경로" value="출석체크 (일 100P)" />
+        <PolicyItem label="주 적립 경로" value={`출석체크 (일 ${attendanceDailyPoints}P)`} />
         <PolicyItem
           label="적용 시점"
           value={config.apply_timing === 'SCHEDULED' ? '예약 적용' : '즉시 적용'}

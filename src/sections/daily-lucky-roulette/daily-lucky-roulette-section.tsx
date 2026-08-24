@@ -5,11 +5,14 @@ import { StatCard } from 'src/components/common/stat-card';
 import { InfoBox } from 'src/components/common/info-box';
 import { RouletteSlotEditor } from 'src/components/roulette/roulette-slot-editor';
 import { RouletteLogTable } from 'src/components/roulette/roulette-log-table';
+import { usePointPolicy } from 'src/sections/point-policy/hooks/use-point-policy';
 import { useDailyLuckyRoulette } from 'src/sections/daily-lucky-roulette/hooks/use-daily-lucky-roulette';
 import { useRouletteLogs } from 'src/sections/roulette/hooks/use-roulette-logs';
-import { POINTS_PER_WON } from 'src/utils/ticket-value';
 
 export const DailyLuckyRouletteSection: React.FC = () => {
+  const { config: pointPolicyConfig } = usePointPolicy();
+  const pointsPerWon = pointPolicyConfig.exchange_rate.point / pointPolicyConfig.exchange_rate.won;
+
   const {
     slots,
     stats,
@@ -137,7 +140,7 @@ export const DailyLuckyRouletteSection: React.FC = () => {
           {statusText}
         </div>
         <div style={{ padding: '0 16px 14px', fontSize: '12px', color: 'var(--text-3)' }}>
-          가치 환산 기준 — 포인트 {POINTS_PER_WON}P = 1원 · 이벤트 티켓{' '}
+          가치 환산 기준 — 포인트 {pointsPerWon}P = 1원 · 이벤트 티켓{' '}
           {fmtTicketValue(valueOverrides?.EVENT_TICKET)} · 브론즈 티켓{' '}
           {fmtTicketValue(valueOverrides?.BRONZE_TICKET)} · 실버 티켓{' '}
           {fmtTicketValue(valueOverrides?.SILVER_TICKET)} · 골드 티켓{' '}

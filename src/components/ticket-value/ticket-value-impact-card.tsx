@@ -1,13 +1,24 @@
 import React from 'react';
 import { PolicyItem } from 'src/components/common/policy-item';
 import type { ITicketValueConfigValue } from 'src/types/config/ticket_value_config';
-import { POINTS_PER_WON, convertTicketToPoint } from 'src/utils/ticket-value';
+import type { IConversionRateItem, IConversionRates } from 'src/types/points/conversion_rate';
+import { convertTicketToPoint } from 'src/utils/ticket-value';
 
 interface TicketValueImpactCardProps {
   values: ITicketValueConfigValue;
   savedValues: ITicketValueConfigValue;
   isDirty: boolean;
+  pointsPerWon: number;
+  conversionRates: IConversionRates | null;
 }
+
+const gradeLabels: Record<IConversionRateItem['ticket_type'], string> = {
+  BRONZE: '브론즈',
+  SILVER: '실버',
+  GOLD: '골드',
+};
+
+const gradeOrder: IConversionRateItem['ticket_type'][] = ['BRONZE', 'SILVER', 'GOLD'];
 
 const simLineStyle: React.CSSProperties = {
   fontSize: '12px',
@@ -25,7 +36,16 @@ export const TicketValueImpactCard: React.FC<TicketValueImpactCardProps> = ({
   values,
   savedValues,
   isDirty,
+  pointsPerWon,
+  conversionRates,
 }) => {
+  const exchangeRatioText = conversionRates
+    ? [...conversionRates.rates]
+        .sort((a, b) => gradeOrder.indexOf(a.ticket_type) - gradeOrder.indexOf(b.ticket_type))
+        .map((rate) => `${gradeLabels[rate.ticket_type]} ${rate.point_amount.toLocaleString()}P`)
+        .join(' / ')
+    : '—';
+
   return (
     <div className="card">
       <div className="card-header">
@@ -68,23 +88,23 @@ export const TicketValueImpactCard: React.FC<TicketValueImpactCardProps> = ({
         label="포인트 → 티켓 교환 비율"
         value={
           <>
-            브론즈 100P / 실버 1,000P / 골드 2,000P
+            {exchangeRatioText}
             <span className="badge badge-gray" style={{ marginLeft: '8px' }}>
               포인트 관리 &gt; 포인트 정책
             </span>
           </>
         }
-        description={`현재 비율은 브론즈 ${POINTS_PER_WON}원 기준(${POINTS_PER_WON}P = 1원)으로 잡혀 있습니다. 티켓 가치가 바뀌면 포인트 환산도 어긋납니다.`}
+        description={`현재 비율은 브론즈 ${pointsPerWon}원 기준(${pointsPerWon}P = 1원)으로 잡혀 있습니다. 티켓 가치가 바뀌면 포인트 환산도 어긋납니다.`}
       />
       {isDirty && (
         <div style={{ ...simLineStyle, marginBottom: '14px' }}>
-          브론즈 {convertTicketToPoint(savedValues.bronze).toLocaleString()}P →{' '}
-          <strong>{convertTicketToPoint(values.bronze).toLocaleString()}P</strong>
-          {' · '}실버 {convertTicketToPoint(savedValues.silver).toLocaleString()}P →{' '}
-          <strong>{convertTicketToPoint(values.silver).toLocaleString()}P</strong>
-          {' · '}골드 {convertTicketToPoint(savedValues.gold).toLocaleString()}P →{' '}
-          <strong>{convertTicketToPoint(values.gold).toLocaleString()}P</strong>
-          {` (${POINTS_PER_WON}P = 1원 고정)`}
+          브론즈 {convertTicketToPoint(savedValues.bronze, pointsPerWon).toLocaleString()}P →{' '}
+          <strong>{convertTicketToPoint(values.bronze, pointsPerWon).toLocaleString()}P</strong>
+          {' · '}실버 {convertTicketToPoint(savedValues.silver, pointsPerWon).toLocaleString()}P →{' '}
+          <strong>{convertTicketToPoint(values.silver, pointsPerWon).toLocaleString()}P</strong>
+          {' · '}골드 {convertTicketToPoint(savedValues.gold, pointsPerWon).toLocaleString()}P →{' '}
+          <strong>{convertTicketToPoint(values.gold, pointsPerWon).toLocaleString()}P</strong>
+          {` (${pointsPerWon}P = 1원 고정)`}
         </div>
       )}
       <PolicyItem

@@ -4,6 +4,8 @@ import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
 import type { IPointStat } from 'src/types/points/point_stat';
 import type { IPoint } from 'src/types/points/point';
 import type { IAttendanceStat } from 'src/types/points/attendance_stat';
+import type { IConversionRates } from 'src/types/points/conversion_rate';
+import type { IPointPolicyConfig } from 'src/types/config/point_policy_config';
 
 const tableName = 'point';
 export default class PointAPI extends BaseAPI {
@@ -60,6 +62,28 @@ export default class PointAPI extends BaseAPI {
       return response.data;
     } catch (error) {
       console.error('Error fetching point history list:', error);
+      throw error;
+    }
+  };
+
+  getConversionRates = async (): Promise<ApiResponse<IConversionRates>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.get(
+        `/${tableName}/admin/conversion_rates`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching point conversion rates:', error);
+      throw error;
+    }
+  };
+
+  getPointPolicy = async (): Promise<ApiResponse<IPointPolicyConfig>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.get(`/${tableName}/admin/point_policy`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching point policy:', error);
       throw error;
     }
   };

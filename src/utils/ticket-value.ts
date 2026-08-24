@@ -21,14 +21,14 @@ export const TICKET_GRADE_RATIO: Record<ITicketValueGrade, number> = {
   gold: 20,
 };
 
-// 포인트 정책의 "10P = 1원" 고정 환율과 티켓 적립 정책의 "환산가치 × 50 = 적립 단위 금액"
+// 포인트 정책의 포인트-원 환율과 티켓 적립 정책의 "환산가치 × 50 = 적립 단위 금액"
 // (브론즈 100원 → 5,000원당 1장)은 이 화면이 소유한 값이 아니라 각자 화면에서 별도 관리되는
-// 값이다. 영향 범위 카드는 이 상수로 미리보기만 계산할 뿐 실제 정책에 반영하지 않는다.
-export const POINTS_PER_WON = 10;
+// 값이다. 영향 범위 카드는 포인트 정책 설정값으로 미리보기만 계산할 뿐 실제 정책에 반영하지 않는다.
 export const TICKET_ACCRUAL_MULTIPLIER = 50;
 
-// 티켓 환산가치(원)를 "10P = 1원" 고정 환율로 환산한 포인트 값으로 바꾼다.
-export const convertTicketToPoint = (wonValue: number): number => wonValue * POINTS_PER_WON;
+// 티켓 환산가치(원)를 포인트 정책의 exchange_rate(point/won) 비율로 환산한 포인트 값으로 바꾼다.
+export const convertTicketToPoint = (wonValue: number, pointsPerWon: number): number =>
+  wonValue * pointsPerWon;
 
 export type RoundedNotes = Partial<Record<ITicketValueGrade, number>>;
 

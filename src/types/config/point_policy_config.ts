@@ -6,7 +6,10 @@ export type IPointApplyTiming = 'IMMEDIATE' | 'SCHEDULED';
 
 export type IPointPolicyConfig = {
   key: string;
+  configured: boolean;
   value: IPointPolicyConfigValue;
+  updated_at: string;
+  daily_points: number;
 };
 
 export type IPointPolicyConfigValue = {

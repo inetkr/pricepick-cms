@@ -6,6 +6,8 @@ import { TicketValueEventTable } from 'src/components/ticket-value/ticket-value-
 import { TicketValueGradeTable } from 'src/components/ticket-value/ticket-value-grade-table';
 import { TicketValueImpactCard } from 'src/components/ticket-value/ticket-value-impact-card';
 import { TicketValueRatioCard } from 'src/components/ticket-value/ticket-value-ratio-card';
+import { useConversionRates } from 'src/sections/point-policy/hooks/use-conversion-rates';
+import { usePointPolicy } from 'src/sections/point-policy/hooks/use-point-policy';
 import { useTicketValue } from 'src/sections/ticket-value/hooks/use-ticket-value';
 
 export const TicketValueSection: React.FC = () => {
@@ -24,6 +26,9 @@ export const TicketValueSection: React.FC = () => {
     saveTierValues,
     saveEventValue,
   } = useTicketValue();
+  const { config: pointPolicyConfig } = usePointPolicy();
+  const pointsPerWon = pointPolicyConfig.exchange_rate.point / pointPolicyConfig.exchange_rate.won;
+  const { conversionRates } = useConversionRates();
 
   if (isLoading) {
     return (
@@ -63,7 +68,13 @@ export const TicketValueSection: React.FC = () => {
 
       <TicketValueRatioCard values={values} />
 
-      <TicketValueImpactCard values={values} savedValues={savedValues} isDirty={isTierDirty} />
+      <TicketValueImpactCard
+        values={values}
+        savedValues={savedValues}
+        isDirty={isTierDirty}
+        pointsPerWon={pointsPerWon}
+        conversionRates={conversionRates}
+      />
     </div>
   );
 };
