@@ -7,6 +7,7 @@ import {
   LogoCell,
   MarginCell,
   SimulatorButtonCell,
+  UnlockDaysInputCell,
 } from 'src/components/ticket-accrual/ticket-accrual-rate-cells';
 import type { TicketAccrualFilters } from 'src/sections/ticket-accrual/hooks/use-ticket-accrual';
 import type {
@@ -63,7 +64,10 @@ interface TicketAccrualCatalogMallTableProps {
   // 다시 조회한다.
   onSearch: () => void;
   isSearching: boolean;
-  onChangeField: (id: string, patch: Partial<Pick<IAffiliateMall, 'feeRate' | 'accrualRate'>>) => void;
+  onChangeField: (
+    id: string,
+    patch: Partial<Pick<IAffiliateMall, 'feeRate' | 'accrualRate' | 'unlockDays'>>
+  ) => void;
   onOpenSimulator: (mall: IAffiliateMall) => void;
   onOpenDetail: (mall: IAffiliateMall) => void;
   onEditLogo: (mall: IAffiliateMall) => void;
@@ -228,6 +232,14 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
   });
 
   columns.push({ key: 'margin', label: '마진', render: (m) => <MarginCell mall={m} /> });
+
+  columns.push({
+    key: 'unlockDays',
+    label: '전환 대기일 수',
+    render: (m) => (
+      <UnlockDaysInputCell mall={m} onChange={(id, unlockDays) => onChangeField(id, { unlockDays })} />
+    ),
+  });
 
   columns.push({
     key: 'simulator',

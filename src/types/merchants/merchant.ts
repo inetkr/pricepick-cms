@@ -19,6 +19,9 @@ export type IMerchant = {
   accrual_rate: string;
   is_applied: boolean;
   img_url: string | null;
+  // 구매 확정 후 랜덤(가지급) 티켓이 등급 티켓으로 전환되기까지 대기하는 일수. 몰마다 값이
+  // 다르며, 아직 설정되지 않은 몰은 null로 내려온다. 조회 전용 필드 — CMS에서 수정하지 않는다.
+  unlock_days: number | null;
 };
 
 export type IMerchantListResult = {
@@ -44,6 +47,9 @@ export type IMerchantUpdatePayload = Partial<{
   is_applied: boolean;
   lp_status: IMerchantLpStatusFilter;
   img_url: string;
+  // 구매 확정 후 랜덤 티켓이 등급 티켓으로 전환되기까지의 대기일 수. 링크프라이스 제휴몰만 이
+  // 화면에서 수정한다(쿠팡은 카카오톡 연동 여부에 따른 고정 정책이라 대상 아님).
+  unlock_days: number;
 }>;
 
 export type IMerchantUpdateMultiPayload = {

@@ -2783,6 +2783,71 @@ export const globalStyles = css`
     }
   }
 
+  /* ── 티켓 적립 설정: 상단 안내 버튼 · 모달 목록 ── */
+  .ta-notice {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    background: var(--main-soft);
+    border: 1px solid var(--main-line);
+    border-radius: var(--r-md);
+    padding: 9px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--main-hover);
+    cursor: pointer;
+  }
+  .ta-notice:hover {
+    border-color: var(--main);
+  }
+  .ta-notice-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--main);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+  }
+  .ta-notice-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ta-notice-list li {
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-2);
+  }
+  .ta-notice-list li:last-child {
+    border-bottom: none;
+  }
+  .ta-notice-list .k {
+    display: block;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .ta-days-fixed {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--text-2);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    padding: 5px 9px;
+  }
+
   /* ── 티켓 적립 설정: 제휴몰(링크프라이스) 목록 스크롤 영역 ── */
   .ta-scroll-table thead th {
     position: sticky;

@@ -11,6 +11,7 @@ import {
   defaultAccrualRate,
   isValidAccrualRate,
   isValidFeeRate,
+  isValidUnlockDays,
   toAffiliateMall,
 } from 'src/utils/ticket-accrual';
 import { DEFAULT_TICKET_VALUE, fromApiTicketValue } from 'src/utils/ticket-value';
@@ -30,7 +31,7 @@ const DEFAULT_FILTERS: TicketAccrualFilters = {
 };
 
 const mallSignature = (m: IAffiliateMall) =>
-  `${m.feeRate}|${m.accrualRate}|${m.applied}|${m.approvalStatus}|${m.logoUrl}`;
+  `${m.feeRate}|${m.accrualRate}|${m.applied}|${m.approvalStatus}|${m.logoUrl}|${m.unlockDays}`;
 
 // current를 saved 스냅샷과 비교해 바뀐 행의 id만 골라낸다 — 대표 제휴몰 목록·카탈로그 목록에
 // 각각 따로 적용한다.
@@ -50,6 +51,7 @@ type MallPatch = {
   is_applied?: boolean;
   lp_status?: IAffiliateMallApprovalStatus;
   img_url?: string;
+  unlock_days?: number;
 };
 
 // saved 스냅샷과 달라진 필드만 골라 PUT 페이로드를 만든다 — 대표 제휴몰·카탈로그 저장 함수가
@@ -67,6 +69,12 @@ const buildMallPatch = (
   if (!saved || saved.applied !== current.applied) patch.is_applied = current.applied;
   if (!saved || saved.approvalStatus !== current.approvalStatus) patch.lp_status = current.approvalStatus;
   if (!saved || saved.logoUrl !== current.logoUrl || forceLogo) patch.img_url = current.logoUrl;
+  // unlock_days는 null을 보낼 수 없는 필드다 — 사용자가 값을 채운(=숫자가 된) 경우에만, 그리고
+  // 저장 스냅샷과 달라졌을 때만 patch에 넣는다. 링크프라이스 제휴몰에서만 실제로 바뀐다(쿠팡은
+  // 이 값을 편집하지 않으므로 saved와 항상 같다).
+  if (current.unlockDays != null && (!saved || saved.unlockDays !== current.unlockDays)) {
+    patch.unlock_days = current.unlockDays;
+  }
   return patch;
 };
 
@@ -208,7 +216,7 @@ export const useTicketAccrual = () => {
   // id는 두 목록 사이에서 겹치지 않는 실제 서버 UUID이므로, 어느 쪽에 속한 id인지 미리 가리지
   // 않고 두 setter에 모두 매핑을 걸어도 안전하다 — 해당 없는 쪽은 조건에 걸리는 행이 없어 그대로다.
   const updateMallField = useCallback(
-    (id: string, patch: Partial<Pick<IAffiliateMall, 'feeRate' | 'accrualRate'>>) => {
+    (id: string, patch: Partial<Pick<IAffiliateMall, 'feeRate' | 'accrualRate' | 'unlockDays'>>) => {
       setPrimaryMalls((prev) =>
         prev.some((m) => m.id === id) ? prev.map((m) => (m.id === id ? { ...m, ...patch } : m)) : prev
       );
@@ -302,6 +310,7 @@ export const useTicketAccrual = () => {
               approvalStatus: 'NOT_APPLIED',
               applied: false,
               logoUrl: '',
+              unlockDays: null,
             };
         setCatalogMalls((prev) => [...prev, newMall]);
         setSavedCatalogMalls((prev) => [...prev, newMall]);
@@ -411,7 +420,12 @@ export const useTicketAccrual = () => {
     () =>
       new Set(
         catalogMalls
-          .filter((m) => !isValidFeeRate(m.feeRate) || !isValidAccrualRate(m.accrualRate))
+          .filter(
+            (m) =>
+              !isValidFeeRate(m.feeRate) ||
+              !isValidAccrualRate(m.accrualRate) ||
+              !isValidUnlockDays(m.unlockDays)
+          )
           .map((m) => m.id)
       ),
     [catalogMalls]
@@ -460,7 +474,7 @@ export const useTicketAccrual = () => {
   // 제휴몰(링크프라이스)만 저장한다 — 대표 제휴몰 쪽 미저장 변경은 그대로 dirty로 남겨 둔다.
   const saveCatalogMalls = useCallback(async () => {
     if (invalidCatalogIds.size > 0) {
-      toast.error('수수료·적립률 입력값을 확인하세요.');
+      toast.error('수수료·적립률·전환 대기일 수 입력값을 확인하세요.');
       return;
     }
     if (catalogDirtyIds.size === 0) {

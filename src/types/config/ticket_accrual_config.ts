@@ -23,4 +23,7 @@ export type IAffiliateMall = {
   applied: boolean;
   // 몰 로고 이미지 주소 — 비어 있으면 목록에서 이름 첫 글자 배지로 대신 표시한다
   logoUrl: string;
+  // merchant/admin API의 unlock_days 그대로 — 구매 확정 후 랜덤 티켓이 등급 티켓으로 전환되기까지
+  // 걸리는 대기일 수. 조회 전용이라 이 화면에서 수정하지 않는다. 미설정 몰은 null.
+  unlockDays: number | null;
 };

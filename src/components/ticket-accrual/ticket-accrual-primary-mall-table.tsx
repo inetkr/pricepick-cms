@@ -7,6 +7,7 @@ import {
   LogoCell,
   MarginCell,
   SimulatorButtonCell,
+  UnlockDaysFixedCell,
 } from 'src/components/ticket-accrual/ticket-accrual-rate-cells';
 import type { IAffiliateMall } from 'src/types/config/ticket_accrual_config';
 
@@ -73,6 +74,11 @@ export const TicketAccrualPrimaryMallTable: React.FC<TicketAccrualPrimaryMallTab
       ),
     },
     { key: 'margin', label: '마진', render: (m) => <MarginCell mall={m} /> },
+    {
+      key: 'unlockDays',
+      label: '전환 대기일 수',
+      render: () => <UnlockDaysFixedCell />,
+    },
     {
       key: 'simulator',
       label: '시뮬레이터',

@@ -1,6 +1,12 @@
 import React from 'react';
 import type { IAffiliateMall } from 'src/types/config/ticket_accrual_config';
-import { MAX_ACCRUAL_RATE, MAX_FEE_RATE } from 'src/utils/ticket-accrual';
+import {
+  isValidUnlockDays,
+  MAX_ACCRUAL_RATE,
+  MAX_FEE_RATE,
+  MAX_UNLOCK_DAYS,
+  MIN_UNLOCK_DAYS,
+} from 'src/utils/ticket-accrual';
 
 // 대표 제휴몰·카탈로그 테이블이 공통으로 쓰는 셀 렌더러 — 두 테이블을 별도 컴포넌트로 나눠도
 // 수수료·적립률 입력, 마진 계산, 시뮬레이터 버튼은 그대로 재사용한다.
@@ -57,6 +63,45 @@ export const MarginCell: React.FC<{ mall: IAffiliateMall }> = ({ mall }) => {
     </span>
   );
 };
+
+// 링크프라이스 제휴몰(카탈로그)의 전환 대기일 수 입력 — 수수료·적립률 입력(RateInputCell)과
+// 같은 모양(form-input + 단위 라벨)으로 맞추되, 단위가 %가 아니라 "일"이고 정수만 받는다.
+// 값을 비우면 null로 되돌린다(= API가 아직 값을 안 준 상태와 동일하게 취급, 저장을 막지 않는다).
+export const UnlockDaysInputCell: React.FC<{
+  mall: IAffiliateMall;
+  onChange: (id: string, value: number | null) => void;
+}> = ({ mall, onChange }) => {
+  const invalid = !isValidUnlockDays(mall.unlockDays);
+  return (
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+      <input
+        className={`form-input ${invalid ? 'has-error' : ''}`}
+        type="number"
+        min={MIN_UNLOCK_DAYS}
+        max={MAX_UNLOCK_DAYS}
+        step={1}
+        value={mall.unlockDays ?? ''}
+        style={{ width: '72px', height: '32px', padding: '4px 8px', textAlign: 'right' }}
+        onChange={(e) => {
+          const raw = e.target.value;
+          onChange(mall.id, raw === '' ? null : Number(raw));
+        }}
+      />
+      <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>일</span>
+    </div>
+  );
+};
+
+// 쿠팡(merchant_source=MANUAL) 전용 — 대기일 수가 카카오톡 연동 여부에 따라 갈리는 고정 정책이라
+// unlock_days 숫자 하나로는 표현이 안 된다. API 값과 무관하게 항상 이 고정 문구를 보여주며,
+// 수정도 여기서 하지 않는다(자세한 설명은 "티켓 적립 설정 Notice" 모달 참고).
+export const COUPANG_UNLOCK_DAYS_LABEL = '카카오톡 연동 D+7 / 미연동 D+30';
+
+export const UnlockDaysFixedCell: React.FC = () => (
+  <span className="ta-days-fixed" title="쿠팡은 직계약 제휴몰이라 대기일 수가 고정값입니다. 이 화면에서 수정할 수 없습니다.">
+    {COUPANG_UNLOCK_DAYS_LABEL}
+  </span>
+);
 
 export const SimulatorButtonCell: React.FC<{
   mall: IAffiliateMall;

@@ -6,6 +6,7 @@ import { TicketAccrualAddMallModal } from 'src/components/ticket-accrual/ticket-
 import { TicketAccrualCatalogMallTable } from 'src/components/ticket-accrual/ticket-accrual-catalog-mall-table';
 import { TicketAccrualLogoModal } from 'src/components/ticket-accrual/ticket-accrual-logo-modal';
 import { TicketAccrualMallDetailModal } from 'src/components/ticket-accrual/ticket-accrual-mall-detail-modal';
+import { TicketAccrualNoticeModal } from 'src/components/ticket-accrual/ticket-accrual-notice-modal';
 import { TicketAccrualPrimaryMallTable } from 'src/components/ticket-accrual/ticket-accrual-primary-mall-table';
 import { TicketAccrualSimulatorModal } from 'src/components/ticket-accrual/ticket-accrual-simulator-modal';
 import { useTicketAccrual } from 'src/sections/ticket-accrual/hooks/use-ticket-accrual';
@@ -47,6 +48,7 @@ export const TicketAccrualSection: React.FC = () => {
   } = useTicketAccrual();
 
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isNoticeOpen, setIsNoticeOpen] = useState(false);
   const [simulatorMall, setSimulatorMall] = useState<IAffiliateMall | null>(null);
   const [detailMall, setDetailMall] = useState<IAffiliateMall | null>(null);
   const [logoModalMall, setLogoModalMall] = useState<IAffiliateMall | null>(null);
@@ -72,6 +74,15 @@ export const TicketAccrualSection: React.FC = () => {
         표시됩니다. 적립률 기본값은 수수료의 {DEFAULT_ACCRUAL_RATIO}%이며, 나머지{' '}
         {100 - DEFAULT_ACCRUAL_RATIO}%가 우리 수익입니다.
       </InfoBox>
+
+      <button
+        type="button"
+        className="ta-notice"
+        onClick={() => setIsNoticeOpen(true)}
+      >
+        <span>티켓 적립 설정 Notice</span>
+        <span className="ta-notice-mark">!</span>
+      </button>
 
       <TicketAccrualPrimaryMallTable
         malls={primaryMalls}
@@ -126,6 +137,7 @@ export const TicketAccrualSection: React.FC = () => {
         }
       />
 
+      <TicketAccrualNoticeModal open={isNoticeOpen} onClose={() => setIsNoticeOpen(false)} />
       <TicketAccrualAddMallModal open={isAddOpen} onClose={() => setIsAddOpen(false)} onSubmit={addMall} />
       <TicketAccrualSimulatorModal
         mall={simulatorMall}

@@ -12,6 +12,11 @@ export const DEFAULT_ACCRUAL_RATIO = 60;
 export const MAX_FEE_RATE = 100;
 export const MAX_ACCRUAL_RATE = 20;
 
+// 전환 대기일 수(unlock_days) 입력 범위 — 링크프라이스 제휴몰(카탈로그)에서만 편집 가능하다.
+// 쿠팡(대표 제휴몰)은 카카오톡 연동 여부에 따른 고정 정책이라 이 범위 검증 대상이 아니다.
+export const MIN_UNLOCK_DAYS = 1;
+export const MAX_UNLOCK_DAYS = 365;
+
 const APPROVAL_STATUS_VALUES: readonly IMerchantLpStatusFilter[] = [
   'APPROVED',
   'PENDING',
@@ -42,6 +47,7 @@ export const toAffiliateMall = (m: IMerchant, source: IAffiliateMallSource): IAf
   approvalStatus: mapLpStatus(m.lp_status),
   applied: m.is_applied,
   logoUrl: m.img_url ?? '',
+  unlockDays: m.unlock_days ?? null,
 });
 
 export const roundRate = (value: number): number => Math.round(value * 10) / 10;
@@ -59,6 +65,12 @@ export const isValidFeeRate = (value: number): boolean =>
 
 export const isValidAccrualRate = (value: number): boolean =>
   Number.isFinite(value) && value >= 0 && value <= MAX_ACCRUAL_RATE;
+
+// unlockDays가 null이면(=API가 아직 값을 안 내려준 몰) 유효한 것으로 본다 — 값을 안 건드린
+// 몰까지 저장을 막으면 안 되기 때문이다. 사용자가 값을 입력했을 때만 범위를 검증한다.
+export const isValidUnlockDays = (value: number | null): boolean =>
+  value == null ||
+  (Number.isInteger(value) && value >= MIN_UNLOCK_DAYS && value <= MAX_UNLOCK_DAYS);
 
 export type TicketDenomination = { grade: 'gold' | 'silver' | 'bronze'; label: string; value: number };
 
