@@ -189,28 +189,30 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
       const savedStatus = savedApprovalById.get(m.id);
       const changed = savedStatus !== undefined && savedStatus !== m.approvalStatus;
       return (
-      <select
-        className="form-select"
-        style={{
-          height: `${APPROVAL_SELECT_HEIGHT}px`,
-          lineHeight: `${APPROVAL_SELECT_LINE_HEIGHT}px`,
-          padding: '0 8px',
-          fontSize: '12px',
-          fontWeight: 700,
-          maxWidth: '110px',
-          borderColor: APPROVAL_COLOR[m.approvalStatus],
-          color: APPROVAL_COLOR[m.approvalStatus],
-          boxShadow: changed ? '0 0 0 2px var(--warning)' : 'none',
-        }}
-        value={m.approvalStatus}
-        onChange={(e) => onSetApprovalStatus(m.id, e.target.value as IAffiliateMallApprovalStatus)}
-      >
-        {(Object.keys(APPROVAL_LABEL) as IAffiliateMallApprovalStatus[]).map((status) => (
-          <option key={status} value={status}>
-            {APPROVAL_LABEL[status]}
-          </option>
-        ))}
-      </select>
+        <select
+          className="form-select"
+          style={{
+            height: `${APPROVAL_SELECT_HEIGHT}px`,
+            lineHeight: `${APPROVAL_SELECT_LINE_HEIGHT}px`,
+            padding: '0 8px',
+            fontSize: '12px',
+            fontWeight: 700,
+            maxWidth: '110px',
+            borderColor: APPROVAL_COLOR[m.approvalStatus],
+            color: APPROVAL_COLOR[m.approvalStatus],
+            boxShadow: changed ? '0 0 0 2px var(--warning)' : 'none',
+          }}
+          value={m.approvalStatus}
+          onChange={(e) =>
+            onSetApprovalStatus(m.id, e.target.value as IAffiliateMallApprovalStatus)
+          }
+        >
+          {(Object.keys(APPROVAL_LABEL) as IAffiliateMallApprovalStatus[]).map((status) => (
+            <option key={status} value={status}>
+              {APPROVAL_LABEL[status]}
+            </option>
+          ))}
+        </select>
       );
     },
   });
@@ -227,17 +229,23 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
     key: 'accrualRate',
     label: '적립률',
     render: (m) => (
-      <AccrualRateCell mall={m} onChange={(id, accrualRate) => onChangeField(id, { accrualRate })} />
+      <AccrualRateCell
+        mall={m}
+        onChange={(id, accrualRate) => onChangeField(id, { accrualRate })}
+      />
     ),
   });
 
-  columns.push({ key: 'margin', label: '마진', render: (m) => <MarginCell mall={m} /> });
+  columns.push({ key: 'margin', label: '수익', render: (m) => <MarginCell mall={m} /> });
 
   columns.push({
     key: 'unlockDays',
     label: '전환 대기일 수',
     render: (m) => (
-      <UnlockDaysInputCell mall={m} onChange={(id, unlockDays) => onChangeField(id, { unlockDays })} />
+      <UnlockDaysInputCell
+        mall={m}
+        onChange={(id, unlockDays) => onChangeField(id, { unlockDays })}
+      />
     ),
   });
 
@@ -271,7 +279,12 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
     <div className="card">
       <div
         className="card-header"
-        style={{ flexWrap: 'wrap', gap: '10px', alignItems: 'center', justifyContent: 'space-between' }}
+        style={{
+          flexWrap: 'wrap',
+          gap: '10px',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <div className="card-title">제휴몰 (링크프라이스)</div>
@@ -308,7 +321,10 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
             className="filter-sel"
             value={filters.applied}
             onChange={(e) =>
-              onFiltersChange({ ...filters, applied: e.target.value as TicketAccrualFilters['applied'] })
+              onFiltersChange({
+                ...filters,
+                applied: e.target.value as TicketAccrualFilters['applied'],
+              })
             }
           >
             {APPLIED_FILTER_OPTIONS.map((opt) => (
@@ -317,12 +333,25 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
               </option>
             ))}
           </select>
-          <button type="button" className="btn btn-primary btn-sm" onClick={onSearch} disabled={isSearching}>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            onClick={onSearch}
+            disabled={isSearching}
+          >
             {isSearching ? '검색 중...' : '검색'}
           </button>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            flexWrap: 'wrap',
+            justifyContent: 'flex-end',
+          }}
+        >
           {!selectMode ? (
             <button
               type="button"
@@ -346,13 +375,25 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
                 onChange={(e) => setBulkRate(Number(e.target.value))}
               />
               <span style={{ fontSize: '13px', color: 'var(--text-2)' }}>%</span>
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => onBulkApplyRate(bulkRate)}>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => onBulkApplyRate(bulkRate)}
+              >
                 적립률 {bulkRate}% 적용
               </button>
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => onBulkSetApplied(true)}>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => onBulkSetApplied(true)}
+              >
                 적용으로
               </button>
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => onBulkSetApplied(false)}>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => onBulkSetApplied(false)}
+              >
                 미적용으로
               </button>
               <button type="button" className="btn btn-ghost btn-sm" onClick={onToggleSelectMode}>
@@ -365,7 +406,12 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
             제휴몰 추가
           </button>
           <span style={{ width: '1px', height: '22px', background: 'var(--border)' }} />
-          <button type="button" className="btn btn-primary btn-sm" onClick={onSave} disabled={isSaving}>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            onClick={onSave}
+            disabled={isSaving}
+          >
             {isSaving ? '저장 중...' : '저장'}
           </button>
         </div>
@@ -419,7 +465,10 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
           ⬇️ 엑셀 다운로드
         </a>
       </div>
-      <div className="ta-scroll-table" style={{ maxHeight: '640px', overflowY: 'auto', overflowX: 'auto' }}>
+      <div
+        className="ta-scroll-table"
+        style={{ maxHeight: '640px', overflowY: 'auto', overflowX: 'auto' }}
+      >
         <Table
           data={malls}
           columns={columns}

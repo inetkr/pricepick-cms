@@ -38,7 +38,7 @@ export const RouletteLogTable: React.FC<RouletteLogTableProps> = ({
 }) => (
   <div className="card">
     <div className="card-header">
-      <div className="card-title">룰렛 실행 로그</div>
+      <div className="card-title">상자 열기 기록</div>
       <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>
         {(pagination?.totalItems ?? logs.length).toLocaleString()}건
       </span>
@@ -48,7 +48,7 @@ export const RouletteLogTable: React.FC<RouletteLogTableProps> = ({
         <tr>
           <th style={{ width: '150px' }}>일시</th>
           <th>닉네임 / 카카오톡 ID</th>
-          <th style={{ width: '150px' }}>룰렛 종류</th>
+          <th style={{ width: '150px' }}>선물 상자 종류</th>
           <th style={{ width: '170px' }}>결과</th>
           <th style={{ width: '110px' }}>지급 상태</th>
         </tr>
@@ -56,13 +56,19 @@ export const RouletteLogTable: React.FC<RouletteLogTableProps> = ({
       <tbody>
         {isLoading ? (
           <tr>
-            <td colSpan={5} style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}>
+            <td
+              colSpan={5}
+              style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}
+            >
               불러오는 중...
             </td>
           </tr>
         ) : logs.length === 0 ? (
           <tr>
-            <td colSpan={5} style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}>
+            <td
+              colSpan={5}
+              style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}
+            >
               실행 로그가 없습니다.
             </td>
           </tr>

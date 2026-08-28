@@ -158,7 +158,7 @@ export const useJackpotRoulette = () => {
       setSavedSlots(slots);
       setHasSavedConfig(true);
       setJustSaved(true);
-      toast.success('잭팟 룰렛 설정이 저장되었습니다.');
+      toast.success('랜덤 선물 상자 열기 설정이 저장되었습니다.');
       loadStats();
     } catch (error) {
       console.error('Failed to save jackpot roulette config:', error);
@@ -184,7 +184,7 @@ export const useJackpotRoulette = () => {
         event_ticket_daily_cap: eventTicketDailyCap,
         event_ticket_monthly_cap: eventTicketMonthlyCap,
       });
-      toast.success('잭팟 룰렛 참여 제한 정책이 저장되었습니다.');
+      toast.success('랜덤 선물 상자 열기 참여 제한 정책이 저장되었습니다.');
     } catch (error) {
       console.error('Failed to save jackpot roulette policy:', error);
       toast.error('저장에 실패했습니다.');

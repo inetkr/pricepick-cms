@@ -125,7 +125,7 @@ export const useDailyLuckyRoulette = () => {
       setSavedSlots(slots);
       setHasSavedConfig(true);
       setJustSaved(true);
-      toast.success('매일 행운 룰렛 설정이 저장되었습니다.');
+      toast.success('매일 선물 상자 열기 설정이 저장되었습니다.');
       loadStats();
     } catch (error) {
       console.error('Failed to save daily lucky roulette config:', error);

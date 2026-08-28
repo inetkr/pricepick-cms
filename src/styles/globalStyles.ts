@@ -2573,47 +2573,23 @@ export const globalStyles = css`
   }
 
   /* ── 룰렛 슬롯·로그 정렬 ──
-     숫자 계열은 우측, 헤더·텍스트 계열(슬롯 번호·보상 유형·삭제)은 가운데 유지. 전역
-     td{text-align:center!important} 규칙은 인라인 style로 덮을 수 없어 더 강한 특이도의
-     id 선택자 + !important로만 우측 정렬할 수 있다.
+     보상칸 테이블(수량·가치·확률·기댓값 기여 포함)은 전역 td{text-align:center!important}
+     그대로 전 컬럼 가운데 정렬. 실행 로그의 결과(보상 아이콘) 칸만 예외로 우측 정렬한다.
      슬롯 테이블 컬럼: 1 슬롯 / 2 보상 유형 / 3 수량 / 4 가치(원) / 5 확률(%) / 6 기댓값 기여 / 7 삭제 */
-  #rlt-table td:nth-child(3),
-  #rlt-table td:nth-child(4),
-  #rlt-table td:nth-child(5),
-  #rlt-table td:nth-child(6),
-  #jkr-table td:nth-child(3),
-  #jkr-table td:nth-child(4),
-  #jkr-table td:nth-child(5),
-  #jkr-table td:nth-child(6) {
-    text-align: right !important;
-  }
-  /* 합계 행 → 확률 합계(2번째 칸)·기댓값 합계(3번째 칸)도 같은 기준. "합계" 라벨은 가운데 유지.
-     확률 합계는 본문 표시 단위(%)+간격(6px)+단위폭(16px)만큼 오른쪽에서 당겨지므로 같은 만큼
-     밀어야 숫자 오른쪽 끝이 컬럼 안에서 세로로 일직선이 된다(기본 padding 18 + 22 = 40). */
-  #rlt-table tfoot td:nth-child(2),
-  #rlt-table tfoot td:nth-child(3),
-  #jkr-table tfoot td:nth-child(2),
-  #jkr-table tfoot td:nth-child(3) {
-    text-align: right !important;
-  }
-  #rlt-table tfoot td:nth-child(2),
-  #jkr-table tfoot td:nth-child(2) {
-    padding-right: 40px;
-  }
   /* 실행 로그 → 보상 아이콘이 들어가는 결과(4번째 칸)만 우측, 일시·닉네임·룰렛 종류·지급 상태는 가운데 유지 */
   #rlt-log-table td:nth-child(4),
   #jkr-log-table td:nth-child(4) {
     text-align: right !important;
   }
 
-  /* 수량·확률 칸 — 입력 박스(스피너 포함)와 단위를 한 덩어리로 잡아 우측 정렬을 함께 붙인다.
+  /* 수량·확률 칸 — 입력 박스(스피너 포함)와 단위를 한 덩어리로 잡아 컬럼 가운데에 함께 붙인다.
      .form-input이 width:100%라 flex 아이템 안에서 내용만큼 쪼그라들면 폭이 달라졌다. 입력
-     폭·단위 폭을 둘 다 고정해야 단위 글자 폭이 달라도("장"/"P"/"%") 숫자의 오른쪽 끝이
-     컬럼 안에서 세로로 일직선이 된다. */
+     폭·단위 폭을 둘 다 고정해야 단위 글자 폭이 달라도("장"/"P"/"%") 입력 그룹 전체가 항상
+     같은 폭으로 컬럼 가운데에 놓인다. */
   .rlt-numcell {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 6px;
   }
   .rlt-numcell .rlt-num {

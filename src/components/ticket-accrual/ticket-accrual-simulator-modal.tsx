@@ -31,7 +31,8 @@ export const TicketAccrualSimulatorModal: React.FC<TicketAccrualSimulatorModalPr
   const budget = Math.floor((amount * mall.accrualRate) / 100);
   const breakdown = calcGreedyBreakdown(budget, ticketValue);
   const margin = revenue - breakdown.reward;
-  const marginPct = revenue > 0 ? Math.round(((margin / revenue) * 100 + Number.EPSILON) * 10) / 10 : 0;
+  const marginPct =
+    revenue > 0 ? Math.round(((margin / revenue) * 100 + Number.EPSILON) * 10) / 10 : 0;
   const barFillPct = revenue > 0 ? Math.min(100, (breakdown.reward / revenue) * 100) : 0;
 
   return (
@@ -140,8 +141,12 @@ export const TicketAccrualSimulatorModal: React.FC<TicketAccrualSimulatorModalPr
               ) : (
                 <>
                   {breakdown.gold > 0 && <span className="tk-gold">골드 {breakdown.gold}장</span>}{' '}
-                  {breakdown.silver > 0 && <span className="tk-silver">실버 {breakdown.silver}장</span>}{' '}
-                  {breakdown.bronze > 0 && <span className="tk-bronze">브론즈 {breakdown.bronze}장</span>}
+                  {breakdown.silver > 0 && (
+                    <span className="tk-silver">실버 {breakdown.silver}장</span>
+                  )}{' '}
+                  {breakdown.bronze > 0 && (
+                    <span className="tk-bronze">브론즈 {breakdown.bronze}장</span>
+                  )}
                 </>
               )}
             </span>
@@ -158,7 +163,7 @@ export const TicketAccrualSimulatorModal: React.FC<TicketAccrualSimulatorModalPr
             background: 'var(--main-soft)',
           }}
         >
-          <span style={{ fontSize: '13px', fontWeight: 600 }}>마진(매출-적립)</span>
+          <span style={{ fontSize: '13px', fontWeight: 600 }}>수익(매출-적립)</span>
           <span>
             <span
               style={{

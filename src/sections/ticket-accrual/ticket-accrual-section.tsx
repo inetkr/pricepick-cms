@@ -68,18 +68,7 @@ export const TicketAccrualSection: React.FC = () => {
 
   return (
     <div className="section active">
-      <InfoBox type="info">
-        제휴몰별 수수료와 사용자에게 돌려줄 적립률을 정합니다(계약이 바뀌면 수수료도 여기서 바로
-        반영). 등급 환산은 큰 단위부터 채우는 기존 방식 그대로입니다. 쿠팡은 대표 제휴몰로 항상 별도
-        표시됩니다. 적립률 기본값은 수수료의 {DEFAULT_ACCRUAL_RATIO}%이며, 나머지{' '}
-        {100 - DEFAULT_ACCRUAL_RATIO}%가 우리 수익입니다.
-      </InfoBox>
-
-      <button
-        type="button"
-        className="ta-notice"
-        onClick={() => setIsNoticeOpen(true)}
-      >
+      <button type="button" className="ta-notice" onClick={() => setIsNoticeOpen(true)}>
         <span>티켓 적립 설정 Notice</span>
         <span className="ta-notice-mark">!</span>
       </button>
@@ -138,7 +127,11 @@ export const TicketAccrualSection: React.FC = () => {
       />
 
       <TicketAccrualNoticeModal open={isNoticeOpen} onClose={() => setIsNoticeOpen(false)} />
-      <TicketAccrualAddMallModal open={isAddOpen} onClose={() => setIsAddOpen(false)} onSubmit={addMall} />
+      <TicketAccrualAddMallModal
+        open={isAddOpen}
+        onClose={() => setIsAddOpen(false)}
+        onSubmit={addMall}
+      />
       <TicketAccrualSimulatorModal
         mall={simulatorMall}
         ticketValue={ticketValue}

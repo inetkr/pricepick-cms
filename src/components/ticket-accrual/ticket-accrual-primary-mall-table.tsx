@@ -16,7 +16,10 @@ interface TicketAccrualPrimaryMallTableProps {
   // 마지막 저장 시점 스냅샷 — 로고가 저장 전 값과 달라졌는지 판단하는 기준이다(카탈로그 테이블의
   // savedMalls와 같은 용도).
   savedMalls: IAffiliateMall[];
-  onChangeField: (id: string, patch: Partial<Pick<IAffiliateMall, 'feeRate' | 'accrualRate'>>) => void;
+  onChangeField: (
+    id: string,
+    patch: Partial<Pick<IAffiliateMall, 'feeRate' | 'accrualRate'>>
+  ) => void;
   onOpenSimulator: (mall: IAffiliateMall) => void;
   onEditLogo: (mall: IAffiliateMall) => void;
   // 저장하지 않은 변경 건수 — 이 테이블(대표 제휴몰)만의 값이다. 카탈로그 쪽 변경은 포함하지
@@ -70,10 +73,13 @@ export const TicketAccrualPrimaryMallTable: React.FC<TicketAccrualPrimaryMallTab
       key: 'accrualRate',
       label: '적립률',
       render: (m) => (
-        <AccrualRateCell mall={m} onChange={(id, accrualRate) => onChangeField(id, { accrualRate })} />
+        <AccrualRateCell
+          mall={m}
+          onChange={(id, accrualRate) => onChangeField(id, { accrualRate })}
+        />
       ),
     },
-    { key: 'margin', label: '마진', render: (m) => <MarginCell mall={m} /> },
+    { key: 'margin', label: '수익', render: (m) => <MarginCell mall={m} /> },
     {
       key: 'unlockDays',
       label: '전환 대기일 수',

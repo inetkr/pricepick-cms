@@ -32,7 +32,8 @@ export const DailyLuckyRouletteSection: React.FC = () => {
 
   // 티켓 환산가치는 티켓 가치 설정 화면 값을 그대로 따른다 — valueOverrides가 아직 로딩 전이면
   // 옛 값을 추측해 보여주지 않고 "—"로 비워 둔다(getSlotValue와 같은 기준).
-  const fmtTicketValue = (v: number | undefined) => (v === undefined ? '—' : `${v.toLocaleString()}원`);
+  const fmtTicketValue = (v: number | undefined) =>
+    v === undefined ? '—' : `${v.toLocaleString()}원`;
 
   const {
     logs,
@@ -62,27 +63,27 @@ export const DailyLuckyRouletteSection: React.FC = () => {
   return (
     <div className="section active" id="sec-daily-lucky-roulette">
       <InfoBox type="info">
-        <strong>매일 행운 룰렛 = 출석(쿠팡 구경하기) 시 1일 1회 무료 룰렛</strong> — 슬롯별 보상
-        내용과 당첨 확률을 운영자가 직접 수정합니다. 확률 합계가 100%가 아니면 저장되지 않습니다.
-        슬롯은 6개 고정이며 보상 유형·수량·확률만 수정합니다. 이벤트 티켓을 쓰는 유료 룰렛은{' '}
-        <strong>잭팟 룰렛</strong> 메뉴에서 따로 관리합니다.
+        <strong>매일 선물 상자 열기 = 출석(쿠팡 구경하기) 시 1일 1회 무료로 여는 선물 상자</strong>{' '}
+        — 보상칸별 보상 내용과 받을 확률을 운영자가 직접 수정합니다. 확률 합계가 100%가 아니면
+        저장되지 않습니다. 보상칸은 6개 고정이며 보상 유형·수량·확률만 수정합니다. 이벤트 티켓을
+        쓰는 상자는<strong>랜덤 선물 상자 열기</strong> 메뉴에서 따로 관리합니다.
       </InfoBox>
 
       <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
         <StatCard
-          label="이번 달 룰렛 실행"
+          label="이번 달 상자 열기"
           value={isLoading ? '—' : `${stats.total_spins_this_month.toLocaleString()}회`}
-          change={{ type: 'neutral', text: '실제 돌린 횟수 집계' }}
+          change={{ type: 'neutral', text: '실행 기록 없음' }}
           color="purple"
         />
         <StatCard
           label="이번 달 지급 총액"
           value={isLoading ? '—' : `${stats.total_won_value_this_month.toLocaleString()}원`}
-          change={{ type: 'neutral', text: '지급완료 건 원화 환산' }}
+          change={{ type: 'neutral', text: '원화 환산' }}
           color="green"
         />
         <StatCard
-          label="1회 기댓값"
+          label="1회 기대값"
           value={
             isLoading
               ? '—'
@@ -104,7 +105,7 @@ export const DailyLuckyRouletteSection: React.FC = () => {
 
       <div className="card">
         <div className="card-header">
-          <div className="card-title">슬롯 구성 · 당첨 확률</div>
+          <div className="card-title">보상칸 구성 · 받을 확률</div>
           <div style={{ display: 'flex', gap: '6px' }}>
             <button type="button" className="btn btn-ghost btn-sm" onClick={resetToDefault}>
               기본값 복원
@@ -147,14 +148,15 @@ export const DailyLuckyRouletteSection: React.FC = () => {
           {fmtTicketValue(valueOverrides?.GOLD_TICKET)}. 기대값 기여 = 가치 × 확률.
         </div>
         <div style={{ padding: '0 16px 16px', fontSize: '12px', color: 'var(--text-3)' }}>
-          여기서 저장한 슬롯 구성·보상·확률을 데모 앱 룰렛 화면이 그대로 읽어 렌더링하고 추첨·지급합니다.
-          등급 티켓(브론즈·실버·골드) 슬롯도 앱에서 정상 표시·지급됩니다. 앱을 새로고침하면 반영됩니다.
+          여기서 저장한 보상칸 구성·보상·확률을 앱 선물 상자 화면이 그대로 읽어 렌더링하고
+          추첨·지급합니다. 등급 티켓(브론즈·실버·골드) 보상칸도 앱에서 정상 표시·지급됩니다. 앱을
+          새로고침하면 반영됩니다.
         </div>
       </div>
 
       <RouletteLogTable
         tableId="rlt-log-table"
-        rouletteTypeLabel="매일 행운 룰렛"
+        rouletteTypeLabel="매일 선물 상자 열기"
         logs={logs}
         isLoading={isLoadingLogs}
         pagination={{

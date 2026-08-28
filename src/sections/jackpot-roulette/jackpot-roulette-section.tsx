@@ -62,43 +62,37 @@ export const JackpotRouletteSection: React.FC = () => {
       : justSaved
         ? '저장 완료 · 앱에서 다음 진입 시 반영됩니다.'
         : hasSavedConfig
-          ? '저장된 구성을 불러왔습니다 · 슬롯 6개.'
+          ? '저장된 구성을 불러왔습니다 · 보상칸 6개.'
           : '기본값(예시) 표시 중 · 저장하면 이 설정이 앱에 적용됩니다.';
 
   // 확률·수량 유효성은 여기서 버튼을 막지 않고 saveConfig 내부에서 토스트로 안내한다 —
   // disabled로 클릭 자체를 막으면 그 안내 메시지가 절대 뜨지 않는다.
   const canSave = !isSaving && !isLoading;
 
-  const limitsStatusText = isLoadingLimits
-    ? '정책을 불러오는 중…'
-    : isSavingLimits
-      ? '저장 중…'
-      : '저장된 제한 정책을 불러왔습니다.';
-
   return (
     <div className="section active" id="sec-jackpot-roulette">
       <InfoBox type="info">
-        <strong>잭팟 룰렛 = 이벤트 티켓 1장으로 1회 돌리는 유료 룰렛</strong> — 매일 행운 룰렛과
-        구조는 같고 보상 구성·확률만 다릅니다. 슬롯은 6개 고정입니다. 슬롯별 보상 내용과 당첨 확률을
-        운영자가 직접 수정하며, 확률 합계가 100%가 아니면 저장되지 않습니다. 악용 방지 제한 (하루
-        참여 상한 · 이벤트 티켓 일/월 획득 상한)은 아래에서 조정합니다.
+        <strong>랜덤 선물 상자 열기 = 이벤트 티켓 1장으로 1회 여는 선물 상자</strong> — 매일 선물
+        상자 열기와 구조는 같고 보상 구성·확률만 다릅니다. 보상칸은 6개 고정입니다. 보상칸별 보상
+        내용과 받을 확률을 운영자가 직접 수정하며, 확률 합계가 100%가 아니면 저장되지 않습니다. 악용
+        방지 제한(하루 참여 상한 · 이벤트 티켓 일/월 획득 상한)도 아래에서 조정합니다.
       </InfoBox>
 
       <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
         <StatCard
-          label="이번 달 룰렛 실행"
+          label="이번 달 상자 열기"
           value={isLoading ? '—' : `${stats.total_spins_this_month.toLocaleString()}회`}
-          change={{ type: 'neutral', text: '실제 돌린 횟수 집계' }}
+          change={{ type: 'neutral', text: '실행 기록 없음' }}
           color="purple"
         />
         <StatCard
           label="이번 달 지급 총액"
           value={isLoading ? '—' : `${stats.total_won_value_this_month.toLocaleString()}원`}
-          change={{ type: 'neutral', text: '지급완료 건 원화 환산' }}
+          change={{ type: 'neutral', text: '원화 환산' }}
           color="green"
         />
         <StatCard
-          label="1회 기댓값"
+          label="1회 기대값"
           value={
             isLoading
               ? '—'
@@ -120,7 +114,7 @@ export const JackpotRouletteSection: React.FC = () => {
 
       <div className="card">
         <div className="card-header">
-          <div className="card-title">슬롯 구성 · 당첨 확률</div>
+          <div className="card-title">보상칸 구성 · 받을 확률</div>
           <div style={{ display: 'flex', gap: '6px' }}>
             <button type="button" className="btn btn-ghost btn-sm" onClick={resetToDefault}>
               기본값 복원
@@ -163,8 +157,8 @@ export const JackpotRouletteSection: React.FC = () => {
           {fmtTicketValue(valueOverrides?.GOLD_TICKET)}. 기대값 기여 = 가치 × 확률.
         </div>
         <div style={{ padding: '0 16px 16px', fontSize: '12px', color: 'var(--text-3)' }}>
-          여기서 저장한 슬롯 구성·보상·확률과 아래 참여 제한 정책을 데모 앱 잭팟 룰렛 화면(홈 하단
-          잭팟 배너로 진입)이 그대로 읽어 적용합니다. 실행 로그·월 집계도 앱 실행 기록 실집계입니다.
+          여기서 저장한 보상칸 구성·보상·확률과 아래 참여 제한 정책을 앱 랜덤 선물 상자 열기 화면이
+          그대로 읽어 적용합니다. 실행 로그·월 집계도 앱 실행 기록 실집계입니다.
         </div>
       </div>
 
@@ -203,10 +197,10 @@ export const JackpotRouletteSection: React.FC = () => {
             </div>
           </div>
           <InfoBox type="info">
-            구매로 발급된 티켓은 등급 티켓·이벤트 티켓 모두 승인 대기 상태로 발급되고, 카카오 연동
-            D+7 / 미연동 D+30 경과 또는 쿠팡 구매 확정 시 승인됩니다. 승인 전에는 잭팟 룰렛에 쓸 수
-            없으므로 &ldquo;돌리고 환불&rdquo; 악용은 티켓 단계에서 이미 차단됩니다. 별도 설정 항목을 두지
-            않습니다.
+            구매로 발급된 티켓은 등급 티켓·이벤트 티켓 모두 승인 대기 상태로 발급되고, 쿠팡은
+            카카오톡 연동 D+7 / 미연동 D+30, 링크프라이스 제휴몰은 몰별 전환 대기일 수(기본 30일)
+            경과 시 승인됩니다. 승인 전에는 랜덤 선물 상자 열기에 쓸 수 없으므로 &ldquo;열고
+            환불&rdquo; 악용은 티켓 단계에서 이미 차단됩니다. 별도 설정 항목을 두지 않습니다.
           </InfoBox>
           <div className="form-group">
             <label className="form-label" htmlFor="jkr-daily-ticket-cap">
@@ -252,21 +246,11 @@ export const JackpotRouletteSection: React.FC = () => {
             </div>
           </div>
         </div>
-        <div
-          style={{
-            padding: '12px 16px',
-            fontSize: '12px',
-            color: 'var(--text-3)',
-            borderTop: '1px solid var(--border)',
-          }}
-        >
-          {limitsStatusText}
-        </div>
       </div>
 
       <RouletteLogTable
         tableId="jkr-log-table"
-        rouletteTypeLabel="잭팟 룰렛"
+        rouletteTypeLabel="랜덤 선물 상자 열기"
         logs={logs}
         isLoading={isLoadingLogs}
         pagination={{

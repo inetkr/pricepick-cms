@@ -61,28 +61,28 @@ export const TicketValueImpactCard: React.FC<TicketValueImpactCardProps> = ({
         않습니다.
       </div>
       <PolicyItem
-        label="매일 행운 룰렛 보상 구성"
+        label="매일 선물 상자 열기 보상 구성"
         value={
           <>
             보상 슬롯별 티켓 종류·수량{' '}
             <span className="badge badge-gray" style={{ marginLeft: '8px' }}>
-              티켓 · 보상 &gt; 매일 행운 룰렛
+              티켓 · 보상 &gt; 매일 선물 상자 열기
             </span>
           </>
         }
-        description="룰렛 보상 슬롯은 운영자가 CMS에서 직접 정하는 값입니다(자동 계산 대상 아님). 티켓 가치를 바꾸면 슬롯 구성도 다시 정해야 합니다."
+        description="선물 상자 보상 슬롯은 운영자가 CMS에서 직접 정하는 값입니다(자동 계산 대상 아님). 티켓 가치를 바꾸면 슬롯 구성도 다시 정해야 합니다."
       />
       <PolicyItem
-        label="잭팟 룰렛 보상 구성"
+        label="랜덤 선물 상자 열기 보상 구성"
         value={
           <>
-            잭팟 당첨 보상·확률 테이블{' '}
+            당첨 보상·확률 테이블{' '}
             <span className="badge badge-gray" style={{ marginLeft: '8px' }}>
-              티켓 · 보상 &gt; 잭팟 룰렛
+              티켓 · 보상 &gt; 랜덤 선물 상자 열기
             </span>
           </>
         }
-        description="잭팟 보상 슬롯도 운영자가 CMS에서 직접 정하는 값입니다(자동 계산 대상 아님). 티켓 가치를 바꾸면 슬롯 구성도 다시 정해야 합니다."
+        description="랜덤 선물 상자 보상 슬롯도 운영자가 CMS에서 직접 정하는 값입니다(자동 계산 대상 아님). 티켓 가치를 바꾸면 슬롯 구성도 다시 정해야 합니다."
       />
       <PolicyItem
         label="포인트 → 티켓 교환 비율"

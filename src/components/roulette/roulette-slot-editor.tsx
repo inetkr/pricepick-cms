@@ -50,12 +50,12 @@ export const RouletteSlotEditor: React.FC<RouletteSlotEditorProps> = ({
     <table id={tableId}>
       <thead>
         <tr>
-          <th style={{ width: '64px' }}>슬롯</th>
-          <th style={{ width: '150px' }}>보상 유형</th>
-          <th style={{ width: '150px' }}>수량</th>
-          <th style={{ width: '110px' }}>가치(원)</th>
-          <th style={{ width: '150px' }}>확률(%)</th>
-          <th style={{ width: '120px' }}>기댓값 기여</th>
+          <th style={{ width: '64px', textAlign: 'center' }}>슬롯</th>
+          <th style={{ width: '150px', textAlign: 'center' }}>보상 유형</th>
+          <th style={{ width: '150px', textAlign: 'center' }}>수량</th>
+          <th style={{ width: '110px', textAlign: 'center' }}>가치(원)</th>
+          <th style={{ width: '150px', textAlign: 'center' }}>확률(%)</th>
+          <th style={{ width: '120px', textAlign: 'center' }}>기댓값 기여</th>
         </tr>
       </thead>
       <tbody>

@@ -98,7 +98,10 @@ export const UnlockDaysInputCell: React.FC<{
 export const COUPANG_UNLOCK_DAYS_LABEL = '카카오톡 연동 D+7 / 미연동 D+30';
 
 export const UnlockDaysFixedCell: React.FC = () => (
-  <span className="ta-days-fixed" title="쿠팡은 직계약 제휴몰이라 대기일 수가 고정값입니다. 이 화면에서 수정할 수 없습니다.">
+  <span
+    className="ta-days-fixed"
+    title="쿠팡은 직계약 제휴몰이라 대기일 수가 고정값입니다. 이 화면에서 수정할 수 없습니다."
+  >
     {COUPANG_UNLOCK_DAYS_LABEL}
   </span>
 );
@@ -108,7 +111,7 @@ export const SimulatorButtonCell: React.FC<{
   onOpen: (mall: IAffiliateMall) => void;
 }> = ({ mall, onOpen }) => (
   <button type="button" className="btn btn-ghost btn-sm" onClick={() => onOpen(mall)}>
-    적립 시뮬레이터
+    시뮬레이터
   </button>
 );
 
