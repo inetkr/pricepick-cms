@@ -53,7 +53,7 @@ export const DailyLuckyRouletteSection: React.FC = () => {
       : justSaved
         ? '저장 완료 · 앱에서 다음 진입 시 반영됩니다.'
         : hasSavedConfig
-          ? '저장된 구성을 불러왔습니다 · 슬롯 6개.'
+          ? '저장된 구성을 불러왔습니다 · 보상칸 6개.'
           : '기본값(예시) 표시 중 · 저장하면 이 설정이 앱에 적용됩니다.';
 
   // 확률·수량 유효성은 여기서 버튼을 막지 않고 saveConfig 내부에서 토스트로 안내한다 —
