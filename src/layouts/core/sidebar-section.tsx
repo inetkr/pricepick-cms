@@ -244,7 +244,6 @@ const MENU_GROUPS: MenuGroup[] = [
         label: '포스트백 로그',
         icon: <PostbackIcon />,
         href: '/postback',
-        disabled: true,
       },
       // { id: 'app-version', label: '앱 버전 관리', icon: <AppIcon />, href: '/app-version' },
       {

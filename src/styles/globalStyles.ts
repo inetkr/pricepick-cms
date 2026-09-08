@@ -3034,4 +3034,166 @@ export const globalStyles = css`
     font-size: 11px;
     opacity: 0.7;
   }
+
+  /* ── 포스트백 로그 — 제휴사별 블록(쿠팡 / 링크프라이스) 공용 ── */
+  .pb-mem {
+    text-align: left;
+    line-height: 1.45;
+  }
+  .pb-mem .nm {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .pb-mem .kk {
+    font-size: 11px;
+    color: var(--text-2);
+  }
+  .pb-uid {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pb-ord {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--text-2);
+    max-width: 190px;
+    margin: 0 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* 목록 행을 통째로 누른다 — 커서와 배경으로 드러내고 안내 문구는 두지 않는다 */
+  .pb-row {
+    cursor: pointer;
+  }
+  .pb-row:hover td {
+    background: var(--surface-3);
+  }
+  .pb-row[aria-expanded='true'] td {
+    background: var(--main-soft);
+  }
+  .pb-caret {
+    width: 36px;
+    color: var(--text-3);
+  }
+  .pb-caret svg {
+    display: block;
+    margin: 0 auto;
+    transition: transform 0.15s;
+  }
+  .pb-row:hover .pb-caret {
+    color: var(--main);
+  }
+  .pb-row[aria-expanded='true'] .pb-caret {
+    color: var(--main);
+  }
+  .pb-row[aria-expanded='true'] .pb-caret svg {
+    transform: rotate(180deg);
+  }
+  .pb-detail > td {
+    padding: 0 18px 14px;
+    background: var(--surface-2);
+    white-space: normal;
+    text-align: left !important;
+  }
+  .pb-detail table {
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .pb-detail th {
+    font-size: 10px;
+    padding: 7px 12px;
+  }
+  .pb-detail td {
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+  .pb-detail tr:hover td {
+    background: var(--surface);
+  }
+  .pb-pid {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--text-2);
+  }
+  .pb-pname {
+    text-align: left !important;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pb-dim {
+    font-size: 11px;
+    color: var(--text-3);
+  }
+  .pb-strike {
+    text-decoration: line-through;
+    color: var(--text-3);
+  }
+  .pb-cx {
+    color: var(--danger);
+    font-weight: 600;
+  }
+  /* 원문 그대로 표기 — 값이 안 왔으면 자리를 채우지 않고 그대로 빈 걸 보인다 */
+  .pb-none {
+    color: var(--text-3);
+  }
+  .pb-raw {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    color: var(--text-3);
+  }
+  .pb-link {
+    color: var(--info);
+    font-weight: 600;
+  }
+  .fk {
+    display: block;
+    margin-top: 2px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 9.5px;
+    font-weight: 500;
+    color: var(--text-3);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .pb-rawbox {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .pb-rawitem {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+  }
+  .pb-rawitem .k {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    color: var(--text-3);
+  }
+  .pb-rawitem .v {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--text-2);
+  }
+  .pb-empty-raw {
+    padding: 14px 0 4px;
+    font-size: 12px;
+    color: var(--text-3);
+  }
 `;
