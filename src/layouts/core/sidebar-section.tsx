@@ -65,6 +65,12 @@ const MENU_GROUPS: MenuGroup[] = [
     items: [
       { id: 'stats', label: '수익 분석', icon: <ChartIcon />, href: '/stats', disabled: true },
       {
+        id: 'revenue-fee',
+        label: '제휴 수수료 매출',
+        icon: <RevenueIcon />,
+        href: '/revenue-fee',
+      },
+      {
         id: 'revenue',
         label: '매출 내역',
         icon: <RevenueIcon />,

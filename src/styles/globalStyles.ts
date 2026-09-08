@@ -916,6 +916,14 @@ export const globalStyles = css`
     background: var(--info-soft);
     color: var(--info);
   }
+  /* 「취소」와 「취소(환수)」는 둘 다 죽은 건이라 회색 계열로 두되, 받았다 도로 빼앗긴 것은
+     테두리를 둘러 갈라 놓는다 — 같은 회색으로 두면 「안 받은 것」과 「받았다 빼앗긴 것」을
+     눈으로 가를 수 없다(앱도 「취소됨」·「환수됨」으로 갈라 쓴다). */
+  .badge-gray-out {
+    background: transparent;
+    color: var(--text-3);
+    border: 1px solid var(--border);
+  }
   .rlt-jackpot-badge {
     display: inline-block;
     margin-left: 6px;
@@ -2899,5 +2907,131 @@ export const globalStyles = css`
     height: 100%;
     background: var(--main-line);
     border-radius: 999px;
+  }
+
+  /* ── 제휴 수수료 매출 ── 칸·단추 높이를 하나로 ──
+     한 줄에 놓인 것들이 제 멋대로 다른 높이로 달린다 — 원래 값은 form-input 40px ·
+     filter-sel/search-box 36px · btn-sm 27px 로 세 가지였다. 값 하나(--rf-ctl-h)로 묶고
+     이 화면의 모든 입력칸·고르기·단추가 그것만 보게 한다 — 칸마다 따로 적으면 다음에
+     하나 더할 때 또 어긋난다. 화면 밖으로는 안 나간다: .btn-sm·.filter-sel 자체를 고치면
+     CMS 툴바 이외 줄이 다 같이 움직인다. */
+  #sec-revenue-fee {
+    --rf-ctl-h: 36px;
+  }
+  #sec-revenue-fee .form-input,
+  #sec-revenue-fee .filter-sel,
+  #sec-revenue-fee .search-box,
+  #sec-revenue-fee .btn {
+    height: var(--rf-ctl-h);
+    box-sizing: border-box;
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: normal;
+    vertical-align: middle;
+  }
+  #sec-revenue-fee .btn {
+    padding-left: 16px;
+    padding-right: 16px;
+    font-size: 12px;
+  }
+
+  /* ── 제휴 수수료 매출 ── 칸 정렬 ──
+     두 줄짜리 칸은 가운데(주문일·기간·회원), 숫자는 오른쪽(머리글까지), 이름·번호는 왼쪽.
+     td 가 text-align:center!important 라 여기서도 !important 로 눌러야 먹는다.
+       #rf-od-table    1주문일 2제휴몰 3주문번호 4회원 5거래액 6수수료 7유저 적립 8수익 9상태
+       #rf-bd-table    1기간 2주문건수 3거래액 4수수료매출 5유저 적립 6수익
+       #rf-mall-table  1제휴몰 2주문건수 3거래액 4수수료 5유저 적립 6수익
+       #rf-cp-table    위와 같다(제휴몰별 항상 쿠팡 한 줄)
+       #rf-cpbd-table  1기간 2주문건수 3거래액 4수수료 5유저 적립 6수익 (기간별 항상 쿠팡) */
+  #sec-revenue-fee .stats-grid {
+    gap: 10px;
+  }
+  #sec-revenue-fee .stat-card {
+    padding: 16px 14px;
+  }
+  /* 카드가 세 장에서 다섯 장으로 늘었다 — 한 줄에 다섯이 들어가야 하고 두 줄로 접히면 안 된다.
+     고정값 대신 창 너비를 따라가게 한다 → 1440px 에서 21.6px, 1100px 에서 16.5px 로 줄어
+     어디서도 안 잘린다. 아래는 15px 로, 그보다 좁으면 표가 이미 가로로 밀리는 폭이다. */
+  #sec-revenue-fee .stat-value {
+    font-size: clamp(15px, 1.5vw, 22px);
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+  }
+  #sec-revenue-fee th {
+    text-align: center !important;
+  }
+  #rf-od-table td:nth-child(2),
+  #rf-od-table td:nth-child(3),
+  #rf-mall-table td:nth-child(1),
+  #rf-cp-table td:nth-child(1) {
+    text-align: left !important;
+  }
+  #rf-od-table td:nth-child(1),
+  #rf-od-table td:nth-child(4),
+  #rf-od-table td:nth-child(9),
+  #rf-bd-table td:nth-child(1),
+  #rf-cpbd-table td:nth-child(1) {
+    text-align: center !important;
+  }
+  #rf-od-table td:nth-child(n + 5):nth-child(-n + 8),
+  #rf-bd-table td:nth-child(n + 2),
+  #rf-mall-table td:nth-child(n + 2),
+  #rf-cp-table td:nth-child(n + 2),
+  #rf-cpbd-table td:nth-child(n + 2) {
+    text-align: right !important;
+  }
+
+  /* 「수익」이 이 화면의 결론이라 그 칸만 옅은 초록 바탕으로 띄어둔다
+     (김반장 지시 — "수수료가 높아도 적립률을 세게 걸어뒀으면 남는 게 없는데 지금은 그게 안 보인다"). */
+  .rf-net-col {
+    background: rgba(22, 163, 74, 0.05);
+  }
+  td.rf-net-col {
+    font-weight: 700;
+    color: var(--success);
+  }
+  .rf-mall-kind {
+    font-size: 11px;
+    color: var(--text-3);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  .rf-tb-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-3);
+    letter-spacing: -0.1px;
+  }
+  /* 월별·일별 줄은 눌러서 그 구간으로 들어가는 자리다 — 눌리는 줄임을 손끝으로 알 수 있게. */
+  .rf-bd-row {
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .rf-bd-row:hover {
+    background: var(--surface-2);
+  }
+  .rf-bd-row.sel {
+    background: var(--main-soft);
+  }
+  .rf-bd-row.sel td {
+    font-weight: 700;
+  }
+  .rf-drill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: -4px 0 16px;
+    padding: 10px 16px;
+    background: var(--main-soft);
+    border: 1px solid var(--main-line);
+    border-radius: var(--r-md);
+    font-size: 12.5px;
+    color: var(--main-hover);
+    font-weight: 600;
+    flex-wrap: wrap;
+  }
+  .rf-drill-mark {
+    font-size: 11px;
+    opacity: 0.7;
   }
 `;
