@@ -35,6 +35,7 @@ const PAGE_META: Record<string, { title: string; bc: string }> = {
   '/withdrawal': { title: '계정 탈퇴 처리', bc: '운영' },
   '/stats': { title: '수익 분석', bc: '매출 · 수익' },
   '/revenue': { title: '매출 내역', bc: '매출 · 수익' },
+  '/revenue-fee': { title: '제휴 수수료 매출', bc: '매출 · 수익' },
   '/settlement': { title: '정산 내역', bc: '매출 · 수익' },
   '/postback': { title: '포스트백 로그', bc: '시스템' },
   '/appver': { title: '앱 버전 관리', bc: '시스템' },
