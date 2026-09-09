@@ -64,14 +64,34 @@ export type IAffiliateOrderStatus =
      GRANTED           지급 완료
      PARTIALLY_GRANTED 일부 지급 — 한도에 걸려 일부만 나갔다
      REJECTED_LIMIT    한도 초과로 미지급 — 하루/한 달 적립 한도에 걸린 건
-     REVOKED           취소(환수) — 이미 준 티켓을 도로 뺏었다 */
+     REVOKED           취소(환수) — 이미 준 티켓을 도로 뺏었다
+   PARTIAL 은 PARTIALLY_GRANTED 와 같은 뜻으로 오고, CANCELLED 는 주문 취소로 티켓이
+   아예 없던 일이 된 건이다 — 둘 다 실제 응답에서 확인한 값이라 함께 받아 둔다. */
 export type IAffiliateTicketStatus =
   | 'NOT_GRANTED'
   | 'PENDING'
   | 'GRANTED'
   | 'PARTIALLY_GRANTED'
+  | 'PARTIAL' // 실제 응답이 쓰는 표기 — PARTIALLY_GRANTED 와 같은 뜻이다
   | 'REJECTED_LIMIT'
+  | 'CANCELLED' // 주문이 취소돼 티켓 자체가 없던 일이 된 건
   | 'REVOKED';
+
+/* 주문에 딸린 상품 한 줄 — 한 주문에 상품이 여럿이면 그 수만큼 온다.
+   is_cancelled 인 줄은 주문의 합계(transaction_amount·commission_amount)에서 이미 빠져 있다 —
+   그래서 일부만 취소된 주문은 거래액이 original_transaction_amount 보다 작다.
+   partner_status 는 제휴사가 보낸 원문(purchase | cancel)이라 값을 못 박지 않는다. */
+export type IAffiliateRevenueOrderProduct = {
+  product_code: string;
+  product_name: string;
+  quantity: number;
+  price: number;
+  commission_amount: number;
+  status: IAffiliateOrderStatus;
+  partner_status: string;
+  is_cancelled: boolean;
+  is_counted_in_amount: boolean;
+};
 
 export type IAffiliateRevenueOrder = {
   id: string;
@@ -89,6 +109,8 @@ export type IAffiliateRevenueOrder = {
   nickname: string;
   identified_id: string;
   transaction_amount: number;
+  // 취소 전 금액 — 일부만 취소된 주문은 transaction_amount 보다 크다
+  original_transaction_amount: number;
   commission_amount: number;
   commission_rate: number | null; // 취소 건은 null
   user_accrual_amount: number;
@@ -99,6 +121,9 @@ export type IAffiliateRevenueOrder = {
   ticket_status: IAffiliateTicketStatus;
   ticket_amount: number;
   ticket_unlock_date: string;
+  is_counted_in_revenue: boolean;
+  product_count: number;
+  products: IAffiliateRevenueOrderProduct[];
 };
 
 /* 제휴몰 고르기 칸에 넣는 한 줄 — /orders 와 /filters 가 같은 모양으로 준다.

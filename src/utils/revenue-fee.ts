@@ -159,7 +159,9 @@ const TICKET_STATUS_TO_KEY: Record<IAffiliateTicketStatus, IRevenueFeeStatusKey>
   PENDING: 'pending_grant',
   GRANTED: 'granted',
   PARTIALLY_GRANTED: 'partially_granted',
+  PARTIAL: 'partially_granted',
   REJECTED_LIMIT: 'rejected_limit',
+  CANCELLED: 'canceled',
   REVOKED: 'clawed_back',
 };
 
