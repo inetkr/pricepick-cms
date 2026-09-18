@@ -9,7 +9,6 @@ import {
   type IGifticonOrder,
   type IGifticonOrderFilters,
 } from 'src/types/gifticons/gifticon_order';
-import { mapGifticonOrderFromApi } from 'src/utils/gifticon-orders';
 
 // ----------------------------------------------------------------------
 
@@ -46,7 +45,7 @@ export const useGifticonOrders = () => {
       .then((res) => {
         if (reqRef.current !== seq) return;
         const rows = res?.result?.object?.rows ?? [];
-        setOrders(rows.map(mapGifticonOrderFromApi));
+        setOrders(rows);
         setTotalItems(res?.result?.object?.count ?? 0);
       })
       .catch((error) => {
@@ -74,8 +73,7 @@ export const useGifticonOrders = () => {
   // CSV 내보내기 — 지금 페이지가 아니라 같은 조건에 맞는 전체 건수를 다시 불러온다.
   const exportOrders = useCallback(async (): Promise<IGifticonOrder[]> => {
     const res = await giftAPI.getOrderList(1, Math.max(totalItems, 1), toApiParams(filters));
-    const rows = res?.result?.object?.rows ?? [];
-    return rows.map(mapGifticonOrderFromApi);
+    return res?.result?.object?.rows ?? [];
   }, [filters, totalItems]);
 
   const totalPages = Math.max(1, Math.ceil(totalItems / limit));

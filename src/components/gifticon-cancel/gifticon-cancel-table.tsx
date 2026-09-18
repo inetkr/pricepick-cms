@@ -6,6 +6,12 @@ import type { Column } from 'src/components/common/table-pagination-row-per-page
 import { TablePaginationRowPerPage } from 'src/components/common/table-pagination-row-per-page';
 import type { PaginationProps } from 'src/components/common/pagination';
 import type { IGifticonOrder } from 'src/types/gifticons/gifticon_order';
+import {
+  getGifticonOrderCancelReason,
+  getGifticonOrderMember,
+  getGifticonOrderProductName,
+  ticketCountsToParts,
+} from 'src/utils/gifticon-orders';
 
 // ----------------------------------------------------------------------
 
@@ -27,7 +33,7 @@ const buildColumns = (startIndex: number): Column<IGifticonOrder>[] => [
     ),
   },
   {
-    key: 'orderNo',
+    key: 'order_no',
     label: '주문번호',
     align: 'center',
     render: (item) => (
@@ -39,30 +45,34 @@ const buildColumns = (startIndex: number): Column<IGifticonOrder>[] => [
           wordBreak: 'break-all',
         }}
       >
-        {item.orderNo}
+        {item.order_no}
       </span>
     ),
   },
   {
-    key: 'member',
+    key: 'user',
     label: '닉네임 / 카카오톡 ID / 식별 아이디',
     align: 'center',
-    render: (item) => <MemberIdentityCell member={item.member} userId={item.userId} />,
+    render: (item) => (
+      <MemberIdentityCell member={getGifticonOrderMember(item)} userId={item.user.identified_id} />
+    ),
   },
   {
-    key: 'productName',
+    key: 'product_name',
     label: '상품명',
     align: 'center',
-    render: (item) => <span style={{ fontWeight: 500, display: 'block' }}>{item.productName}</span>,
+    render: (item) => (
+      <span style={{ fontWeight: 500, display: 'block' }}>{getGifticonOrderProductName(item)}</span>
+    ),
   },
   {
-    key: 'cancelledAt',
+    key: 'cancelled_at',
     label: '취소날짜',
     align: 'center',
-    render: (item) => <DateTimeCell value={item.cancelledAt} />,
+    render: (item) => <DateTimeCell value={item.cancelled_at} />,
   },
   {
-    key: 'cancelReason',
+    key: 'cancel_reason',
     label: '상태',
     align: 'center',
     render: (item) => (
@@ -77,16 +87,20 @@ const buildColumns = (startIndex: number): Column<IGifticonOrder>[] => [
           fontWeight: 600,
         }}
       >
-        {item.cancelReason ?? '관리자 취소'}
+        {getGifticonOrderCancelReason(item) ?? '관리자 취소'}
       </span>
     ),
   },
   {
-    key: 'refundedTickets',
+    key: 'refunded_tickets',
     label: '환불 티켓',
     align: 'center',
     render: (item) => (
-      <UsedTicketCell parts={item.refundedTickets} wonAmount={item.priceWon} negative />
+      <UsedTicketCell
+        parts={ticketCountsToParts(item.refunded_tickets)}
+        wonAmount={item.price_won}
+        negative
+      />
     ),
   },
   {
@@ -96,10 +110,7 @@ const buildColumns = (startIndex: number): Column<IGifticonOrder>[] => [
     // tickets_after — 이 취소 건으로 환불된 뒤 회원이 들고 있게 된 등급 티켓.
     // 원화 병기(tickets_after_won)는 서버가 계산해 내려준 값을 그대로 쓴다.
     render: (item) => (
-      <UsedTicketCell
-        parts={item.ticketsAfter}
-        wonAmount={item.ticketsAfterWon ?? undefined}
-      />
+      <UsedTicketCell parts={ticketCountsToParts(item.tickets_after)} wonAmount={item.tickets_after_won} />
     ),
   },
 ];

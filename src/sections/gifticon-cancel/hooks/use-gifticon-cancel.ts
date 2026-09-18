@@ -9,7 +9,6 @@ import {
   type IGifticonOrder,
   type IGifticonUnusedOrderFilters,
 } from 'src/types/gifticons/gifticon_order';
-import { mapGifticonOrderFromApi } from 'src/utils/gifticon-orders';
 
 // ----------------------------------------------------------------------
 
@@ -46,8 +45,7 @@ export const useGifticonCancelledOrders = () => {
       .getCancelledOrderList(page, limit, toApiParams(filters))
       .then((res) => {
         if (reqRef.current !== seq) return;
-        const rows = res?.result?.object?.rows ?? [];
-        setOrders(rows.map(mapGifticonOrderFromApi));
+        setOrders(res?.result?.object?.rows ?? []);
         setTotalItems(res?.result?.object?.count ?? 0);
       })
       .catch((error) => {
@@ -79,8 +77,7 @@ export const useGifticonCancelledOrders = () => {
       Math.max(totalItems, 1),
       toApiParams(filters)
     );
-    const rows = res?.result?.object?.rows ?? [];
-    return rows.map(mapGifticonOrderFromApi);
+    return res?.result?.object?.rows ?? [];
   }, [filters, totalItems]);
 
   const totalPages = Math.max(1, Math.ceil(totalItems / limit));

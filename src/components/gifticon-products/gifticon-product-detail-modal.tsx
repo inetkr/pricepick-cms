@@ -8,13 +8,12 @@ import { Modal } from 'src/components/common/modal';
 import { GifticonProductImageModal } from 'src/components/gifticon-products/gifticon-product-image-modal';
 import type {
   IGifticonProduct,
-  IGifticonProductFormValues,
+  IGifticonProductDetail,
 } from 'src/types/gifticon-products/gifticon_product';
 import {
+  apiTicketPriceToParts,
   formatBrandedProductName,
   formatGifticonTicketComboText,
-  getGifticonTicketBreakdown,
-  mapGifticonProductDetailFromApi,
   resolveGifticonImageUrl,
 } from 'src/utils/gifticon-products';
 
@@ -24,7 +23,7 @@ interface GifticonProductDetailModalProps {
   // 목록에서 누른 행 — 상세 API 응답이 올 때까지 보여줄 초기값으로만 쓴다.
   product: IGifticonProduct;
   onClose: () => void;
-  onSave: (id: string, values: IGifticonProductFormValues) => void;
+  onSave: (id: string, patch: Partial<IGifticonProduct>) => void;
 }
 
 // API는 valid_end를 시각까지 포함한 ISO 문자열로 내려주므로 <input type="date">가
@@ -42,15 +41,17 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
   onClose,
   onSave,
 }) => {
-  const [product, setProduct] = useState(initialProduct);
+  const [product, setProduct] = useState<IGifticonProductDetail>({
+    ...initialProduct,
+    description: null,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const { category } = product;
-  const [name, setName] = useState(product.name);
-  const [imageUrl, setImageUrl] = useState(product.imageUrl ?? '');
+  const [name, setName] = useState(product.product_name);
+  const [imageUrl, setImageUrl] = useState(product.image_url ?? '');
   // 이미지 변경 팝업에서 새로 고른 파일 — 저장을 눌러야 그때 업로드된다.
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
-  const [notice, setNotice] = useState(product.notice ?? '');
+  const [description, setDescription] = useState(product.description ?? '');
   const [imgError, setImgError] = useState(false);
   const [showImageEditor, setShowImageEditor] = useState(false);
   const [error, setError] = useState('');
@@ -68,11 +69,10 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
         if (reqRef.current !== seq) return;
         const row = res?.result?.object;
         if (!row) return;
-        const detail = mapGifticonProductDetailFromApi(row);
-        setProduct(detail);
-        setName(detail.name);
-        setImageUrl(detail.imageUrl ?? '');
-        setNotice(detail.notice ?? '');
+        setProduct(row);
+        setName(row.product_name);
+        setImageUrl(row.image_url ?? '');
+        setDescription(row.description ?? '');
         setImgError(false);
       })
       .catch((err) => {
@@ -96,16 +96,16 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
     []
   );
 
-  const ticketParts = product.ticketParts ?? getGifticonTicketBreakdown(product.price);
+  const ticketParts = apiTicketPriceToParts(product.ticket_price);
   const showImage = !!imageUrl.trim() && !imgError;
 
   // 판매가격 아래 병기 — 상품 목록 표(gip-price-main)와 같은 형식으로 등급 조합 전체를
   // "골드 79 + 실버 1"처럼 보여준다. 환산값이 없으면 빨간 안내 문구.
-  const hasPrice = product.price != null && product.price > 0;
+  const hasPrice = product.price_won > 0;
   const priceHintText = !hasPrice
     ? ''
     : ticketParts.length > 0
-      ? `${formatGifticonTicketComboText(ticketParts)} (${product.price!.toLocaleString('ko-KR')}원)`
+      ? `${formatGifticonTicketComboText(ticketParts)} (${product.price_won.toLocaleString('ko-KR')}원)`
       : '티켓 환산값이 설정되지 않았습니다 — 「티켓 가치 설정」에서 등급별 환산가치를 먼저 넣어 주세요.';
 
   const handleSave = async () => {
@@ -127,23 +127,19 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
         uploadedImageUrl = resolveGifticonImageUrl(imagePath);
         if (imagePath) payload.image_url = imagePath;
       }
-      if (trimmedName !== product.name) payload.product_name = trimmedName;
-      const trimmedNotice = notice.trim();
-      if (trimmedNotice !== (product.notice ?? '')) payload.description = trimmedNotice;
+      if (trimmedName !== product.product_name) payload.product_name = trimmedName;
+      const trimmedDescription = description.trim();
+      if (trimmedDescription !== (product.description ?? '')) {
+        payload.description = trimmedDescription;
+      }
 
       if (Object.keys(payload).length > 0) {
         await giftAPI.updateProduct(product.id, payload);
       }
 
       onSave(product.id, {
-        category,
-        name: trimmedName,
-        brand: product.brand,
-        saleEndDate: product.saleEndDate,
-        validityDays: product.validityDays,
-        price: product.price,
-        imageUrl: uploadedImageUrl ?? product.imageUrl,
-        notice: trimmedNotice || null,
+        product_name: trimmedName,
+        image_url: uploadedImageUrl ?? product.image_url,
       });
       toast.success('상품 정보를 저장했습니다.');
       onClose();
@@ -255,7 +251,7 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
               <input
                 id="gid-category"
                 className="form-input"
-                value={category}
+                value={product.category_name}
                 disabled
                 style={{ background: 'var(--surface-2)' }}
               />
@@ -268,7 +264,7 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
               <input
                 id="gid-code"
                 className="form-input"
-                value={product.code}
+                value={product.product_code}
                 disabled
                 style={{ background: 'var(--surface-2)', fontFamily: 'monospace', fontSize: '12px' }}
               />
@@ -282,7 +278,7 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
                 id="gid-validity"
                 className="form-input"
                 type="number"
-                value={product.validityDays != null ? String(product.validityDays) : ''}
+                value={product.provider_valid_days != null ? String(product.provider_valid_days) : ''}
                 disabled
                 style={{ background: 'var(--surface-2)' }}
               />
@@ -309,7 +305,7 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
                 id="gid-sale-end"
                 className="form-input"
                 type="date"
-                value={toDateInputValue(product.saleEndDate)}
+                value={toDateInputValue(product.valid_end)}
                 disabled
                 style={{ background: 'var(--surface-2)' }}
               />
@@ -324,7 +320,7 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
                 className="form-input"
                 type="number"
                 style={{ textAlign: 'right', background: 'var(--surface-2)' }}
-                value={product.price != null ? String(product.price) : ''}
+                value={String(product.price_won)}
                 disabled
               />
               {priceHintText && (
@@ -341,7 +337,7 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
               <input
                 id="gid-brand"
                 className="form-input"
-                value={product.brand}
+                value={product.brand_name}
                 disabled
                 style={{ background: 'var(--surface-2)' }}
               />
@@ -373,9 +369,9 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
             rows={6}
             style={{ resize: 'vertical', lineHeight: 1.6 }}
             placeholder="이 상품의 유의사항을 적어 주세요."
-            value={notice}
+            value={description}
             disabled={isLoading || isSaving}
-            onChange={(e) => setNotice(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
       </div>
@@ -383,7 +379,7 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
 
     {showImageEditor && (
       <GifticonProductImageModal
-        productLabel={formatBrandedProductName(product.brand, name)}
+        productLabel={formatBrandedProductName(product.brand_name, name)}
         currentImageUrl={imageUrl}
         onClose={() => setShowImageEditor(false)}
         onSave={(file, previewUrl) => {

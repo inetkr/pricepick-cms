@@ -8,37 +8,44 @@ import { GifticonCancelTable } from 'src/components/gifticon-cancel/gifticon-can
 import { GifticonCancelToolbar } from 'src/components/gifticon-cancel/gifticon-cancel-toolbar';
 import type { IGifticonOrder } from 'src/types/gifticons/gifticon_order';
 import { useGifticonCancelledOrders } from 'src/sections/gifticon-cancel/hooks/use-gifticon-cancel';
+import {
+  getGifticonOrderCancelReason,
+  getGifticonOrderMember,
+  getGifticonOrderProductName,
+  ticketCountsToParts,
+} from 'src/utils/gifticon-orders';
 import { formatGifticonTicketPartText } from 'src/utils/gifticon-products';
 
 const formatRefundedTicketsForCsv = (order: IGifticonOrder): string => {
-  if (!order.refundedTickets.length) return '—';
-  const lines = order.refundedTickets.map((p) => `−${formatGifticonTicketPartText(p)}`);
-  lines.push(`(−${order.priceWon.toLocaleString('ko-KR')}원)`);
+  const parts = ticketCountsToParts(order.refunded_tickets);
+  if (!parts.length) return '—';
+  const lines = parts.map((p) => `−${formatGifticonTicketPartText(p)}`);
+  lines.push(`(−${order.price_won.toLocaleString('ko-KR')}원)`);
   return lines.join('\n');
 };
 
 const formatHoldingsForCsv = (order: IGifticonOrder): string => {
-  if (!order.ticketsAfter.length) return '—';
-  const lines = order.ticketsAfter.map(formatGifticonTicketPartText);
-  if (order.ticketsAfterWon != null) {
-    lines.push(`(${order.ticketsAfterWon.toLocaleString('ko-KR')}원)`);
-  }
+  const parts = ticketCountsToParts(order.tickets_after);
+  if (!parts.length) return '—';
+  const lines = parts.map(formatGifticonTicketPartText);
+  lines.push(`(${order.tickets_after_won.toLocaleString('ko-KR')}원)`);
   return lines.join('\n');
 };
 
 const CSV_COLUMNS: CsvColumn<IGifticonOrder>[] = [
-  { header: '주문번호', accessor: (row) => row.orderNo },
-  { header: '닉네임', accessor: (row) => row.member.nickname ?? '' },
-  { header: '카카오톡 ID', accessor: (row) => row.member.kakaoLoginId ?? '' },
-  { header: '식별 아이디', accessor: (row) => row.userId },
-  { header: '상품명', accessor: (row) => row.productName },
-  { header: '상품코드', accessor: (row) => row.productCode },
-  { header: '기프티콘 코드', accessor: (row) => row.voucherCode ?? '' },
+  { header: '주문번호', accessor: (row) => row.order_no },
+  { header: '닉네임', accessor: (row) => getGifticonOrderMember(row).nickname ?? '' },
+  { header: '카카오톡 ID', accessor: (row) => getGifticonOrderMember(row).kakaoLoginId ?? '' },
+  { header: '식별 아이디', accessor: (row) => row.user.identified_id },
+  { header: '상품명', accessor: (row) => getGifticonOrderProductName(row) },
+  { header: '상품코드', accessor: (row) => row.product_code },
+  { header: '기프티콘 코드', accessor: (row) => row.voucher_code ?? '' },
   {
     header: '취소일시',
-    accessor: (row) => (row.cancelledAt ? dayjs(row.cancelledAt).format('YYYY-MM-DD HH:mm:ss') : ''),
+    accessor: (row) =>
+      row.cancelled_at ? dayjs(row.cancelled_at).format('YYYY-MM-DD HH:mm:ss') : '',
   },
-  { header: '취소사유', accessor: (row) => row.cancelReason ?? '' },
+  { header: '취소사유', accessor: (row) => getGifticonOrderCancelReason(row) ?? '' },
   { header: '환불 티켓', accessor: (row) => formatRefundedTicketsForCsv(row) },
   { header: '보유 티켓', accessor: (row) => formatHoldingsForCsv(row) },
 ];

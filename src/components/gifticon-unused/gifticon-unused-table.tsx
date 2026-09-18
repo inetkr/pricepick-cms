@@ -7,6 +7,11 @@ import { TablePaginationRowPerPage } from 'src/components/common/table-paginatio
 import type { PaginationProps } from 'src/components/common/pagination';
 import type { IGifticonOrder } from 'src/types/gifticons/gifticon_order';
 import { formatGifticonValidityDays } from 'src/utils/gifticon-products';
+import {
+  getGifticonOrderMember,
+  getGifticonOrderProductName,
+  ticketCountsToParts,
+} from 'src/utils/gifticon-orders';
 
 // ----------------------------------------------------------------------
 
@@ -21,13 +26,13 @@ const buildColumns = (
   onCancelRequest?: (item: IGifticonOrder) => void
 ): Column<IGifticonOrder>[] => [
   {
-    key: 'createdAt',
+    key: 'created_at',
     label: '구매일',
     align: 'center',
-    render: (item) => <DateTimeCell value={item.createdAt} />,
+    render: (item) => <DateTimeCell value={item.created_at} />,
   },
   {
-    key: 'orderNo',
+    key: 'order_no',
     label: '주문번호',
     align: 'center',
     render: (item) => (
@@ -39,47 +44,53 @@ const buildColumns = (
           wordBreak: 'break-all',
         }}
       >
-        {item.orderNo}
+        {item.order_no}
       </span>
     ),
   },
   {
-    key: 'member',
+    key: 'user',
     label: '닉네임 / 카카오톡 ID / 식별 아이디',
     align: 'center',
-    render: (item) => <MemberIdentityCell member={item.member} userId={item.userId} />,
+    render: (item) => (
+      <MemberIdentityCell member={getGifticonOrderMember(item)} userId={item.user.identified_id} />
+    ),
   },
   {
-    key: 'productName',
+    key: 'product_name',
     label: '상품명',
     align: 'center',
-    render: (item) => <span style={{ fontWeight: 500, display: 'block' }}>{item.productName}</span>,
+    render: (item) => (
+      <span style={{ fontWeight: 500, display: 'block' }}>{getGifticonOrderProductName(item)}</span>
+    ),
   },
   {
-    key: 'productCode',
+    key: 'product_code',
     label: '상품코드',
     align: 'center',
     render: (item) => (
       <span style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--text-3)' }}>
-        {item.productCode}
+        {item.product_code}
       </span>
     ),
   },
   {
-    key: 'validDays',
+    key: 'valid_days',
     label: '유효기간',
     align: 'center',
     render: (item) => (
       <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>
-        {formatGifticonValidityDays(item.validDays)}
+        {formatGifticonValidityDays(item.valid_days)}
       </span>
     ),
   },
   {
-    key: 'ticketsUsed',
+    key: 'tickets_used',
     label: '사용한 티켓',
     align: 'center',
-    render: (item) => <UsedTicketCell parts={item.ticketsUsed} wonAmount={item.priceWon} />,
+    render: (item) => (
+      <UsedTicketCell parts={ticketCountsToParts(item.tickets_used)} wonAmount={item.price_won} />
+    ),
   },
   {
     key: 'remark',

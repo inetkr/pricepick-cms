@@ -7,10 +7,7 @@ import type { PaginationProps } from 'src/components/common/pagination';
 import { GifticonProductDetailModal } from 'src/components/gifticon-products/gifticon-product-detail-modal';
 import { GifticonProductTable } from 'src/components/gifticon-products/gifticon-product-table';
 import { GifticonProductToolbar } from 'src/components/gifticon-products/gifticon-product-toolbar';
-import type {
-  IGifticonProduct,
-  IGifticonProductFormValues,
-} from 'src/types/gifticon-products/gifticon_product';
+import type { IGifticonProduct } from 'src/types/gifticon-products/gifticon_product';
 import {
   PAGE_SIZE_OPTIONS,
   useGifticonProducts,
@@ -34,11 +31,11 @@ export const GifticonProductsSection: React.FC = () => {
   const startIndex = (page - 1) * limit;
 
   const handleToggleStatus = async (product: IGifticonProduct) => {
-    const nextActive = product.status !== 'ACTIVE';
+    const nextActive = !product.is_active;
     try {
       await giftAPI.updateProduct(product.id, { is_active: nextActive });
       setProducts((prev) =>
-        prev.map((p) => (p.id === product.id ? { ...p, status: nextActive ? 'ACTIVE' : 'INACTIVE' } : p))
+        prev.map((p) => (p.id === product.id ? { ...p, is_active: nextActive } : p))
       );
       toast.success('상태가 변경되었습니다.');
     } catch (error) {
@@ -48,8 +45,8 @@ export const GifticonProductsSection: React.FC = () => {
   };
 
   // 저장 성공 토스트는 모달이 실제 API 응답을 받은 뒤 직접 띄운다 — 여기서는 목록만 갱신한다.
-  const handleSaveProduct = (id: string, values: IGifticonProductFormValues) => {
-    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...values } : p)));
+  const handleSaveProduct = (id: string, patch: Partial<IGifticonProduct>) => {
+    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
   };
 
   const paginationProps: PaginationProps = {

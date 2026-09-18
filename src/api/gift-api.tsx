@@ -2,11 +2,11 @@ import axios from 'src/utils/axios';
 import BaseAPI from './base-api';
 import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
 import type {
-  IGifticonProductApiDetailRow,
-  IGifticonProductApiRow,
+  IGifticonProduct,
+  IGifticonProductDetail,
 } from 'src/types/gifticon-products/gifticon_product';
 import type {
-  IGifticonOrderApiRow,
+  IGifticonOrder,
   IGifticonOrderDateType,
   IGifticonOrderStatusFilter,
 } from 'src/types/gifticons/gifticon_order';
@@ -45,7 +45,7 @@ export default class GiftAPI extends BaseAPI {
     page: number,
     limit: number,
     keyword?: string
-  ): Promise<ApiPaginatedResponse<IGifticonProductApiRow>> => {
+  ): Promise<ApiPaginatedResponse<IGifticonProduct>> => {
     try {
       const params: Record<string, string | number> = { page, limit };
       if (keyword) params.keyword = keyword;
@@ -59,7 +59,7 @@ export default class GiftAPI extends BaseAPI {
     }
   };
 
-  getProductDetail = async (id: string): Promise<ApiResponse<IGifticonProductApiDetailRow>> => {
+  getProductDetail = async (id: string): Promise<ApiResponse<IGifticonProductDetail>> => {
     try {
       const response = await axios.axiosInstanceWithLoading.get(
         `/${tableName}/admin/products/${id}`
@@ -75,7 +75,7 @@ export default class GiftAPI extends BaseAPI {
     page: number,
     limit: number,
     filters?: IGifticonOrderListParams
-  ): Promise<ApiPaginatedResponse<IGifticonOrderApiRow>> => {
+  ): Promise<ApiPaginatedResponse<IGifticonOrder>> => {
     try {
       const params: Record<string, string | number> = { page, limit };
       if (filters) {
@@ -97,7 +97,7 @@ export default class GiftAPI extends BaseAPI {
     page: number,
     limit: number,
     filters?: IGifticonUnusedOrderListParams
-  ): Promise<ApiPaginatedResponse<IGifticonOrderApiRow>> => {
+  ): Promise<ApiPaginatedResponse<IGifticonOrder>> => {
     try {
       const params: Record<string, string | number> = { page, limit };
       if (filters) {
@@ -120,7 +120,7 @@ export default class GiftAPI extends BaseAPI {
     page: number,
     limit: number,
     filters?: IGifticonUnusedOrderListParams
-  ): Promise<ApiPaginatedResponse<IGifticonOrderApiRow>> => {
+  ): Promise<ApiPaginatedResponse<IGifticonOrder>> => {
     try {
       const params: Record<string, string | number> = { page, limit };
       if (filters) {
@@ -139,7 +139,7 @@ export default class GiftAPI extends BaseAPI {
     }
   };
 
-  cancelOrder = async (id: string): Promise<ApiResponse<IGifticonOrderApiRow>> => {
+  cancelOrder = async (id: string): Promise<ApiResponse<IGifticonOrder>> => {
     try {
       const response = await axios.axiosInstanceWithLoading.post(
         `/${tableName}/admin/orders/${id}/cancel`
@@ -154,7 +154,7 @@ export default class GiftAPI extends BaseAPI {
   updateProduct = async (
     id: string,
     payload: IGifticonProductUpdatePayload
-  ): Promise<ApiResponse<IGifticonProductApiRow>> => {
+  ): Promise<ApiResponse<IGifticonProduct>> => {
     try {
       const response = await axios.axiosInstanceWithLoading.put(
         `/${tableName}/admin/products/${id}`,

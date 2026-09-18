@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { giftAPI } from 'src/api';
 import type { IGifticonProduct } from 'src/types/gifticon-products/gifticon_product';
-import { mapGifticonProductFromApi } from 'src/utils/gifticon-products';
 
 // ----------------------------------------------------------------------
 
@@ -29,8 +28,7 @@ export const useGifticonProducts = () => {
       .getProductList(page, limit, keyword.trim() || undefined)
       .then((res) => {
         if (reqRef.current !== seq) return;
-        const rows = res?.result?.object?.rows ?? [];
-        setProducts(rows.map(mapGifticonProductFromApi));
+        setProducts(res?.result?.object?.rows ?? []);
         setTotalItems(res?.result?.object?.count ?? 0);
       })
       .catch((error) => {

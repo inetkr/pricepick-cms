@@ -1,55 +1,34 @@
+import type { IMemberIdentitySummary } from 'src/components/common/member-identity-cell';
 import type {
   IGifticonOrder,
-  IGifticonOrderApiRow,
-  IGifticonOrderApiTicketCounts,
-  IGifticonOrderTicketPart,
+  IGifticonOrderTicketCounts,
 } from 'src/types/gifticons/gifticon_order';
-import { formatBrandedProductName } from 'src/utils/gifticon-products';
+import { formatBrandedProductName, type IGifticonTicketPart } from 'src/utils/gifticon-products';
 
 // ----------------------------------------------------------------------
 
 const TICKET_GRADE_ORDER: Array<'GOLD' | 'SILVER' | 'BRONZE'> = ['GOLD', 'SILVER', 'BRONZE'];
 
-// tickets_used/refunded_tickets는 키가 아예 없을 수도 있다({}) — 없는 등급은 0으로 본다.
-const ticketCountsToParts = (
-  counts: IGifticonOrderApiTicketCounts | null | undefined
-): IGifticonOrderTicketPart[] =>
+// tickets_used/refunded_tickets/tickets_after는 키가 아예 없을 수도 있다({}) — 없는 등급은
+// 0으로 본다.
+export const ticketCountsToParts = (
+  counts: IGifticonOrderTicketCounts | null | undefined
+): IGifticonTicketPart[] =>
   TICKET_GRADE_ORDER.map((grade) => ({ grade, quantity: counts?.[grade] ?? 0 })).filter(
     (p) => p.quantity > 0
   );
 
-export const mapGifticonOrderFromApi = (row: IGifticonOrderApiRow): IGifticonOrder => ({
-  id: row.id,
-  orderNo: row.order_no,
-  productCode: row.product_code,
-  productName: formatBrandedProductName(row.brand_name, row.product_name),
-  imageUrl: row.image_url || null,
-  priceWon: row.price_won,
-  ticketsUsed: ticketCountsToParts(row.tickets_used),
-  status: row.status,
-  isCancelled: row.status === 'CANCELLED',
-  validDays: row.valid_days ?? null,
-  voucherExpiresAt: row.voucher_expires_at,
-  voucherCode: row.voucher_code,
-  issuedAt: row.issued_at,
-  usedAt: row.used_at,
-  createdAt: row.created_at,
-  // 「닉네임 / 카카오톡 ID / 식별 아이디」 칸 그대로 — 식별 아이디는 identified_id다.
-  // 카카오톡 ID 칸에는 kakao_id(내부 숫자 ID)가 아니라 kakao_email을 보여준다. 연동 여부
-  // 자체는 kakao_id 유무로 판단한다 — 연동돼 있어도 이메일 수집 동의가 없으면 비어 보일 수 있다.
-  userId: row.user.identified_id,
-  member: {
-    nickname: row.user.nickname,
-    linkedKakao: !!row.user.kakao_id,
-    kakaoLoginId: row.user.kakao_email,
-  },
-  cancelledAt: row.cancelled_at,
-  cancelReason: row.cancel_reason_label ?? row.cancel_reason,
-  cancelNote: row.cancel_note,
-  refundedTickets: ticketCountsToParts(row.refunded_tickets),
-  refundedTotal: row.refunded_total,
-  ticketsAfter: ticketCountsToParts(row.tickets_after),
-  ticketsAfterWon: row.tickets_after_won ?? null,
+// 상품명 칸 — 브랜드명이 상품명에 이미 들어 있으면 겹쳐 붙이지 않는다.
+export const getGifticonOrderProductName = (order: IGifticonOrder): string =>
+  formatBrandedProductName(order.brand_name, order.product_name);
+
+// 「닉네임 / 카카오톡 ID / 식별 아이디」 칸 — 식별 아이디는 identified_id다. 카카오톡 ID
+// 칸에는 kakao_id(내부 숫자 ID)가 아니라 kakao_email을 보여준다. 연동 여부 자체는 kakao_id
+// 유무로 판단한다 — 연동돼 있어도 이메일 수집 동의가 없으면 비어 보일 수 있다.
+export const getGifticonOrderMember = (order: IGifticonOrder): IMemberIdentitySummary => ({
+  nickname: order.user.nickname,
+  linkedKakao: !!order.user.kakao_id,
+  kakaoLoginId: order.user.kakao_email,
 });
 
 export type IGifticonOrderStatusVariant = 'info' | 'success' | 'warning' | 'danger' | 'neutral';
@@ -84,3 +63,7 @@ export const GIFTICON_ORDER_STATUS_LABEL: Record<string, string> = {
 
 export const getGifticonOrderStatusLabel = (status: string): string =>
   GIFTICON_ORDER_STATUS_LABEL[status] ?? status;
+
+// 취소사유 — cancel_reason_label(한글)이 있으면 그걸 쓰고, 없으면 원본 코드를 그대로 보여준다.
+export const getGifticonOrderCancelReason = (order: IGifticonOrder): string | null =>
+  order.cancel_reason_label ?? order.cancel_reason;

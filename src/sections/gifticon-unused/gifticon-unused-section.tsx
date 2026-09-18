@@ -10,25 +10,31 @@ import { GifticonUnusedTable } from 'src/components/gifticon-unused/gifticon-unu
 import { GifticonUnusedToolbar } from 'src/components/gifticon-unused/gifticon-unused-toolbar';
 import type { IGifticonOrder } from 'src/types/gifticons/gifticon_order';
 import { useGifticonUnusedOrders } from 'src/sections/gifticon-unused/hooks/use-gifticon-unused';
+import {
+  getGifticonOrderMember,
+  getGifticonOrderProductName,
+  ticketCountsToParts,
+} from 'src/utils/gifticon-orders';
 import { formatGifticonTicketPartText, formatGifticonValidityDays } from 'src/utils/gifticon-products';
 
 const formatTicketsForCsv = (order: IGifticonOrder): string => {
-  if (!order.ticketsUsed.length) return '—';
-  const lines = order.ticketsUsed.map(formatGifticonTicketPartText);
-  lines.push(`(${order.priceWon.toLocaleString('ko-KR')}원)`);
+  const parts = ticketCountsToParts(order.tickets_used);
+  if (!parts.length) return '—';
+  const lines = parts.map(formatGifticonTicketPartText);
+  lines.push(`(${order.price_won.toLocaleString('ko-KR')}원)`);
   return lines.join('\n');
 };
 
 const CSV_COLUMNS: CsvColumn<IGifticonOrder>[] = [
-  { header: '구매일시', accessor: (row) => dayjs(row.createdAt).format('YYYY-MM-DD HH:mm:ss') },
-  { header: '주문번호', accessor: (row) => row.orderNo },
-  { header: '닉네임', accessor: (row) => row.member.nickname ?? '' },
-  { header: '카카오톡 ID', accessor: (row) => row.member.kakaoLoginId ?? '' },
-  { header: '식별 아이디', accessor: (row) => row.userId },
-  { header: '상품명', accessor: (row) => row.productName },
-  { header: '상품코드', accessor: (row) => row.productCode },
-  { header: '기프티콘 코드', accessor: (row) => row.voucherCode ?? '' },
-  { header: '유효기간', accessor: (row) => formatGifticonValidityDays(row.validDays) },
+  { header: '구매일시', accessor: (row) => dayjs(row.created_at).format('YYYY-MM-DD HH:mm:ss') },
+  { header: '주문번호', accessor: (row) => row.order_no },
+  { header: '닉네임', accessor: (row) => getGifticonOrderMember(row).nickname ?? '' },
+  { header: '카카오톡 ID', accessor: (row) => getGifticonOrderMember(row).kakaoLoginId ?? '' },
+  { header: '식별 아이디', accessor: (row) => row.user.identified_id },
+  { header: '상품명', accessor: (row) => getGifticonOrderProductName(row) },
+  { header: '상품코드', accessor: (row) => row.product_code },
+  { header: '기프티콘 코드', accessor: (row) => row.voucher_code ?? '' },
+  { header: '유효기간', accessor: (row) => formatGifticonValidityDays(row.valid_days) },
   { header: '사용한 티켓', accessor: (row) => formatTicketsForCsv(row) },
 ];
 

@@ -1,56 +1,22 @@
-import type { TicketGrade } from 'src/types/common';
-import type { IMemberIdentitySummary } from 'src/components/common/member-identity-cell';
-
+// ----------------------------------------------------------------------
+// GET /gift/admin/orders 응답 한 행 그대로 — 화면 전용으로 필드를 새로 짓지 않고
+// 이 모델 하나를 구매내역/미사용취소/취소내역 어디서나 그대로 쓴다.
 // ----------------------------------------------------------------------
 
-export type IGifticonOrderTicketPart = {
-  grade: TicketGrade;
-  quantity: number;
-};
-
-// GET /gift/admin/orders 한 건 — 회원이 티켓을 써서 기프티콘을 교환한 주문(=구매) 기록.
-// 상태 문구는 서버의 status_label 대신 getGifticonOrderStatusLabel(status)로 화면에서
-// 직접 붙인다 — 검색 조건 드롭다운과 표가 같은 문구를 쓰게 하기 위함이다.
-export interface IGifticonOrder {
-  id: string;
-  orderNo: string;
-  productCode: string;
-  productName: string;
-  imageUrl: string | null;
-  priceWon: number;
-  ticketsUsed: IGifticonOrderTicketPart[];
-  status: string;
-  isCancelled: boolean;
-  validDays: number | null;
-  voucherExpiresAt: string | null;
-  voucherCode: string | null;
-  issuedAt: string;
-  usedAt: string | null;
-  createdAt: string;
-  userId: string;
-  member: IMemberIdentitySummary;
-  cancelledAt: string | null;
-  cancelReason: string | null;
-  cancelNote: string | null;
-  refundedTickets: IGifticonOrderTicketPart[];
-  refundedTotal: number;
-  // 취소 처리 뒤 회원이 들고 있게 된 등급 티켓 — 취소내역의 「보유 티켓」 칸에 쓴다.
-  ticketsAfter: IGifticonOrderTicketPart[];
-  // ticketsAfter의 원화 환산 합계 — 서버가 계산해 내려준 값을 그대로 쓴다.
-  ticketsAfterWon: number | null;
-}
-
-// ----------------------------------------------------------------------
-// GET /gift/admin/orders 원본 응답
-// ----------------------------------------------------------------------
-
-export interface IGifticonOrderApiTicketCounts {
+export interface IGifticonOrderTicketCounts {
   GOLD?: number;
   SILVER?: number;
   BRONZE?: number;
 }
 
-export interface IGifticonOrderApiUser {
+export interface IGifticonOrderTicketValueSnapshot {
+  GOLD?: number;
+  SILVER?: number;
+  BRONZE?: number;
+  EVENT?: number;
+}
+
+export interface IGifticonOrderUser {
   id: string;
   fullname: string | null;
   nickname: string | null;
@@ -60,7 +26,7 @@ export interface IGifticonOrderApiUser {
   kakao_email: string | null;
 }
 
-export interface IGifticonOrderApiRow {
+export interface IGifticonOrder {
   id: string;
   order_no: string;
   product_id: string;
@@ -69,7 +35,7 @@ export interface IGifticonOrderApiRow {
   brand_name: string;
   image_url: string | null;
   price_won: number;
-  tickets_used: IGifticonOrderApiTicketCounts;
+  tickets_used: IGifticonOrderTicketCounts;
   tickets_used_total: number;
   status: string;
   status_label: string;
@@ -82,7 +48,7 @@ export interface IGifticonOrderApiRow {
   voucher_pin: string | null;
   voucher_url: string | null;
   is_simulated: boolean;
-  user: IGifticonOrderApiUser;
+  user: IGifticonOrderUser;
   provider: string;
   provider_order_id: string | null;
   cancelled_at: string | null;
@@ -90,11 +56,12 @@ export interface IGifticonOrderApiRow {
   cancel_reason_label: string | null;
   cancel_note: string | null;
   cancelled_by: string | null;
-  refunded_tickets: IGifticonOrderApiTicketCounts;
+  refunded_tickets: IGifticonOrderTicketCounts;
   refunded_total: number;
-  // 취소내역(orders/cancelled) 응답에만 있다 — 구매내역/미사용취소 응답에는 없다.
-  tickets_after?: IGifticonOrderApiTicketCounts;
-  tickets_after_won?: number;
+  // 지금 이 시점 기준으로 회원이 들고 있는 등급 티켓 — 취소내역의 「보유 티켓」 칸에 쓴다.
+  tickets_after: IGifticonOrderTicketCounts;
+  tickets_after_won: number;
+  ticket_value_snapshot: IGifticonOrderTicketValueSnapshot;
 }
 
 // ----------------------------------------------------------------------

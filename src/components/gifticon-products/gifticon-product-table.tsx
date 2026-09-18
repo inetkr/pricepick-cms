@@ -4,10 +4,10 @@ import { TablePaginationRowPerPage } from 'src/components/common/table-paginatio
 import type { PaginationProps } from 'src/components/common/pagination';
 import type { IGifticonProduct } from 'src/types/gifticon-products/gifticon_product';
 import {
+  apiTicketPriceToParts,
   formatGifticonSaleEndDate,
   formatGifticonTicketComboText,
   formatGifticonValidityDays,
-  getGifticonTicketBreakdown,
 } from 'src/utils/gifticon-products';
 
 // ----------------------------------------------------------------------
@@ -57,8 +57,8 @@ const ImagePlaceholder: React.FC = () => (
 // 포인츠허브 gipPriceHtml() 그대로: 등급.장수를 굵게 한 줄, 그 아래 회색으로 원화 병기.
 // 환산값이 없으면(장수 0) 원화만 굵게 보여주고 그 아래 "(환산값 미설정)"을 빨간 글씨로 붙인다.
 const ProductPriceCell: React.FC<{ product: IGifticonProduct }> = ({ product }) => {
-  const parts = product.ticketParts ?? getGifticonTicketBreakdown(product.price);
-  const hasPrice = product.price !== null;
+  const parts = apiTicketPriceToParts(product.ticket_price);
+  const hasPrice = product.price_won > 0;
 
   if (!hasPrice && parts.length === 0) {
     return <span style={{ color: 'var(--text-3)' }}>—</span>;
@@ -68,7 +68,7 @@ const ProductPriceCell: React.FC<{ product: IGifticonProduct }> = ({ product }) 
     return (
       <>
         <div className="gip-price-main">
-          {hasPrice ? `${product.price!.toLocaleString('ko-KR')}원` : '—'}
+          {hasPrice ? `${product.price_won.toLocaleString('ko-KR')}원` : '—'}
         </div>
         <div className="gip-price-none">(환산값 미설정)</div>
       </>
@@ -79,7 +79,7 @@ const ProductPriceCell: React.FC<{ product: IGifticonProduct }> = ({ product }) 
     <>
       <div className="gip-price-main">{formatGifticonTicketComboText(parts)}</div>
       {hasPrice && (
-        <div className="gip-price-won">({product.price!.toLocaleString('ko-KR')}원)</div>
+        <div className="gip-price-won">({product.price_won.toLocaleString('ko-KR')}원)</div>
       )}
     </>
   );
@@ -104,26 +104,26 @@ export const GifticonProductTable: React.FC<GifticonProductTableProps> = ({
       ),
     },
     {
-      key: 'category',
+      key: 'category_name',
       label: '카테고리',
       align: 'center',
-      render: (item) => item.category,
+      render: (item) => item.category_name,
     },
     {
-      key: 'brand',
+      key: 'brand_name',
       label: '브랜드',
       align: 'center',
-      render: (item) => <span style={{ fontWeight: 600 }}>{item.brand}</span>,
+      render: (item) => <span style={{ fontWeight: 600 }}>{item.brand_name}</span>,
     },
     {
-      key: 'imageUrl',
+      key: 'image_url',
       label: '이미지',
       align: 'center',
       width: 70,
       render: (item) =>
-        item.imageUrl ? (
+        item.image_url ? (
           <img
-            src={item.imageUrl}
+            src={item.image_url}
             alt=""
             style={{
               width: '40px',
@@ -142,7 +142,7 @@ export const GifticonProductTable: React.FC<GifticonProductTableProps> = ({
         ),
     },
     {
-      key: 'name',
+      key: 'product_name',
       label: '상품명',
       align: 'center',
       render: (item) => (
@@ -156,50 +156,48 @@ export const GifticonProductTable: React.FC<GifticonProductTableProps> = ({
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
           }}
-          title={item.name}
+          title={item.product_name}
         >
-          {item.name}
+          {item.product_name}
         </span>
       ),
     },
     {
-      key: 'code',
+      key: 'product_code',
       label: '상품코드',
       align: 'center',
       render: (item) => (
         <span style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--text-3)' }}>
-          {item.code}
+          {item.product_code}
         </span>
       ),
     },
     {
-      key: 'saleEndDate',
+      key: 'valid_end',
       label: '상품판매종료일',
       align: 'center',
       render: (item) => (
         <span style={{ fontSize: '12px', color: 'var(--text-3)' }}>
-          {formatGifticonSaleEndDate(item.saleEndDate)}
+          {formatGifticonSaleEndDate(item.valid_end)}
         </span>
       ),
     },
     {
-      key: 'validityDays',
+      key: 'provider_valid_days',
       label: '유효기간',
       align: 'center',
       render: (item) => (
-        <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>
-          {formatGifticonValidityDays(item.validityDays)}
-        </span>
+        <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>{item.provider_valid_days}</span>
       ),
     },
     {
-      key: 'price',
+      key: 'price_won',
       label: '판매가격',
       align: 'center',
       render: (item) => <ProductPriceCell product={item} />,
     },
     {
-      key: 'status',
+      key: 'is_active',
       label: '상태',
       align: 'center',
       render: (item) => (
@@ -212,13 +210,13 @@ export const GifticonProductTable: React.FC<GifticonProductTableProps> = ({
         <label
           className="tgl"
           htmlFor={`gip-tgl-${item.id}`}
-          title={item.status === 'ACTIVE' ? '판매중' : '판매중지'}
+          title={item.is_active ? '판매중' : '판매중지'}
           onClick={(e) => e.stopPropagation()}
         >
           <input
             id={`gip-tgl-${item.id}`}
             type="checkbox"
-            checked={item.status === 'ACTIVE'}
+            checked={item.is_active}
             onChange={() => onToggleStatus?.(item)}
           />
           <span className="tgl-sl" />
