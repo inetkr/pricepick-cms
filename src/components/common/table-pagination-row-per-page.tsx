@@ -18,7 +18,7 @@ export interface TableProps<T> {
   className?: string;
   headerClassName?: string;
   rowClassName?: string | ((item: T, index: number) => string);
-  emptyMessage?: string;
+  emptyMessage?: React.ReactNode;
   pagination?: PaginationProps;
   onRowClick?: (item: T, index: number) => void;
   showTotalInfo?: boolean;

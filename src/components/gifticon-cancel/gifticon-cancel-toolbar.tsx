@@ -1,66 +1,111 @@
-// src/components/gifticon/GifticonCancelToolbar.tsx
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
+import { toast } from 'sonner';
+import {
+  GIFTICON_UNUSED_ORDER_DEFAULT_FILTERS,
+  type IGifticonOrderDateType,
+  type IGifticonUnusedOrderFilters,
+} from 'src/types/gifticons/gifticon_order';
+
+// ----------------------------------------------------------------------
 
 interface GifticonCancelToolbarProps {
-  onSearchName?: (value: string) => void;
-  onSearchNickname?: (value: string) => void;
-  onSearchOrder?: (value: string) => void;
-  onSearchProduct?: (value: string) => void;
-  onReasonChange?: (value: string) => void;
-  onExport?: () => void;
+  onApply: (filters: IGifticonUnusedOrderFilters) => void;
+  onExport: () => Promise<void>;
 }
 
+// 구매내역/미사용취소 검색줄과 같은 필드 구성(이름·상품명·기프티콘 코드 + 기간).
 export const GifticonCancelToolbar: React.FC<GifticonCancelToolbarProps> = ({
-  onSearchName,
-  onSearchNickname,
-  onSearchOrder,
-  onSearchProduct,
-  onReasonChange,
+  onApply,
   onExport,
 }) => {
+  const [draft, setDraft] = useState<IGifticonUnusedOrderFilters>(
+    GIFTICON_UNUSED_ORDER_DEFAULT_FILTERS
+  );
+  const [isExporting, setIsExporting] = useState(false);
+
+  const patch = (next: Partial<IGifticonUnusedOrderFilters>) =>
+    setDraft((prev) => ({ ...prev, ...next }));
+
+  const submit = () => onApply(draft);
+
+  const handleEnter = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') submit();
+  };
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      await onExport();
+    } catch (error) {
+      console.error('Failed to export cancelled gifticon orders:', error);
+      toast.error('내보내기에 실패했습니다.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
-    <div className="toolbar" style={{ flexWrap: 'wrap', gap: '8px' }}>
-      <input
-        className="search-box"
-        placeholder="이름 검색"
-        onChange={(e) => onSearchName?.(e.target.value)}
-        style={{ width: '110px' }}
-      />
-      <input
-        className="search-box"
-        placeholder="닉네임 검색"
-        onChange={(e) => onSearchNickname?.(e.target.value)}
-        style={{ width: '120px' }}
-      />
-      <input
-        className="search-box"
-        placeholder="주문번호 검색"
-        onChange={(e) => onSearchOrder?.(e.target.value)}
-        style={{ width: '160px' }}
-      />
-      <input
-        className="search-box"
-        placeholder="상품명 검색"
-        onChange={(e) => onSearchProduct?.(e.target.value)}
-        style={{ width: '140px' }}
-      />
-      <select className="filter-sel" onChange={(e) => onReasonChange?.(e.target.value)}>
-        <option value="">전체 취소사유</option>
-        <option value="admin">관리자 취소</option>
-        <option value="customer">고객 요청</option>
-        <option value="expire">유효기간 만료</option>
-      </select>
-      <button type="button" className="btn btn-primary btn-sm" onClick={() => console.log('Search')}>
-        검색
-      </button>
-      <button
-        type="button"
-        className="btn btn-ghost btn-sm"
-        style={{ marginLeft: 'auto' }}
-        onClick={onExport}
-      >
-        CSV 내보내기
-      </button>
+    <div className="srch">
+      <div className="srch-row">
+        <input
+          className="search-box"
+          placeholder="이름"
+          value={draft.keyword}
+          onChange={(e) => patch({ keyword: e.target.value })}
+          onKeyDown={handleEnter}
+        />
+        <input
+          className="search-box"
+          placeholder="상품명"
+          value={draft.productName}
+          onChange={(e) => patch({ productName: e.target.value })}
+          onKeyDown={handleEnter}
+        />
+        <input
+          className="search-box"
+          placeholder="기프티콘 코드"
+          value={draft.voucherCode}
+          onChange={(e) => patch({ voucherCode: e.target.value })}
+          onKeyDown={handleEnter}
+        />
+      </div>
+      <div className="srch-row">
+        <select
+          className="filter-sel"
+          value={draft.dateType}
+          onChange={(e) => patch({ dateType: e.target.value as IGifticonOrderDateType })}
+        >
+          <option value="PURCHASE">구매일</option>
+          <option value="CANCEL">취소일</option>
+        </select>
+        <input
+          className="form-input srch-date"
+          type="date"
+          value={draft.from}
+          onChange={(e) => patch({ from: e.target.value })}
+        />
+        <span className="srch-tilde">~</span>
+        <input
+          className="form-input srch-date"
+          type="date"
+          value={draft.to}
+          onChange={(e) => patch({ to: e.target.value })}
+        />
+        <button type="button" className="btn btn-primary btn-sm" onClick={submit}>
+          검색
+        </button>
+        <button
+          type="button"
+          className="btn btn-ghost btn-sm"
+          style={{ marginLeft: 'auto' }}
+          disabled={isExporting}
+          onClick={handleExport}
+        >
+          {isExporting ? '내보내는 중…' : 'CSV 내보내기'}
+        </button>
+      </div>
     </div>
   );
 };

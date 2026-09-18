@@ -1,64 +1,49 @@
-import React from 'react';
+'use client';
 
-interface Option {
-  value: string;
-  label: string;
-}
+import React, { useState } from 'react';
+
+// ----------------------------------------------------------------------
 
 interface GifticonProductToolbarProps {
-  categoryOptions?: Option[];
-  statusOptions?: Option[];
-  onCategoryChange?: (value: string) => void;
-  onStatusChange?: (value: string) => void;
-  onSearch?: (value: string) => void;
+  onSearch: (keyword: string) => void;
   searchPlaceholder?: string;
 }
 
+// 포인츠허브 상품 목록에는 카테고리/상태 거르개가 없다 — 상품명 검색 한 칸뿐이며,
+// 입력이 가로 전체를 채우고 검색 단추는 그 아래 오른쪽에 붙는다.
 export const GifticonProductToolbar: React.FC<GifticonProductToolbarProps> = ({
-  categoryOptions = [
-    { value: '', label: '전체 카테고리' },
-    { value: 'coffee', label: '커피/음료' },
-    { value: 'culture', label: '문화/생활' },
-    { value: 'convenience', label: '편의점' },
-    { value: 'dining', label: '외식' },
-    { value: 'shopping', label: '쇼핑' },
-  ],
-  statusOptions = [
-    { value: '', label: '전체 상태' },
-    { value: 'active', label: '판매중' },
-    { value: 'soldout', label: '품절' },
-    { value: 'inactive', label: '판매중지' },
-  ],
-  onCategoryChange,
-  onStatusChange,
   onSearch,
-  searchPlaceholder = '상품명 검색',
+  searchPlaceholder = '상품명을 입력하세요.',
 }) => {
+  const [keyword, setKeyword] = useState('');
+
+  const submit = () => onSearch(keyword.trim());
+
   return (
-    <div className="toolbar" style={{ flexWrap: 'wrap', gap: '8px' }}>
-      <select className="filter-sel" onChange={(e) => onCategoryChange?.(e.target.value)}>
-        {categoryOptions.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-      <select className="filter-sel" onChange={(e) => onStatusChange?.(e.target.value)}>
-        {statusOptions.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
+    <div
+      style={{
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
+        borderRadius: 'var(--r-lg)',
+        padding: '14px 16px',
+        marginBottom: '16px',
+      }}
+    >
       <input
         className="search-box"
+        style={{ width: '100%' }}
         placeholder={searchPlaceholder}
-        style={{ width: '160px' }}
-        onChange={(e) => onSearch?.(e.target.value)}
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') submit();
+        }}
       />
-      <button type="button" className="btn btn-primary btn-sm" onClick={() => {}}>
-        검색
-      </button>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+        <button type="button" className="btn btn-primary btn-sm" onClick={submit}>
+          검색
+        </button>
+      </div>
     </div>
   );
 };

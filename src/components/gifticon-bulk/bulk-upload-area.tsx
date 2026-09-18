@@ -11,7 +11,7 @@ interface BulkUploadAreaProps {
 
 export const BulkUploadArea: React.FC<BulkUploadAreaProps> = ({
   onFileUpload,
-  accept = '.csv,.xlsx',
+  accept = '.csv,.json',
   maxSize = 10 * 1024 * 1024, // 10MB
   className = '',
 }) => {
@@ -50,8 +50,8 @@ export const BulkUploadArea: React.FC<BulkUploadAreaProps> = ({
 
     // Kiểm tra extension
     const ext = file.name.split('.').pop()?.toLowerCase();
-    if (!ext || !['csv', 'xlsx'].includes(ext)) {
-      setError('지원하지 않는 파일 형식입니다. .csv 또는 .xlsx 파일을 업로드해주세요.');
+    if (!ext || !['csv', 'json'].includes(ext)) {
+      setError('지원하지 않는 파일 형식입니다. .csv 또는 .json 파일을 업로드해주세요.');
       return;
     }
 
@@ -95,10 +95,10 @@ export const BulkUploadArea: React.FC<BulkUploadAreaProps> = ({
     >
       <div style={{ fontSize: '32px', marginBottom: '12px', color: 'var(--text-3)' }}>↑</div>
       <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '6px' }}>
-        CSV / Excel 파일을 여기에 끌어다 놓거나
+        CSV / JSON 파일을 여기에 끌어다 놓거나
       </div>
       <div style={{ fontSize: '12px', color: 'var(--text-2)', marginBottom: '16px' }}>
-        지원 형식: .csv, .xlsx (최대 10MB)
+        지원 형식: .csv, .json (최대 10MB)
       </div>
       <button
         type="button"

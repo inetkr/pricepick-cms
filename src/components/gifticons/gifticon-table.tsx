@@ -1,153 +1,142 @@
-// src/components/gifticons/GifticonTable.tsx
 import React from 'react';
-import { TicketChip } from '../common/ticket-chip';
-import type { Column } from '../common/table-pagination-row-per-page';
-import { TablePaginationRowPerPage } from '../common/table-pagination-row-per-page';
-import type { PaginationProps } from '../common/pagination';
-import type { TicketGrade } from 'src/types/common';
+import { DateTimeCell } from 'src/components/common/date-time-cell';
+import { MemberIdentityCell } from 'src/components/common/member-identity-cell';
+import { UsedTicketCell } from 'src/components/common/used-ticket-cell';
+import type { Column } from 'src/components/common/table-pagination-row-per-page';
+import { TablePaginationRowPerPage } from 'src/components/common/table-pagination-row-per-page';
+import type { PaginationProps } from 'src/components/common/pagination';
+import type { IGifticonOrder } from 'src/types/gifticons/gifticon_order';
+import { formatGifticonValidityDays } from 'src/utils/gifticon-products';
+import { getGifticonOrderStatusLabel, getGifticonOrderStatusVariant } from 'src/utils/gifticon-orders';
 
-export interface GifticonItem {
-  id: number;
-  purchaseDate: string;
-  purchaseTime: string;
-  statusDate: string;
-  statusTime: string;
-  orderNumber: string;
-  nickname: string;
-  kakaoId: string;
-  productName: string;
-  productCode: string;
-  expiryDate: string;
-  status: 'used' | 'unused' | 'expired';
-  ticketGrade: TicketGrade;
-  ticketQuantity: number;
-}
-
-interface GifticonTableProps {
-  data: GifticonItem[];
-  pagination?: PaginationProps;
-  onRowClick?: (item: GifticonItem) => void;
-  className?: string;
-}
-
-const statusBadgeMap = {
-  used: { className: 'badge-red', label: '사용' },
-  unused: { className: 'badge-gray', label: '미사용' },
-  expired: { className: 'badge-amber', label: '만료' },
+const STATUS_VARIANT_COLOR: Record<
+  ReturnType<typeof getGifticonOrderStatusVariant>,
+  { bg: string; color: string }
+> = {
+  info: { bg: 'var(--info-soft)', color: 'var(--info)' },
+  success: { bg: 'var(--success-soft)', color: 'var(--success)' },
+  warning: { bg: 'var(--warning-soft)', color: 'var(--warning)' },
+  danger: { bg: 'var(--danger-soft)', color: 'var(--danger)' },
+  neutral: { bg: 'var(--surface-2)', color: 'var(--text-3)' },
 };
 
-const columns: Column<GifticonItem>[] = [
+// ----------------------------------------------------------------------
+
+interface GifticonTableProps {
+  data: IGifticonOrder[];
+  pagination?: PaginationProps;
+  totalLabel?: string;
+  onRowClick?: (item: IGifticonOrder) => void;
+}
+
+const columns: Column<IGifticonOrder>[] = [
   {
-    key: 'purchaseDate',
+    key: 'createdAt',
     label: '구매일',
-    render: (item) => (
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontWeight: 700, color: '#333333' }}>{item.purchaseDate}</div>
-        <div style={{ color: 'var(--text-3)' }}>{item.purchaseTime}</div>
-      </div>
-    ),
     align: 'center',
+    render: (item) => <DateTimeCell value={item.createdAt} />,
   },
   {
-    key: 'statusDate',
-    label: '상태변경일',
-    render: (item) => (
-      <div style={{ textAlign: 'center' }}>
-        {item.statusDate !== '—' ? (
-          <>
-            <div style={{ fontWeight: 700, color: '#333333' }}>{item.statusDate}</div>
-            <div style={{ color: 'var(--text-3)' }}>{item.statusTime}</div>
-          </>
-        ) : (
-          <span style={{ color: 'var(--text-3)' }}>—</span>
-        )}
-      </div>
-    ),
-    align: 'center',
-  },
-  {
-    key: 'orderNumber',
+    key: 'orderNo',
     label: '주문번호',
+    align: 'center',
     render: (item) => (
-      <span style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--text-2)' }}>
-        {item.orderNumber}
+      <span
+        style={{
+          fontSize: '11px',
+          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          color: 'var(--text-3)',
+          wordBreak: 'break-all',
+        }}
+      >
+        {item.orderNo}
       </span>
     ),
-    align: 'center',
   },
   {
-    key: 'nickname',
-    label: '닉네임(카카오톡 ID)',
-    render: (item) => (
-      <div>
-        <div style={{ fontWeight: 500 }}>{item.nickname}</div>
-        <div style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}>
-          ({item.kakaoId})
-        </div>
-      </div>
-    ),
-    align: 'left',
+    key: 'member',
+    label: '닉네임 / 카카오톡 ID / 식별 아이디',
+    align: 'center',
+    render: (item) => <MemberIdentityCell member={item.member} userId={item.userId} />,
   },
   {
     key: 'productName',
     label: '상품명',
-    render: (item) => <span style={{ textAlign: 'left' }}>{item.productName}</span>,
-    align: 'left',
+    align: 'center',
+    render: (item) => (
+      <span style={{ fontWeight: 500, display: 'block' }}>{item.productName}</span>
+    ),
   },
   {
     key: 'productCode',
     label: '상품코드',
-    render: (item) => (
-      <span style={{ fontSize: '11px', fontFamily: 'monospace' }}>{item.productCode}</span>
-    ),
     align: 'center',
+    render: (item) => (
+      <span style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--text-3)' }}>
+        {item.productCode}
+      </span>
+    ),
   },
   {
-    key: 'expiryDate',
+    key: 'validDays',
     label: '유효기간',
-    render: (item) => (
-      <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>{item.expiryDate}</span>
-    ),
     align: 'center',
+    render: (item) => (
+      <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>
+        {formatGifticonValidityDays(item.validDays)}
+      </span>
+    ),
   },
   {
     key: 'status',
     label: '상태',
-    render: (item) => {
-      const badge = statusBadgeMap[item.status];
-      return <span className={`badge ${badge.className}`}>{badge.label}</span>;
-    },
     align: 'center',
+    render: (item) => {
+      const { bg, color } = STATUS_VARIANT_COLOR[getGifticonOrderStatusVariant(item.status)];
+      return (
+        <span
+          style={{
+            display: 'inline-block',
+            background: bg,
+            color,
+            padding: '3px 8px',
+            borderRadius: '99px',
+            fontSize: '11px',
+            fontWeight: 600,
+          }}
+        >
+          {getGifticonOrderStatusLabel(item.status)}
+        </span>
+      );
+    },
   },
   {
-    key: 'ticket',
-    label: '소모 티켓',
-    render: (item) => (
-      <TicketChip grade={item.ticketGrade} quantity={item.ticketQuantity} bare showQuantity />
-    ),
+    key: 'ticketsUsed',
+    label: '사용한 티켓',
     align: 'center',
+    render: (item) => <UsedTicketCell parts={item.ticketsUsed} wonAmount={item.priceWon} />,
   },
 ];
 
 export const GifticonTable: React.FC<GifticonTableProps> = ({
   data,
   pagination,
+  totalLabel,
   onRowClick,
-  className = '',
-}) => {
-  return (
-    <div className={`card ${className}`}>
-      <div className="card-header">
-        <div className="card-title">구매/사용 내역</div>
-        <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>총 {data.length}건</span>
-      </div>
-      <TablePaginationRowPerPage
-        data={data}
-        columns={columns}
-        pagination={pagination}
-        emptyMessage="조회된 내역이 없습니다."
-        onRowClick={onRowClick}
-      />
+}) => (
+  <div className="card">
+    <div className="card-header">
+      <div className="card-title">구매내역</div>
+      <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>
+        {totalLabel ?? `총 ${data.length}건`}
+      </span>
     </div>
-  );
-};
+    <TablePaginationRowPerPage
+      data={data}
+      columns={columns}
+      pagination={pagination}
+      emptyMessage="조건에 맞는 구매내역이 없습니다."
+      onRowClick={onRowClick}
+    />
+  </div>
+);

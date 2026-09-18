@@ -6,25 +6,25 @@ import type { Column } from 'src/components/common/table-pagination-row-per-page
 import { TablePaginationRowPerPage } from 'src/components/common/table-pagination-row-per-page';
 import type { PaginationProps } from 'src/components/common/pagination';
 import type { IGifticonOrder } from 'src/types/gifticons/gifticon_order';
+import { formatGifticonValidityDays } from 'src/utils/gifticon-products';
 
 // ----------------------------------------------------------------------
 
-interface GifticonCancelTableProps {
+interface GifticonUnusedTableProps {
   data: IGifticonOrder[];
-  startIndex?: number;
   pagination?: PaginationProps;
   totalLabel?: string;
+  onCancelRequest?: (item: IGifticonOrder) => void;
 }
 
-const buildColumns = (startIndex: number): Column<IGifticonOrder>[] => [
+const buildColumns = (
+  onCancelRequest?: (item: IGifticonOrder) => void
+): Column<IGifticonOrder>[] => [
   {
-    key: 'no',
-    label: 'No',
+    key: 'createdAt',
+    label: '구매일',
     align: 'center',
-    width: 56,
-    render: (_item, index) => (
-      <span style={{ color: 'var(--text-3)' }}>{startIndex + index + 1}</span>
-    ),
+    render: (item) => <DateTimeCell value={item.createdAt} />,
   },
   {
     key: 'orderNo',
@@ -56,72 +56,68 @@ const buildColumns = (startIndex: number): Column<IGifticonOrder>[] => [
     render: (item) => <span style={{ fontWeight: 500, display: 'block' }}>{item.productName}</span>,
   },
   {
-    key: 'cancelledAt',
-    label: '취소날짜',
-    align: 'center',
-    render: (item) => <DateTimeCell value={item.cancelledAt} />,
-  },
-  {
-    key: 'cancelReason',
-    label: '상태',
+    key: 'productCode',
+    label: '상품코드',
     align: 'center',
     render: (item) => (
-      <span
-        style={{
-          display: 'inline-block',
-          background: 'var(--danger-soft)',
-          color: 'var(--danger)',
-          padding: '3px 8px',
-          borderRadius: '99px',
-          fontSize: '11px',
-          fontWeight: 600,
-        }}
-      >
-        {item.cancelReason ?? '관리자 취소'}
+      <span style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--text-3)' }}>
+        {item.productCode}
       </span>
     ),
   },
   {
-    key: 'refundedTickets',
-    label: '환불 티켓',
+    key: 'validDays',
+    label: '유효기간',
     align: 'center',
     render: (item) => (
-      <UsedTicketCell parts={item.refundedTickets} wonAmount={item.priceWon} negative />
+      <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>
+        {formatGifticonValidityDays(item.validDays)}
+      </span>
     ),
   },
   {
-    key: 'holdings',
-    label: '보유 티켓',
+    key: 'ticketsUsed',
+    label: '사용한 티켓',
     align: 'center',
-    // tickets_after — 이 취소 건으로 환불된 뒤 회원이 들고 있게 된 등급 티켓.
-    // 원화 병기(tickets_after_won)는 서버가 계산해 내려준 값을 그대로 쓴다.
+    render: (item) => <UsedTicketCell parts={item.ticketsUsed} wonAmount={item.priceWon} />,
+  },
+  {
+    key: 'remark',
+    label: '비고',
+    align: 'center',
     render: (item) => (
-      <UsedTicketCell
-        parts={item.ticketsAfter}
-        wonAmount={item.ticketsAfterWon ?? undefined}
-      />
+      <button
+        type="button"
+        className="btn btn-danger btn-sm"
+        onClick={(e) => {
+          e.stopPropagation();
+          onCancelRequest?.(item);
+        }}
+      >
+        관리자 취소
+      </button>
     ),
   },
 ];
 
-export const GifticonCancelTable: React.FC<GifticonCancelTableProps> = ({
+export const GifticonUnusedTable: React.FC<GifticonUnusedTableProps> = ({
   data,
-  startIndex = 0,
   pagination,
   totalLabel,
+  onCancelRequest,
 }) => (
   <div className="card">
     <div className="card-header">
-      <div className="card-title">취소 내역</div>
+      <div className="card-title">기프티콘 미사용 취소</div>
       <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>
         {totalLabel ?? `총 ${data.length}건`}
       </span>
     </div>
     <TablePaginationRowPerPage
       data={data}
-      columns={buildColumns(startIndex)}
+      columns={buildColumns(onCancelRequest)}
       pagination={pagination}
-      emptyMessage="조건에 맞는 취소내역이 없습니다."
+      emptyMessage="조건에 맞는 미사용 기프티콘이 없습니다."
     />
   </div>
 );

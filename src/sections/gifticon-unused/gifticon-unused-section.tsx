@@ -1,17 +1,17 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import dayjs from 'dayjs';
+import { toast } from 'sonner';
 import { exportArrayToCsv, type CsvColumn } from 'src/components/common/csv-export-button';
 import type { PaginationProps } from 'src/components/common/pagination';
-import { GifticonTable } from 'src/components/gifticons/gifticon-table';
-import { GifticonToolbar } from 'src/components/gifticons/gifticon-toolbar';
+import { GifticonUnusedCancelModal } from 'src/components/gifticon-unused/gifticon-unused-cancel-modal';
+import { GifticonUnusedTable } from 'src/components/gifticon-unused/gifticon-unused-table';
+import { GifticonUnusedToolbar } from 'src/components/gifticon-unused/gifticon-unused-toolbar';
 import type { IGifticonOrder } from 'src/types/gifticons/gifticon_order';
-import { useGifticonOrders } from 'src/sections/gifticons/hooks/use-gifticons';
-import { getGifticonOrderStatusLabel } from 'src/utils/gifticon-orders';
+import { useGifticonUnusedOrders } from 'src/sections/gifticon-unused/hooks/use-gifticon-unused';
 import { formatGifticonTicketPartText, formatGifticonValidityDays } from 'src/utils/gifticon-products';
 
-// 표의 사용한 티켓 칸(등급마다 한 줄 + 원화 병기)과 같은 글자를 그대로 쓴다.
 const formatTicketsForCsv = (order: IGifticonOrder): string => {
   if (!order.ticketsUsed.length) return '—';
   const lines = order.ticketsUsed.map(formatGifticonTicketPartText);
@@ -29,11 +29,10 @@ const CSV_COLUMNS: CsvColumn<IGifticonOrder>[] = [
   { header: '상품코드', accessor: (row) => row.productCode },
   { header: '기프티콘 코드', accessor: (row) => row.voucherCode ?? '' },
   { header: '유효기간', accessor: (row) => formatGifticonValidityDays(row.validDays) },
-  { header: '상태', accessor: (row) => getGifticonOrderStatusLabel(row.status) },
   { header: '사용한 티켓', accessor: (row) => formatTicketsForCsv(row) },
 ];
 
-export const GifticonSection: React.FC = () => {
+export const GifticonUnusedSection: React.FC = () => {
   const {
     orders,
     totalItems,
@@ -45,11 +44,24 @@ export const GifticonSection: React.FC = () => {
     setLimit,
     applyFilters,
     exportOrders,
-  } = useGifticonOrders();
+    cancelOrder,
+  } = useGifticonUnusedOrders();
+  const [cancelTarget, setCancelTarget] = useState<IGifticonOrder | null>(null);
 
   const handleExport = async () => {
     const rows = await exportOrders();
-    exportArrayToCsv(rows, CSV_COLUMNS, `구매내역_${dayjs().format('YYYY-MM-DD')}.csv`);
+    exportArrayToCsv(rows, CSV_COLUMNS, `기프티콘미사용취소_${dayjs().format('YYYY-MM-DD')}.csv`);
+  };
+
+  const handleConfirmCancel = async (id: string) => {
+    try {
+      await cancelOrder(id);
+      setCancelTarget(null);
+      toast.success('기프티콘 구매를 관리자 취소 처리했습니다.');
+    } catch (error) {
+      console.error('Failed to cancel gifticon order:', error);
+      toast.error('취소 처리에 실패했습니다.');
+    }
   };
 
   const paginationProps: PaginationProps = {
@@ -66,13 +78,23 @@ export const GifticonSection: React.FC = () => {
 
   return (
     <div className="section active">
-      <GifticonToolbar onApply={applyFilters} onExport={handleExport} />
+      <GifticonUnusedToolbar onApply={applyFilters} onExport={handleExport} />
 
-      <GifticonTable
+      <GifticonUnusedTable
         data={orders}
         pagination={paginationProps}
         totalLabel={isLoading ? '불러오는 중…' : `총 ${totalItems.toLocaleString('ko-KR')}건`}
+        onCancelRequest={setCancelTarget}
       />
+
+      {cancelTarget && (
+        <GifticonUnusedCancelModal
+          key={cancelTarget.id}
+          order={cancelTarget}
+          onClose={() => setCancelTarget(null)}
+          onConfirm={handleConfirmCancel}
+        />
+      )}
     </div>
   );
 };

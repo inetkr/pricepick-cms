@@ -1,238 +1,246 @@
 import React from 'react';
-import type { Column} from '../common/table-pagination-row-per-page';
-import { TablePaginationRowPerPage } from '../common/table-pagination-row-per-page';
-import type { PaginationProps } from '../common/pagination';
+import type { Column } from 'src/components/common/table-pagination-row-per-page';
+import { TablePaginationRowPerPage } from 'src/components/common/table-pagination-row-per-page';
+import type { PaginationProps } from 'src/components/common/pagination';
+import type { IGifticonProduct } from 'src/types/gifticon-products/gifticon_product';
+import {
+  formatGifticonSaleEndDate,
+  formatGifticonTicketComboText,
+  formatGifticonValidityDays,
+  getGifticonTicketBreakdown,
+} from 'src/utils/gifticon-products';
 
-export interface GifticonProduct {
-  id: number;
-  category: string;
-  brand: string;
-  name: string;
-  code: string;
-  expiry: string;
-  valid: string;
-  price: number;
-  ticketGrade: 'bronze' | 'silver' | 'gold';
-  ticketQty: number;
-  isManual: boolean;
-  manualQty: number | null;
-  status: 'active' | 'soldout' | 'inactive';
-}
+// ----------------------------------------------------------------------
 
 interface GifticonProductTableProps {
-  data: GifticonProduct[];
+  data: IGifticonProduct[];
+  // 페이지가 아니라 전체 목록 기준 순번을 매기기 위한 시작 오프셋 (currentPage-1) * pageSize
+  startIndex?: number;
   pagination?: PaginationProps;
-  onTicketEdit?: (product: GifticonProduct) => void;
-  onToggleStatus?: (product: GifticonProduct) => void;
-  className?: string;
+  onRowClick?: (product: IGifticonProduct) => void;
+  onToggleStatus?: (product: IGifticonProduct) => void;
+  totalLabel?: string;
 }
 
-const columns: Column<GifticonProduct>[] = [
-  {
-    key: 'id',
-    label: 'No',
-    align: 'center',
-  },
-  {
-    key: 'category',
-    label: '카테고리',
-    render: (item) => (
-      <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>{item.category}</span>
-    ),
-    align: 'center',
-  },
-  {
-    key: 'brand',
-    label: '브랜드',
-    render: (item) => <span style={{ fontSize: '12px' }}>{item.brand}</span>,
-    align: 'center',
-  },
-  {
-    key: 'name',
-    label: '상품명',
-    render: (item) => <span style={{ textAlign: 'left', fontWeight: 500 }}>{item.name}</span>,
-    align: 'left',
-  },
-  {
-    key: 'code',
-    label: '상품코드',
-    render: (item) => (
-      <span style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--text-2)' }}>
-        {item.code}
-      </span>
-    ),
-    align: 'center',
-  },
-  {
-    key: 'expiry',
-    label: '판매종료일',
-    render: (item) => (
-      <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>{item.expiry}</span>
-    ),
-    align: 'center',
-  },
-  {
-    key: 'valid',
-    label: '유효기간',
-    render: (item) => (
-      <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>{item.valid}</span>
-    ),
-    align: 'center',
-  },
-  {
-    key: 'price',
-    label: '판매 가격',
-    render: (item) => <span style={{ fontWeight: 600 }}>{item.price.toLocaleString()}원</span>,
-    align: 'center',
-  },
-  {
-    key: 'ticketQty',
-    label: '교환 티켓',
-    render: (item) => {
-      const qty = item.isManual ? item.manualQty : item.ticketQty;
-      const manualBadge = item.isManual ? (
-        <span className="manual-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-          </svg>
-          수동
-        </span>
-      ) : null;
-      return (
-        <span
-          className={`tk-chip ${item.ticketGrade} bare`}
-          style={{ cursor: 'pointer' }}
-          role="button"
-          tabIndex={0}
-          onClick={(e) => {
-            e.stopPropagation();
-            // open ticket edit
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.stopPropagation();
-              // open ticket edit
-            }
-          }}
-        >
-          {item.ticketGrade === 'bronze'
-            ? '브론즈'
-            : item.ticketGrade === 'silver'
-              ? '실버'
-              : '골드'}{' '}
-          {qty}장{manualBadge}
-        </span>
-      );
-    },
-    align: 'center',
-  },
-  {
-    key: 'status',
-    label: '상태',
-    render: (item) => {
-      return (
-        <div
-          className={`toggle ${item.status === 'active' ? 'on' : ''}`}
-          role="button"
-          tabIndex={0}
-          onClick={(e) => {
-            e.stopPropagation();
-            // toggle status
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.stopPropagation();
-              // toggle status
-            }
-          }}
-        />
-      );
-    },
-    align: 'center',
-  },
-];
+const ImagePlaceholder: React.FC = () => (
+  <span
+    style={{
+      width: '40px',
+      height: '40px',
+      borderRadius: '6px',
+      border: '1px solid var(--border)',
+      background: 'var(--surface-2)',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#C9C2DC',
+      flexShrink: 0,
+    }}
+  >
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <polyline points="21 15 16 10 5 21" />
+    </svg>
+  </span>
+);
+
+// 포인츠허브 gipPriceHtml() 그대로: 등급.장수를 굵게 한 줄, 그 아래 회색으로 원화 병기.
+// 환산값이 없으면(장수 0) 원화만 굵게 보여주고 그 아래 "(환산값 미설정)"을 빨간 글씨로 붙인다.
+const ProductPriceCell: React.FC<{ product: IGifticonProduct }> = ({ product }) => {
+  const parts = product.ticketParts ?? getGifticonTicketBreakdown(product.price);
+  const hasPrice = product.price !== null;
+
+  if (!hasPrice && parts.length === 0) {
+    return <span style={{ color: 'var(--text-3)' }}>—</span>;
+  }
+
+  if (parts.length === 0) {
+    return (
+      <>
+        <div className="gip-price-main">
+          {hasPrice ? `${product.price!.toLocaleString('ko-KR')}원` : '—'}
+        </div>
+        <div className="gip-price-none">(환산값 미설정)</div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="gip-price-main">{formatGifticonTicketComboText(parts)}</div>
+      {hasPrice && (
+        <div className="gip-price-won">({product.price!.toLocaleString('ko-KR')}원)</div>
+      )}
+    </>
+  );
+};
 
 export const GifticonProductTable: React.FC<GifticonProductTableProps> = ({
   data,
+  startIndex = 0,
   pagination,
-  onTicketEdit,
+  onRowClick,
   onToggleStatus,
-  className = '',
+  totalLabel,
 }) => {
-  // Wrap columns with handlers
-  const columnsWithHandlers = columns.map((col) => {
-    if (col.key === 'ticketQty') {
-      return {
-        ...col,
-        render: (item: GifticonProduct) => {
-          const qty = item.isManual ? item.manualQty : item.ticketQty;
-          const manualBadge = item.isManual ? (
-            <span className="manual-badge">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-              </svg>
-              수동
-            </span>
-          ) : null;
-          return (
-            <span
-              className={`tk-chip ${item.ticketGrade} bare`}
-              style={{ cursor: 'pointer' }}
-              role="button"
-              tabIndex={0}
-              onClick={() => onTicketEdit?.(item)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  onTicketEdit?.(item);
-                }
-              }}
-            >
-              {item.ticketGrade === 'bronze'
-                ? '브론즈'
-                : item.ticketGrade === 'silver'
-                  ? '실버'
-                  : '골드'}{' '}
-              {qty}장{manualBadge}
-            </span>
-          );
-        },
-      };
-    }
-    if (col.key === 'status') {
-      return {
-        ...col,
-        render: (item: GifticonProduct) => (
-          <div
-            className={`toggle ${item.status === 'active' ? 'on' : ''}`}
-            role="button"
-            tabIndex={0}
-            onClick={() => onToggleStatus?.(item)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                onToggleStatus?.(item);
-              }
+  const columns: Column<IGifticonProduct>[] = [
+    {
+      key: 'no',
+      label: 'No',
+      align: 'center',
+      width: 56,
+      render: (_item, index) => (
+        <span style={{ color: 'var(--text-3)' }}>{startIndex + index + 1}</span>
+      ),
+    },
+    {
+      key: 'category',
+      label: '카테고리',
+      align: 'center',
+      render: (item) => item.category,
+    },
+    {
+      key: 'brand',
+      label: '브랜드',
+      align: 'center',
+      render: (item) => <span style={{ fontWeight: 600 }}>{item.brand}</span>,
+    },
+    {
+      key: 'imageUrl',
+      label: '이미지',
+      align: 'center',
+      width: 70,
+      render: (item) =>
+        item.imageUrl ? (
+          <img
+            src={item.imageUrl}
+            alt=""
+            style={{
+              width: '40px',
+              height: '40px',
+              objectFit: 'cover',
+              borderRadius: '6px',
+              border: '1px solid var(--border)',
+              display: 'inline-block',
+            }}
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
             }}
           />
+        ) : (
+          <ImagePlaceholder />
         ),
-      };
-    }
-    return col;
-  });
+    },
+    {
+      key: 'name',
+      label: '상품명',
+      align: 'center',
+      render: (item) => (
+        <span
+          style={{
+            fontWeight: 500,
+            display: 'block',
+            maxWidth: '260px',
+            marginInline: 'auto',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+          title={item.name}
+        >
+          {item.name}
+        </span>
+      ),
+    },
+    {
+      key: 'code',
+      label: '상품코드',
+      align: 'center',
+      render: (item) => (
+        <span style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--text-3)' }}>
+          {item.code}
+        </span>
+      ),
+    },
+    {
+      key: 'saleEndDate',
+      label: '상품판매종료일',
+      align: 'center',
+      render: (item) => (
+        <span style={{ fontSize: '12px', color: 'var(--text-3)' }}>
+          {formatGifticonSaleEndDate(item.saleEndDate)}
+        </span>
+      ),
+    },
+    {
+      key: 'validityDays',
+      label: '유효기간',
+      align: 'center',
+      render: (item) => (
+        <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>
+          {formatGifticonValidityDays(item.validityDays)}
+        </span>
+      ),
+    },
+    {
+      key: 'price',
+      label: '판매가격',
+      align: 'center',
+      render: (item) => <ProductPriceCell product={item} />,
+    },
+    {
+      key: 'status',
+      label: '상태',
+      align: 'center',
+      render: (item) => (
+        // 라벨을 누르면 실제 클릭은 span(tgl-sl)이나 label 자체에서 시작돼 행의 onClick까지
+        // 버블링된다 — input에만 stopPropagation을 걸어서는 막히지 않아 상세 팝업이 같이
+        // 열렸다. 라벨 자체에서 막는다. 라벨 안에 진짜 키보드 조작 가능한 input이 있어
+        // 키보드 접근성은 그대로다 — 이 onClick은 새 상호작용이 아니라 버블링 차단용이다.
+        // htmlFor/id와 중첩 모두로 연결돼 있지만 이 프로젝트 jsx-a11y 설정에서 오탐이 난다(최소 재현 확인).
+        // eslint-disable-next-line jsx-a11y/label-has-associated-control, jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+        <label
+          className="tgl"
+          htmlFor={`gip-tgl-${item.id}`}
+          title={item.status === 'ACTIVE' ? '판매중' : '판매중지'}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <input
+            id={`gip-tgl-${item.id}`}
+            type="checkbox"
+            checked={item.status === 'ACTIVE'}
+            onChange={() => onToggleStatus?.(item)}
+          />
+          <span className="tgl-sl" />
+        </label>
+      ),
+    },
+  ];
 
   return (
-    <div className={`card ${className}`}>
+    <div className="card">
       <div className="card-header">
         <div className="card-title">상품 목록</div>
-        <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>총 {data.length}개 상품</span>
+        <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>
+          {totalLabel ?? `총 ${data.length}개 상품`}
+        </span>
       </div>
       <TablePaginationRowPerPage
         data={data}
-        columns={columnsWithHandlers}
+        columns={columns}
         pagination={pagination}
-        emptyMessage="상품이 없습니다."
-        rowClassName={(item) => (item.isManual ? 'manual-edited' : '')}
+        emptyMessage="등록된 상품이 없습니다."
+        onRowClick={onRowClick}
       />
     </div>
   );

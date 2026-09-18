@@ -3,30 +3,31 @@
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import {
-  GIFTICON_ORDER_DEFAULT_FILTERS,
+  GIFTICON_UNUSED_ORDER_DEFAULT_FILTERS,
   type IGifticonOrderDateType,
-  type IGifticonOrderFilters,
-  type IGifticonOrderStatusFilter,
+  type IGifticonUnusedOrderFilters,
 } from 'src/types/gifticons/gifticon_order';
-import {
-  GIFTICON_ORDER_STATUS_LABEL,
-  GIFTICON_ORDER_STATUS_OPTIONS,
-} from 'src/utils/gifticon-orders';
 
 // ----------------------------------------------------------------------
 
-interface GifticonToolbarProps {
-  onApply: (filters: IGifticonOrderFilters) => void;
+interface GifticonUnusedToolbarProps {
+  onApply: (filters: IGifticonUnusedOrderFilters) => void;
   onExport: () => Promise<void>;
 }
 
-// 포인츠허브 구매내역 검색줄 그대로: 상태 · 이름 · 닉네임 · 기프티콘 코드 한 줄,
-// 그 아래 기간(from~to) · 검색 · CSV 내보내기 한 줄.
-export const GifticonToolbar: React.FC<GifticonToolbarProps> = ({ onApply, onExport }) => {
-  const [draft, setDraft] = useState<IGifticonOrderFilters>(GIFTICON_ORDER_DEFAULT_FILTERS);
+// 구매내역 검색줄과 같은 필드 구성(이름·상품명·기프티콘 코드 + 기간) — 이 목록은
+// 이미 미사용 건만 보여주므로 상태 거르개는 없다.
+export const GifticonUnusedToolbar: React.FC<GifticonUnusedToolbarProps> = ({
+  onApply,
+  onExport,
+}) => {
+  const [draft, setDraft] = useState<IGifticonUnusedOrderFilters>(
+    GIFTICON_UNUSED_ORDER_DEFAULT_FILTERS
+  );
   const [isExporting, setIsExporting] = useState(false);
 
-  const patch = (next: Partial<IGifticonOrderFilters>) => setDraft((prev) => ({ ...prev, ...next }));
+  const patch = (next: Partial<IGifticonUnusedOrderFilters>) =>
+    setDraft((prev) => ({ ...prev, ...next }));
 
   const submit = () => onApply(draft);
 
@@ -39,7 +40,7 @@ export const GifticonToolbar: React.FC<GifticonToolbarProps> = ({ onApply, onExp
     try {
       await onExport();
     } catch (error) {
-      console.error('Failed to export gifticon orders:', error);
+      console.error('Failed to export unused gifticon orders:', error);
       toast.error('내보내기에 실패했습니다.');
     } finally {
       setIsExporting(false);
@@ -49,18 +50,6 @@ export const GifticonToolbar: React.FC<GifticonToolbarProps> = ({ onApply, onExp
   return (
     <div className="srch">
       <div className="srch-row">
-        <select
-          className="filter-sel"
-          value={draft.status}
-          onChange={(e) => patch({ status: e.target.value as IGifticonOrderStatusFilter })}
-        >
-          <option value="">상태 전체</option>
-          {GIFTICON_ORDER_STATUS_OPTIONS.map((status) => (
-            <option key={status} value={status}>
-              {GIFTICON_ORDER_STATUS_LABEL[status]}
-            </option>
-          ))}
-        </select>
         <input
           className="search-box"
           placeholder="이름"

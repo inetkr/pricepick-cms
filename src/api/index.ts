@@ -17,6 +17,7 @@ import WeeklyDrawAPI from "./weekly-draw-api";
 import MerchantAPI from "./merchant-api";
 import AffiliateRevenueAPI from "./affiliate-revenue-api";
 import PostbackAPI from "./postback-api";
+import GiftAPI from "./gift-api";
 
 export const userAPI = new UserAPI();
 
@@ -55,3 +56,5 @@ export const merchantAPI = new MerchantAPI();
 export const affiliateRevenueAPI = new AffiliateRevenueAPI();
 
 export const postbackAPI = new PostbackAPI();
+
+export const giftAPI = new GiftAPI();

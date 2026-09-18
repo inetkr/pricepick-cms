@@ -206,6 +206,20 @@ export const CancelIcon = ({ className = '' }: { className?: string }) => (
   </svg>
 );
 
+export const UnusedCancelIcon = ({ className = '' }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+  >
+    <path d="M3 12a9 9 0 1 0 3-6.7" />
+    <polyline points="3 4 3 9 8 9" />
+  </svg>
+);
+
 export const ProductIcon = ({ className = '' }: { className?: string }) => (
   <svg
     className={className}

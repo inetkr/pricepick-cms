@@ -10,6 +10,7 @@ import {
   BellIcon,
   BulkIcon,
   CancelIcon,
+  UnusedCancelIcon,
   ChartIcon,
   ChatIcon,
   DashboardIcon,
@@ -167,25 +168,28 @@ const MENU_GROUPS: MenuGroup[] = [
     label: '기프티콘 관리',
     items: [
       {
+        id: 'gifticon-products',
+        label: '상품 목록',
+        icon: <ProductIcon />,
+        href: '/gifticon-products',
+      },
+      {
         id: 'gifticons',
-        label: '구매/사용 내역',
+        label: '구매내역',
         icon: <GiftIcon />,
         href: '/gifticons',
-        disabled: true,
+      },
+      {
+        id: 'gifticon-unused',
+        label: '기프티콘 미사용 취소',
+        icon: <UnusedCancelIcon />,
+        href: '/gifticon-unused',
       },
       {
         id: 'gifticon-cancel',
         label: '취소 내역',
         icon: <CancelIcon />,
         href: '/gifticon-cancel',
-        disabled: true,
-      },
-      {
-        id: 'gifticon-products',
-        label: '상품 목록',
-        icon: <ProductIcon />,
-        href: '/gifticon-products',
-        disabled: true,
       },
       {
         id: 'gifticon-bulk',

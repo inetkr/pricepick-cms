@@ -3196,4 +3196,213 @@ export const globalStyles = css`
     font-size: 12px;
     color: var(--text-3);
   }
+
+  /* ── 회원 표기(닉네임 / 카카오톡 ID / 식별 아이디) — 구매내역류 목록 공용 ──
+     줄 자리는 늘 셋을 지키고, 없는 값은 빈 채로 둔다. 값이 없어도 높이가 흔들리지
+     않도록 줄마다 고정 line-height/height 를 준다. */
+  .idc {
+    min-width: 0;
+    text-align: center;
+  }
+  .idc-nick,
+  .idc-sub,
+  .idc-uid {
+    display: block;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .idc-nick {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+    line-height: 18px;
+    height: 18px;
+  }
+  .idc-sub {
+    font-size: 11px;
+    color: var(--text-3);
+    line-height: 15px;
+    height: 15px;
+    margin-top: 2px;
+  }
+  .idc-uid {
+    font-size: 11px;
+    color: var(--text-3);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    line-height: 15px;
+    height: 15px;
+    margin-top: 2px;
+    cursor: pointer;
+    max-width: 100%;
+  }
+  .idc-uid:empty,
+  .idc-sub:empty,
+  .idc-nick:empty {
+    cursor: default;
+  }
+  .idc-uid:not(:empty):hover {
+    color: var(--main);
+    text-decoration: underline;
+  }
+
+  /* ── 두 줄짜리 검색줄 — 구매내역 · 취소내역 등 포인츠허브류 목록 공용 ── */
+  .srch {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .srch-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .srch-row + .srch-row {
+    margin-top: 10px;
+  }
+  .srch-row .search-box {
+    width: 150px;
+  }
+  .srch-date {
+    width: 150px;
+  }
+  .srch-tilde {
+    color: var(--text-3);
+    font-size: 13px;
+  }
+  /* 두 줄로 적는 칸 — 날짜 아래 시각 */
+  .cell-sub {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 2px;
+  }
+
+  /* ── 상품 설명 일괄 등록 — 새로 / 히스토리 탭 ── */
+  .bt-tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .bt-tab {
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-3);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+  }
+  .bt-tab.on {
+    color: var(--main);
+    border-bottom-color: var(--main);
+  }
+  .bt-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bt-sum {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .bt-empty {
+    text-align: center;
+    padding: 52px 18px;
+    color: var(--text-3);
+  }
+  .bt-empty-ico {
+    font-size: 40px;
+    opacity: 0.35;
+    margin-bottom: 10px;
+  }
+
+  /* ── 상품 목록 — 판매가격 칸: 등급.장수 위, 환산 원화 아래 ── */
+  .gip-price-main {
+    font-weight: 700;
+    color: var(--text);
+  }
+  .gip-price-won {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 2px;
+  }
+  .gip-price-none {
+    font-size: 11px;
+    color: var(--danger);
+    margin-top: 2px;
+  }
+
+  /* ── 상품 상세 정보 모달 — 판매가격 입력 아래 등급 티켓 병기 한 줄 ── */
+  .gid-won {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-top: 6px;
+  }
+  .gid-won.none {
+    color: var(--danger);
+  }
+
+  /* ── 구매내역/미사용취소/취소내역 — 사용한 티켓 칸: 등급마다 한 줄, 줄간격 좁게 ── */
+  .tkc {
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+  /* ── 취소내역 — 환불 티켓처럼 "되돌아간" 조합을 빨갛게 보여줄 때 ── */
+  .ph-minus {
+    color: var(--danger);
+    font-weight: 700;
+  }
+
+  /* ── 상품 목록 — 상태 스위치. display:inline-block이라 text-align:center로 가운데 온다 ── */
+  .tgl {
+    display: inline-block;
+    position: relative;
+    width: 40px;
+    height: 22px;
+    cursor: pointer;
+    vertical-align: middle;
+  }
+  .tgl input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+  .tgl .tgl-sl {
+    position: absolute;
+    inset: 0;
+    background: var(--text-3);
+    border-radius: 99px;
+    transition: background 0.18s;
+  }
+  .tgl .tgl-sl::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.18s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  }
+  .tgl input:checked + .tgl-sl {
+    background: var(--success);
+  }
+  .tgl input:checked + .tgl-sl::before {
+    transform: translateX(18px);
+  }
 `;
