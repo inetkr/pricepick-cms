@@ -3035,6 +3035,108 @@ export const globalStyles = css`
     opacity: 0.7;
   }
 
+  /* ── Gifti Shop sales revenue ──
+     Layout and sizing follow the affiliate-fee revenue screen (#sec-revenue-fee)
+     as-is — two screens in the same group with different field heights or number
+     sizes can't be read side by side.
+     Field/select/button height is unified through one variable (--gs-ctl-h): writing
+     each separately drifts out of sync the next time one is added. Scoped to this
+     screen only — editing .btn-sm/.filter-sel directly would move the whole CMS. */
+  #sec-revenue-gifti {
+    --gs-ctl-h: 36px;
+  }
+  #sec-revenue-gifti .form-input,
+  #sec-revenue-gifti .filter-sel,
+  #sec-revenue-gifti .search-box,
+  #sec-revenue-gifti .btn {
+    height: var(--gs-ctl-h);
+    box-sizing: border-box;
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: normal;
+    vertical-align: middle;
+  }
+  #sec-revenue-gifti .btn {
+    padding-left: 16px;
+    padding-right: 16px;
+    font-size: 12px;
+  }
+  #sec-revenue-gifti .stats-grid {
+    gap: 10px;
+  }
+  #sec-revenue-gifti .stat-card {
+    padding: 16px 14px;
+  }
+  /* Card numbers scale with window width — a fixed size would clip "5,251,000원" in a narrow window */
+  #sec-revenue-gifti .stat-value {
+    font-size: clamp(15px, 1.5vw, 22px);
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+  }
+  /* Column widths are pinned via colgroup — tickets-used renders one line per grade,
+     so leaving width auto would make columns wobble row to row with the line count */
+  #sec-revenue-gifti table {
+    table-layout: fixed;
+    width: 100%;
+  }
+  #sec-revenue-gifti th,
+  #sec-revenue-gifti td {
+    text-align: center !important;
+  }
+  /* One line per grade — tightened line height so three lines fit in one row */
+  #sec-revenue-gifti .tkc {
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+  /* The drillable "기간" (period) cell — it must look clickable (no explanatory text
+     added). A button covering the whole cell: putting a role on the td would make it
+     clickable by eye only, unreachable by keyboard. */
+  #sec-revenue-gifti .gs-drillable {
+    width: 100%;
+    padding: 0;
+    background: none;
+    border: none;
+    font: inherit;
+    color: var(--main);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  #sec-revenue-gifti .gs-drillable:hover {
+    text-decoration: underline;
+  }
+  #sec-revenue-gifti .gs-drillable:focus-visible {
+    outline: 2px solid var(--main);
+    outline-offset: 2px;
+    border-radius: var(--r-sm);
+  }
+  /* Per-order table — the member cell is always three lines, so row height is pinned to keep rows even */
+  #sec-revenue-gifti #gs-dt-table td {
+    height: 76px;
+    box-sizing: border-box;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  #sec-revenue-gifti #gs-dt-table th {
+    white-space: normal;
+    line-height: 1.35;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  /* The member cell's line height comes from .idc itself — zeroed here so the outer td's font size doesn't interfere */
+  #sec-revenue-gifti #gs-dt-table td:nth-child(3) {
+    line-height: 0;
+    font-size: 0;
+  }
+  /* Order numbers (PHTRX…) are long, so they wrap to two lines instead of truncating */
+  #sec-revenue-gifti #gs-dt-table td.ordno {
+    white-space: normal;
+    word-break: break-all;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    line-height: 1.4;
+  }
+
   /* ── 포스트백 로그 — 제휴사별 블록(쿠팡 / 링크프라이스) 공용 ── */
   .pb-mem {
     text-align: left;

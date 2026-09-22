@@ -511,6 +511,27 @@ export const JackpotLuckySpinIcon = ({ className = '' }: { className?: string })
   </svg>
 );
 
+// Gifti Shop sales revenue — points to "what went out through the Gifti Shop" within
+// the revenue menu group. Uses a gift-box shape to set it apart from the revenue (₩)
+// icon: with the same icon within the same group, there'd be no way to tell the
+// affiliate-fee row from the Gifti Shop row in the list.
+export const GiftiShopIcon = ({ className = '' }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="8" width="18" height="13" rx="2" />
+    <path d="M3 12h18M12 8v13" />
+    <path d="M12 8S10.5 4 8 4a2.5 2.5 0 0 0 0 5h4z" />
+    <path d="M12 8s1.5-4 4-4a2.5 2.5 0 0 1 0 5h-4z" />
+  </svg>
+);
+
 export const GiftBoxIcon = ({ className = '' }: { className?: string }) => (
   <svg
     className={className}

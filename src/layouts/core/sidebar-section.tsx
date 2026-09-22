@@ -16,6 +16,7 @@ import {
   DashboardIcon,
   GiftIcon,
   GiftBoxIcon,
+  GiftiShopIcon,
   RandomGiftBoxIcon,
   InviteIcon,
   MembersIcon,
@@ -70,6 +71,12 @@ const MENU_GROUPS: MenuGroup[] = [
         label: '제휴 수수료 매출',
         icon: <RevenueIcon />,
         href: '/revenue-fee',
+      },
+      {
+        id: 'revenue-gifti',
+        label: '기프티샵 판매 매출',
+        icon: <GiftiShopIcon />,
+        href: '/revenue-gifti',
       },
       {
         id: 'revenue',

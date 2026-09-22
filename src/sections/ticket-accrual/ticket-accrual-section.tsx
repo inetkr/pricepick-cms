@@ -11,7 +11,6 @@ import { TicketAccrualPrimaryMallTable } from 'src/components/ticket-accrual/tic
 import { TicketAccrualSimulatorModal } from 'src/components/ticket-accrual/ticket-accrual-simulator-modal';
 import { useTicketAccrual } from 'src/sections/ticket-accrual/hooks/use-ticket-accrual';
 import type { IAffiliateMall } from 'src/types/config/ticket_accrual_config';
-import { DEFAULT_ACCRUAL_RATIO } from 'src/utils/ticket-accrual';
 
 export const TicketAccrualSection: React.FC = () => {
   const {

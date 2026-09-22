@@ -27,8 +27,22 @@ export type TicketAccrualFilters = {
 const DEFAULT_FILTERS: TicketAccrualFilters = {
   category: '',
   approvalStatus: '',
-  applied: '',
+  applied: 'true',
 };
+
+// filters 조건에 맞는 몰만 남긴다 — searchCatalogMalls는 서버에 같은 조건으로 다시 묻지만,
+// 초기 로딩(loadConfig)은 총 건수(totalCatalogCount) 계산을 위해 이미 받아 둔 전체 목록에
+// DEFAULT_FILTERS를 그대로 적용해 표시 목록만 추려낸다.
+const filterCatalogMalls = (
+  malls: IAffiliateMall[],
+  filters: TicketAccrualFilters
+): IAffiliateMall[] =>
+  malls.filter((m) => {
+    if (filters.category && m.category !== filters.category) return false;
+    if (filters.approvalStatus && m.approvalStatus !== filters.approvalStatus) return false;
+    if (filters.applied !== '' && m.applied !== (filters.applied === 'true')) return false;
+    return true;
+  });
 
 const mallSignature = (m: IAffiliateMall) =>
   `${m.feeRate}|${m.accrualRate}|${m.applied}|${m.approvalStatus}|${m.logoUrl}|${m.unlockDays}`;
@@ -165,10 +179,11 @@ export const useTicketAccrual = () => {
       ]);
       const loadedPrimary = manualRows.map((m) => toAffiliateMall(m, 'MANUAL'));
       const loadedCatalog = linkpriceRows.map((m) => toAffiliateMall(m, 'LINKPRICE'));
+      const filteredCatalog = filterCatalogMalls(loadedCatalog, DEFAULT_FILTERS);
       setPrimaryMalls(loadedPrimary);
       setSavedPrimaryMalls(loadedPrimary);
-      setCatalogMalls(loadedCatalog);
-      setSavedCatalogMalls(loadedCatalog);
+      setCatalogMalls(filteredCatalog);
+      setSavedCatalogMalls(filteredCatalog);
       setTotalCatalogCount(loadedCatalog.length);
       setLogoUploadIds(new Set());
 

@@ -18,6 +18,7 @@ import MerchantAPI from "./merchant-api";
 import AffiliateRevenueAPI from "./affiliate-revenue-api";
 import PostbackAPI from "./postback-api";
 import GiftAPI from "./gift-api";
+import GiftiRevenueAPI from "./gifti-revenue-api";
 
 export const userAPI = new UserAPI();
 
@@ -58,3 +59,5 @@ export const affiliateRevenueAPI = new AffiliateRevenueAPI();
 export const postbackAPI = new PostbackAPI();
 
 export const giftAPI = new GiftAPI();
+
+export const giftiRevenueAPI = new GiftiRevenueAPI();
