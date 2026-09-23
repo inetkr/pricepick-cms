@@ -37,13 +37,17 @@ export const TicketAccrualSection: React.FC = () => {
     toggleSelectAllVisible,
     updateMallField,
     updateMallLogo,
-    setApprovalStatus,
     toggleApplied,
     addMall,
     bulkApplyRate,
     bulkSetApplied,
     savePrimaryMalls,
     saveCatalogMalls,
+    isSyncingLinkprice,
+    linkpriceSyncMessage,
+    linkpriceSyncStatus,
+    linkpriceSyncedAt,
+    syncLinkprice,
   } = useTicketAccrual();
 
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -104,8 +108,12 @@ export const TicketAccrualSection: React.FC = () => {
         onOpenSimulator={setSimulatorMall}
         onOpenDetail={setDetailMall}
         onEditLogo={setLogoModalMall}
-        onSetApprovalStatus={setApprovalStatus}
         onOpenAddMall={() => setIsAddOpen(true)}
+        onSyncLinkprice={syncLinkprice}
+        isSyncingLinkprice={isSyncingLinkprice}
+        linkpriceSyncMessage={linkpriceSyncMessage}
+        linkpriceSyncStatus={linkpriceSyncStatus}
+        linkpriceSyncedAt={linkpriceSyncedAt}
         selectMode={selectMode}
         selectedIds={selectedIds}
         allVisibleSelected={allVisibleSelected}

@@ -26,4 +26,9 @@ export type IAffiliateMall = {
   // merchant/admin API의 unlock_days 그대로 — 구매 확정 후 랜덤 티켓이 등급 티켓으로 전환되기까지
   // 걸리는 대기일 수. 조회 전용이라 이 화면에서 수정하지 않는다. 미설정 몰은 null.
   unlockDays: number | null;
+  // 링크프라이스 앱 실적 인정 여부 — 아직 동기화되지 않아 값이 없으면 null("갱신 필요"로 표시).
+  appAndroid: 'Y' | 'N' | null;
+  appIos: 'Y' | 'N' | null;
+  // 랜덤티켓 지급 시점(when_trans) 원문 — 여러 줄일 수 있어 자르지 않고 그대로 보관한다.
+  whenTrans: string;
 };

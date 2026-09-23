@@ -12,10 +12,9 @@ export const DEFAULT_ACCRUAL_RATIO = 60;
 export const MAX_FEE_RATE = 100;
 export const MAX_ACCRUAL_RATE = 20;
 
-// 전환 대기일 수(unlock_days) 입력 범위 — 링크프라이스 제휴몰(카탈로그)에서만 편집 가능하다.
-// 쿠팡(대표 제휴몰)은 카카오톡 연동 여부에 따른 고정 정책이라 이 범위 검증 대상이 아니다.
-export const MIN_UNLOCK_DAYS = 1;
-export const MAX_UNLOCK_DAYS = 365;
+// 링크프라이스 제휴몰의 등급 전환 시점 — 실적 월의 익익월 6일 이후 확정 건을 대조해 전환한다.
+// 몰마다 다르지 않고 우리가 정하는 값도 아니라, 이 화면에서는 읽기 전용 문구로만 보여준다.
+export const LP_CONVERT_LABEL = '익익월 6일 확정 후';
 
 const APPROVAL_STATUS_VALUES: readonly IMerchantLpStatusFilter[] = [
   'APPROVED',
@@ -24,14 +23,24 @@ const APPROVAL_STATUS_VALUES: readonly IMerchantLpStatusFilter[] = [
   'NOT_APPLIED',
 ];
 
-// merchant API의 lp_status 응답은 IAffiliateMallApprovalStatus와 같은 영문 enum 그대로 내려온다
-// (과거에는 한글 라벨이었으나 서버가 변경됨). MANUAL 소스(쿠팡 등 직계약 제휴몰)는 링크프라이스
-// 심사를 거치지 않아 lp_status가 null로 오며, 서버가 알 수 없는 값을 내려주는 경우도 안전하게
-// '미신청'으로 취급한다.
-export const mapLpStatus = (status: string | null | undefined): IAffiliateMallApprovalStatus =>
-  APPROVAL_STATUS_VALUES.includes(status as IMerchantLpStatusFilter)
-    ? (status as IAffiliateMallApprovalStatus)
-    : 'NOT_APPLIED';
+// 목록(get_list_cms)은 영문 enum을 내려주지만 상세(:id)는 같은 필드를 한글 라벨("승인")로
+// 내려준다 — 둘 다 받아 같은 값으로 읽는다. 한쪽만 처리하면 전 몰이 조용히 '미신청'으로
+// 표시되고 필터까지 어긋나는데, 화면에는 오류가 아니라 정상처럼 보여 알아채기 어렵다.
+const APPROVAL_STATUS_BY_KO: Record<string, IAffiliateMallApprovalStatus> = {
+  승인: 'APPROVED',
+  승인대기: 'PENDING',
+  거부: 'REJECTED',
+  미신청: 'NOT_APPLIED',
+};
+
+// MANUAL 소스(쿠팡 등 직계약 제휴몰)는 링크프라이스 심사를 거치지 않아 lp_status가 null로 오며,
+// 서버가 알 수 없는 값을 내려주는 경우도 안전하게 '미신청'으로 취급한다.
+export const mapLpStatus = (status: string | null | undefined): IAffiliateMallApprovalStatus => {
+  if (APPROVAL_STATUS_VALUES.includes(status as IMerchantLpStatusFilter)) {
+    return status as IAffiliateMallApprovalStatus;
+  }
+  return APPROVAL_STATUS_BY_KO[String(status ?? '').trim()] ?? 'NOT_APPLIED';
+};
 
 // merchant API 응답(문자열 소수, MANUAL 소스는 category도 null)을 화면에서 쓰는 뷰 모델로 변환한다.
 // get_list_cms 응답 행에는 merchant_source 필드가 내려오지 않으므로, 어느 필터로 가져온
@@ -48,6 +57,9 @@ export const toAffiliateMall = (m: IMerchant, source: IAffiliateMallSource): IAf
   applied: m.is_applied,
   logoUrl: m.img_url ?? '',
   unlockDays: m.unlock_days ?? null,
+  appAndroid: m.lp_app_android_yn ?? null,
+  appIos: m.lp_app_ios_yn ?? null,
+  whenTrans: m.lp_when_trans ?? '',
 });
 
 export const roundRate = (value: number): number => Math.round(value * 10) / 10;
@@ -63,14 +75,13 @@ export const defaultAccrualRate = (
 export const isValidFeeRate = (value: number): boolean =>
   Number.isFinite(value) && value >= 0 && value <= MAX_FEE_RATE;
 
-export const isValidAccrualRate = (value: number): boolean =>
-  Number.isFinite(value) && value >= 0 && value <= MAX_ACCRUAL_RATE;
+// 적립률 상한은 그 몰의 커미션이다 — 커미션보다 많이 돌려주면 역마진이기 때문이다. 커미션을
+// 숫자로 알 수 없는 몰(아직 동기화 전 등)은 기준이 없으므로 기본 상한 20%를 그대로 쓴다.
+export const accrualRateCap = (feeRate: number): number =>
+  Number.isFinite(feeRate) && feeRate > 0 ? feeRate : MAX_ACCRUAL_RATE;
 
-// unlockDays가 null이면(=API가 아직 값을 안 내려준 몰) 유효한 것으로 본다 — 값을 안 건드린
-// 몰까지 저장을 막으면 안 되기 때문이다. 사용자가 값을 입력했을 때만 범위를 검증한다.
-export const isValidUnlockDays = (value: number | null): boolean =>
-  value == null ||
-  (Number.isInteger(value) && value >= MIN_UNLOCK_DAYS && value <= MAX_UNLOCK_DAYS);
+export const isValidAccrualRate = (value: number, max: number = MAX_ACCRUAL_RATE): boolean =>
+  Number.isFinite(value) && value >= 0 && value <= max;
 
 export type TicketDenomination = { grade: 'gold' | 'silver' | 'bronze'; label: string; value: number };
 

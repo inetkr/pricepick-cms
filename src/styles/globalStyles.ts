@@ -2862,6 +2862,178 @@ export const globalStyles = css`
   .ta-row-dim:hover {
     opacity: 0.75;
   }
+  /* 링크프라이스가 아직 값을 내려주지 않은 칸 — "링크프라이스 업데이트"를 눌러야 채워진다.
+     승인(APPROVED) 몰에만 붙이고, 미승인 몰은 애초에 조회 대상이 아니라 "—"로 둔다. */
+  .ta-needsync {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 99px;
+    background: var(--warning-soft);
+    color: var(--warning);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  /* 커미션·앱 지원은 값이 짧은 대신 머리글이 길어, 칸 여백을 줄여야 열 폭을 아낄 수 있다 */
+  .ta-tight {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+  .ta-appcell {
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .ta-appcell.no {
+    color: #b91c1c;
+  }
+  .ta-appcell.yes {
+    color: var(--success);
+  }
+  /* 랜덤티켓 지급 시점 원문은 여러 줄인 몰(11번가·옥션)이 있어 행 높이가 튄다 —
+     목록에는 첫 줄만 적고 전문은 title(마우스오버)로 넘긴다. 원문은 자르지 않는다. */
+  .ta-when {
+    display: inline-block;
+    max-width: 140px;
+    vertical-align: bottom;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ta-when-more {
+    font-size: 12px;
+    color: var(--text-3);
+    cursor: default;
+  }
+  /* 로고 그림 자체가 등록·변경 버튼이다. 로고가 없는 몰은 빈칸으로 두지 않고 이름 첫 글자
+     동그라미를 같은 크기로 그려 그것이 누르는 자리가 된다 — 예전 "등록" 글자가 하던 몫이다. */
+  .ta-logo-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 3px;
+    margin: 0 auto;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: box-shadow 0.12s, transform 0.12s;
+  }
+  .ta-logo-cell:hover {
+    box-shadow: 0 0 0 2px var(--main-soft);
+    transform: scale(1.06);
+  }
+  .ta-logo-cell:focus-visible {
+    outline: 2px solid var(--main);
+    outline-offset: 1px;
+  }
+
+  /* ── 제휴몰 정보 모달 — 링크프라이스 광고주 조회 오픈 API 원문을 2열로 펼쳐 보여준다 ── */
+  .ta-src {
+    padding: 8px 0 10px;
+    font-size: 11.5px;
+    color: var(--text-3);
+    border-bottom: 1px solid var(--border);
+  }
+  .ta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 28px;
+  }
+  /* 라벨 칸은 가장 긴 라벨("링크프라이스 승인 상태" ≈ 132px)에 API·수기 꼬리표(≈ 34px)까지
+     한 줄에 들어가는 폭이다 — 좁히면 꼬리표만 아랫줄로 떨어져 어느 라벨에 붙은 것인지 흐려진다. */
+  .ta-kv {
+    display: grid;
+    grid-template-columns: 176px 1fr;
+    gap: 10px;
+    align-items: start;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+  .ta-kv > .k {
+    color: var(--text-2);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .ta-kv > .v {
+    color: var(--text);
+    word-break: break-word;
+  }
+  .ta-kv > .v a {
+    word-break: break-all;
+  }
+  /* 그 값이 API에서 온 것인지(api) 사람이 적어 둔 것인지(man) 구분하는 꼬리표 */
+  .ta-tag {
+    display: inline-block;
+    margin-left: 5px;
+    padding: 0 5px;
+    border-radius: 4px;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    vertical-align: 1px;
+  }
+  .ta-tag.api {
+    background: var(--main-soft);
+    color: var(--main);
+  }
+  .ta-tag.man {
+    background: var(--surface-2);
+    color: var(--text-3);
+  }
+  .ta-flagrow {
+    padding: 10px 0;
+  }
+  /* 문장이 긴 항목은 2열 아래 가로 전체 폭으로 펼친다 */
+  .ta-full {
+    margin-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .ta-scope {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .ta-scope > span {
+    padding: 1px 7px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--surface-2);
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+  .ta-scope > span.no {
+    background: var(--danger-soft);
+    color: #b91c1c;
+  }
+  .ta-scope > span.yes {
+    background: var(--success-soft);
+    color: #15803d;
+  }
+  /* 서로 어긋나는 값이 있어 사람이 한 번 봐야 하는 자리 — 우리가 판정하지 않고 표시만 한다 */
+  .ta-needchk {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 99px;
+    background: var(--warning-soft);
+    color: #92400e;
+    font-size: 11px;
+    font-weight: 700;
+    vertical-align: middle;
+  }
+  .ta-pre {
+    white-space: pre-wrap;
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.55;
+  }
   .ta-sim-amount-box {
     display: flex;
     align-items: center;

@@ -3,39 +3,24 @@ import type { Column } from 'src/components/common/table';
 import { Table } from 'src/components/common/table';
 import {
   AccrualRateCell,
-  FeeRateCell,
+  AppSupportCell,
+  ApprovalBadgeCell,
+  CommissionCell,
   LogoCell,
+  LpConvertLabelCell,
   MarginCell,
   SimulatorButtonCell,
-  UnlockDaysInputCell,
+  WhenTransCell,
 } from 'src/components/ticket-accrual/ticket-accrual-rate-cells';
 import type { TicketAccrualFilters } from 'src/sections/ticket-accrual/hooks/use-ticket-accrual';
 import type {
   IAffiliateMall,
   IAffiliateMallApprovalStatus,
 } from 'src/types/config/ticket_accrual_config';
-
-const APPROVAL_LABEL: Record<IAffiliateMallApprovalStatus, string> = {
-  APPROVED: '승인',
-  PENDING: '승인대기',
-  REJECTED: '거부',
-  NOT_APPLIED: '미신청',
-};
-
-// select의 테두리·글자색을 상태별로 맞춰, 드롭다운을 접어 놓은 상태에서도 승인/대기/거부
-// 여부가 한눈에 보이게 한다(배경색은 쓰지 않는다).
-const APPROVAL_COLOR: Record<IAffiliateMallApprovalStatus, string> = {
-  APPROVED: 'var(--success)',
-  PENDING: 'var(--amber)',
-  REJECTED: 'var(--danger)',
-  NOT_APPLIED: 'var(--text-3)',
-};
-
-const APPROVAL_SELECT_HEIGHT = 32;
-const APPROVAL_SELECT_LINE_HEIGHT = APPROVAL_SELECT_HEIGHT - 2; // 위아래 1px 테두리를 뺀 콘텐츠 높이 — 선택값이 안 잘리도록 세로 중앙 정렬을 강제한다
+import { accrualRateCap } from 'src/utils/ticket-accrual';
 
 const APPROVAL_FILTER_OPTIONS: { value: IAffiliateMallApprovalStatus | ''; label: string }[] = [
-  { value: '', label: 'LP상태 전체' },
+  { value: '', label: '링크프라이스 승인 상태 전체' },
   { value: 'APPROVED', label: '승인' },
   { value: 'PENDING', label: '승인대기' },
   { value: 'REJECTED', label: '거부' },
@@ -43,7 +28,7 @@ const APPROVAL_FILTER_OPTIONS: { value: IAffiliateMallApprovalStatus | ''; label
 ];
 
 const APPLIED_FILTER_OPTIONS: { value: TicketAccrualFilters['applied']; label: string }[] = [
-  { value: '', label: '적용 전체' },
+  { value: '', label: '적용 상태 전체' },
   { value: 'true', label: '적용' },
   { value: 'false', label: '미적용' },
 ];
@@ -64,15 +49,21 @@ interface TicketAccrualCatalogMallTableProps {
   // 다시 조회한다.
   onSearch: () => void;
   isSearching: boolean;
-  onChangeField: (
-    id: string,
-    patch: Partial<Pick<IAffiliateMall, 'feeRate' | 'accrualRate' | 'unlockDays'>>
-  ) => void;
+  // 이 화면에서 운영자가 고치는 값은 적립률 하나다 — 커미션·승인 상태·등급 전환 시점은 모두
+  // 링크프라이스가 정하는 값이라 읽기 전용이다.
+  onChangeField: (id: string, patch: Partial<Pick<IAffiliateMall, 'accrualRate'>>) => void;
   onOpenSimulator: (mall: IAffiliateMall) => void;
   onOpenDetail: (mall: IAffiliateMall) => void;
   onEditLogo: (mall: IAffiliateMall) => void;
-  onSetApprovalStatus: (id: string, status: IAffiliateMallApprovalStatus) => void;
   onOpenAddMall: () => void;
+  // 링크프라이스 광고주 조회 API를 지금 불러와 merchant_source=LINKPRICE 레코드를 갱신한다.
+  onSyncLinkprice: () => void;
+  isSyncingLinkprice: boolean;
+  // 마지막 갱신 결과 한 줄 — 아직 한 번도 실행하지 않았으면 null(줄 자체를 그리지 않는다).
+  linkpriceSyncMessage: string | null;
+  linkpriceSyncStatus: 'ok' | 'bad' | null;
+  // 마지막으로 링크프라이스에서 제휴몰 정보를 받아온 시각 — 목록 하단에 함께 적는다.
+  linkpriceSyncedAt: string | null;
   selectMode: boolean;
   selectedIds: Set<string>;
   allVisibleSelected: boolean;
@@ -106,8 +97,12 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
   onOpenSimulator,
   onOpenDetail,
   onEditLogo,
-  onSetApprovalStatus,
   onOpenAddMall,
+  onSyncLinkprice,
+  isSyncingLinkprice,
+  linkpriceSyncMessage,
+  linkpriceSyncStatus,
+  linkpriceSyncedAt,
   selectMode,
   selectedIds,
   allVisibleSelected,
@@ -124,10 +119,6 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
 }) => {
   const [bulkRate, setBulkRate] = useState(60);
 
-  const savedApprovalById = useMemo(
-    () => new Map(savedMalls.map((m) => [m.id, m.approvalStatus])),
-    [savedMalls]
-  );
   const savedLogoById = useMemo(
     () => new Map(savedMalls.map((m) => [m.id, m.logoUrl])),
     [savedMalls]
@@ -147,7 +138,7 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
           aria-label="보이는 몰 전체 선택"
         />
       ),
-      width: '40px',
+      width: '4%',
       render: (m) => (
         <input
           type="checkbox"
@@ -163,7 +154,7 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
     key: 'logo',
     label: '로고',
     align: 'center',
-    width: '70px',
+    width: '4%',
     render: (m) => {
       const savedLogoUrl = savedLogoById.get(m.id);
       const changed = savedLogoUrl !== undefined && savedLogoUrl !== m.logoUrl;
@@ -175,6 +166,7 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
     key: 'name',
     label: '제휴몰',
     align: 'center',
+    width: '11%',
     render: (m) => (
       <button type="button" className="ta-name-link" onClick={() => onOpenDetail(m)}>
         {m.name}
@@ -182,82 +174,77 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
     ),
   });
 
+  // 링크프라이스가 정해 내려주는 값이라 우리가 고치지 않는다 — 읽기 전용 배지다.
   columns.push({
     key: 'approvalStatus',
-    label: '링크프라이스 상태',
-    render: (m) => {
-      const savedStatus = savedApprovalById.get(m.id);
-      const changed = savedStatus !== undefined && savedStatus !== m.approvalStatus;
-      return (
-        <select
-          className="form-select"
-          style={{
-            height: `${APPROVAL_SELECT_HEIGHT}px`,
-            lineHeight: `${APPROVAL_SELECT_LINE_HEIGHT}px`,
-            padding: '0 8px',
-            fontSize: '12px',
-            fontWeight: 700,
-            maxWidth: '110px',
-            borderColor: APPROVAL_COLOR[m.approvalStatus],
-            color: APPROVAL_COLOR[m.approvalStatus],
-            boxShadow: changed ? '0 0 0 2px var(--warning)' : 'none',
-          }}
-          value={m.approvalStatus}
-          onChange={(e) =>
-            onSetApprovalStatus(m.id, e.target.value as IAffiliateMallApprovalStatus)
-          }
-        >
-          {(Object.keys(APPROVAL_LABEL) as IAffiliateMallApprovalStatus[]).map((status) => (
-            <option key={status} value={status}>
-              {APPROVAL_LABEL[status]}
-            </option>
-          ))}
-        </select>
-      );
-    },
+    label: '링크프라이스 승인 상태',
+    width: '8%',
+    render: (m) => <ApprovalBadgeCell mall={m} />,
+  });
+
+  // 링크프라이스 제휴몰이 우리에게 주는 값은 커미션(모바일) 하나이고 그것도 읽기 전용이다.
+  // 이 화면에서 우리가 정하는 값은 적립률 하나뿐이라 수수료 입력칸은 대표 제휴몰에만 둔다.
+  columns.push({
+    key: 'feeRate',
+    label: '커미션(모바일)',
+    width: '8%',
+    className: 'ta-tight',
+    render: (m) => <CommissionCell mall={m} />,
   });
 
   columns.push({
-    key: 'feeRate',
-    label: '수수료',
-    render: (m) => (
-      <FeeRateCell mall={m} onChange={(id, feeRate) => onChangeField(id, { feeRate })} />
-    ),
+    key: 'app',
+    label: '앱(AOS·iOS)',
+    width: '9%',
+    className: 'ta-tight',
+    render: (m) => <AppSupportCell mall={m} />,
   });
 
   columns.push({
     key: 'accrualRate',
     label: '적립률',
+    width: '9%',
     render: (m) => (
       <AccrualRateCell
         mall={m}
+        max={accrualRateCap(m.feeRate)}
         onChange={(id, accrualRate) => onChangeField(id, { accrualRate })}
       />
     ),
   });
 
-  columns.push({ key: 'margin', label: '수익', render: (m) => <MarginCell mall={m} /> });
+  columns.push({
+    key: 'margin',
+    label: '수익',
+    width: '7%',
+    render: (m) => <MarginCell mall={m} />,
+  });
 
   columns.push({
-    key: 'unlockDays',
-    label: '전환 대기일 수',
-    render: (m) => (
-      <UnlockDaysInputCell
-        mall={m}
-        onChange={(id, unlockDays) => onChangeField(id, { unlockDays })}
-      />
-    ),
+    key: 'whenTrans',
+    label: '랜덤티켓 지급 시점',
+    width: '15%',
+    render: (m) => <WhenTransCell mall={m} />,
+  });
+
+  columns.push({
+    key: 'convert',
+    label: '등급 전환 시점',
+    width: '9%',
+    render: () => <LpConvertLabelCell />,
   });
 
   columns.push({
     key: 'simulator',
     label: '시뮬레이터',
+    width: '9%',
     render: (m) => <SimulatorButtonCell mall={m} onOpen={onOpenSimulator} />,
   });
 
   columns.push({
     key: 'applied',
     label: '적용',
+    width: '7%',
     render: (m) => (
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <div
@@ -287,9 +274,10 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          <div className="card-title">제휴몰 (링크프라이스)</div>
+          <div className="card-title">제휴몰(링크프라이스)</div>
           <select
-            className="filter-sel"
+            className="form-input"
+            style={{ width: '120px' }}
             value={filters.category}
             onChange={(e) => onFiltersChange({ ...filters, category: e.target.value })}
           >
@@ -301,7 +289,8 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
             ))}
           </select>
           <select
-            className="filter-sel"
+            className="form-input"
+            style={{ width: '190px' }}
             value={filters.approvalStatus}
             onChange={(e) =>
               onFiltersChange({
@@ -309,7 +298,7 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
                 approvalStatus: e.target.value as IAffiliateMallApprovalStatus | '',
               })
             }
-            title="링크프라이스 상태로 거르기"
+            title="링크프라이스 승인 상태로 거르기"
           >
             {APPROVAL_FILTER_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -318,7 +307,8 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
             ))}
           </select>
           <select
-            className="filter-sel"
+            className="form-input"
+            style={{ width: '125px' }}
             value={filters.applied}
             onChange={(e) =>
               onFiltersChange({
@@ -357,7 +347,7 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
               type="button"
               className="btn btn-ghost btn-sm"
               onClick={onToggleSelectMode}
-              title="여러 몰을 골라 체크한 뒤 일괄 조정하세요."
+              title="눌러서 몰을 체크한 뒤 일괄 조작하세요."
             >
               선택
             </button>
@@ -402,6 +392,16 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
             </>
           )}
           <span style={{ width: '1px', height: '22px', background: 'var(--border)' }} />
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={onSyncLinkprice}
+            disabled={isSyncingLinkprice}
+            title="링크프라이스 광고주 조회 API를 지금 불러 제휴몰 정보를 갱신합니다."
+          >
+            {isSyncingLinkprice ? '갱신 중...' : '링크프라이스 업데이트'}
+          </button>
+          <span style={{ width: '1px', height: '22px', background: 'var(--border)' }} />
           <button type="button" className="btn btn-ghost btn-sm" onClick={onOpenAddMall}>
             제휴몰 추가
           </button>
@@ -416,21 +416,32 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
           </button>
         </div>
       </div>
+      {linkpriceSyncMessage && (
+        <div
+          style={{
+            padding: '7px 20px',
+            borderBottom: '1px solid var(--border)',
+            fontSize: '11.5px',
+            color: linkpriceSyncStatus === 'ok' ? 'var(--success)' : 'var(--danger)',
+          }}
+        >
+          {linkpriceSyncMessage}
+        </div>
+      )}
       {dirtyCount > 0 && (
         <div
           style={{
             background: 'var(--warning-soft)',
             border: '1px solid var(--warning)',
             borderRadius: 'var(--r-md)',
-            margin: '14px 20px',
+            margin: '0 0 14px',
             padding: '10px 16px',
-            fontSize: '13px',
+            fontSize: '12px',
             color: 'var(--warning)',
             fontWeight: 700,
-            lineHeight: 1.6,
           }}
         >
-          저장하지 않은 변경 {dirtyCount}개 몰 — 저장 버튼을 눌러야 적용됩니다.
+          저장하지 않은 변경 {dirtyCount}건 — 저장 버튼을 눌러야 적용됩니다
         </div>
       )}
       <div
@@ -453,7 +464,7 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
           rel="noopener noreferrer"
           style={{ textDecoration: 'none' }}
         >
-          📄 HTML로 보기
+          HTML로 보기
         </a>
         <a
           className="btn btn-ghost btn-sm"
@@ -462,7 +473,7 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
           rel="noopener noreferrer"
           style={{ textDecoration: 'none' }}
         >
-          ⬇️ 엑셀 다운로드
+          엑셀 내려받기
         </a>
       </div>
       <div
@@ -480,12 +491,13 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
       <div
         style={{
           padding: '12px 18px',
-          fontSize: '12px',
+          fontSize: '13px',
           color: 'var(--text-3)',
           borderTop: '1px solid var(--border)',
         }}
       >
         저장된 값 기준 · 총 {totalCount.toLocaleString()}개(표시 {malls.length.toLocaleString()}개)
+        {linkpriceSyncedAt && ` · 제휴몰 정보 마지막 갱신 ${linkpriceSyncedAt}`}
       </div>
     </div>
   );

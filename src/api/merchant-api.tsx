@@ -3,8 +3,10 @@ import type { ApiResponse } from 'src/types/api_response';
 import type {
   IMerchant,
   IMerchantCategoriesResult,
+  IMerchantDetail,
   IMerchantCreatePayload,
   IMerchantListResult,
+  IMerchantSyncResult,
   IMerchantUpdateMultiPayload,
   IMerchantUpdatePayload,
 } from 'src/types/merchants/merchant';
@@ -43,9 +45,11 @@ export default class MerchantAPI {
     }
   };
 
-  getDetail = async (id: string): Promise<ApiResponse<IMerchant>> => {
+  // 제휴몰 정보 모달이 쓰는 조회 — 목록에 없는 링크프라이스 원문(raw_detail)까지 받아온다.
+  // 모달을 열 때마다 한 건씩만 부르므로 전역 로딩 스피너를 띄우지 않는 instance를 쓴다.
+  getDetail = async (id: string): Promise<ApiResponse<IMerchantDetail>> => {
     try {
-      const response = await axios.axiosInstanceWithLoading.get(`/${tableName}/admin/${id}`, {
+      const response = await axios.axiosInstance.get(`/${tableName}/admin/${id}`, {
         params: { fields: JSON.stringify(['$all']) },
       });
       return response.data;
@@ -90,6 +94,21 @@ export default class MerchantAPI {
       return response.data;
     } catch (error) {
       console.error('Error bulk-updating merchants:', error);
+      throw error;
+    }
+  };
+
+  // 링크프라이스 광고주 조회 API를 지금 불러와 merchant_source=LINKPRICE 레코드(수수료율·
+  // 링크프라이스 승인 상태 등)를 갱신한다. 호출부(useTicketAccrual)가 성공 후 카탈로그
+  // 목록을 다시 조회해 화면에 반영한다.
+  syncLinkprice = async (): Promise<ApiResponse<IMerchantSyncResult>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.post(
+        `/${tableName}/admin/sync_linkprice`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error syncing linkprice merchants:', error);
       throw error;
     }
   };
