@@ -388,25 +388,26 @@ export default function SidebarSection() {
               </span>
             </div>
             <div className="sb-grp-items">
-              {group.items.map((item) => {
-                const isActive = pathname.replace(/\/$/, '') === item.href.replace(/\/$/, '');
-                return (
-                  <button
-                    type="button"
-                    key={item.id}
-                    className={`sb-item ${isActive ? 'active' : ''} ${item.disabled ? 'btn-disabled' : ''}`}
-                    data-label={item.label}
-                    disabled={item.disabled}
-                    onClick={() => !item.disabled && router.push(item.href)}
-                  >
-                    <span className="sb-item-ico">{item.icon}</span>
-                    <span className="sb-item-lbl">{item.label}</span>
-                    {item.badge !== undefined && item.badge > 0 && (
-                      <span className="sb-item-badge">{item.badge}</span>
-                    )}
-                  </button>
-                );
-              })}
+              {group.items
+                .filter((item) => !item.disabled)
+                .map((item) => {
+                  const isActive = pathname.replace(/\/$/, '') === item.href.replace(/\/$/, '');
+                  return (
+                    <button
+                      type="button"
+                      key={item.id}
+                      className={`sb-item ${isActive ? 'active' : ''}`}
+                      data-label={item.label}
+                      onClick={() => router.push(item.href)}
+                    >
+                      <span className="sb-item-ico">{item.icon}</span>
+                      <span className="sb-item-lbl">{item.label}</span>
+                      {item.badge !== undefined && item.badge > 0 && (
+                        <span className="sb-item-badge">{item.badge}</span>
+                      )}
+                    </button>
+                  );
+                })}
             </div>
           </div>
         ))}
