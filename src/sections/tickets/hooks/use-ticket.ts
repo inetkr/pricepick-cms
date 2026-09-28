@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { ticketAPI } from 'src/api';
-import type { ITicket } from 'src/types/tickets/ticket';
+import type { ITicket, ITicketHistoryCategory } from 'src/types/tickets/ticket';
 import type { ITicketStat } from 'src/types/tickets/ticket_stat';
 
 type IFilters = {
   search: string;
-  transaction_type: string;
+  category: string;
   // usage_status: string;
 }
 
@@ -19,9 +19,10 @@ export const useTickets = () => {
     total_expired: 0,
     total_admin_sub: 0,
   });
+  const [categories, setCategories] = useState<ITicketHistoryCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState<IFilters>({
-    search: '', transaction_type: ''
+    search: '', category: ''
   });
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -55,6 +56,17 @@ export const useTickets = () => {
       }
     } catch (error) {
       console.error('Failed to load stats:', error);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      const responseData = await ticketAPI.getHistoryCategories();
+      if (responseData && responseData.result && responseData.result.object) {
+        setCategories(responseData.result.object.categories ?? []);
+      }
+    } catch (error) {
+      console.error('Failed to load ticket history categories:', error);
     }
   };
 
@@ -109,6 +121,7 @@ export const useTickets = () => {
 
   useEffect(() => {
     loadStats();
+    loadCategories();
   }, []);
 
   useEffect(() => {
@@ -118,6 +131,7 @@ export const useTickets = () => {
   return {
     tickets,
     stats,
+    categories,
     isLoading,
     filters,
     setFilters: handleSetFilters,

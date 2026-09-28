@@ -2,7 +2,7 @@ import axios from 'src/utils/axios';
 import BaseAPI from './base-api';
 import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
 import type { ITicketStat } from 'src/types/tickets/ticket_stat';
-import type { ITicket } from 'src/types/tickets/ticket';
+import type { ITicket, ITicketHistoryCategory } from 'src/types/tickets/ticket';
 import type {
   ILuckySpinConfig,
   ILuckySpinConfigSlot,
@@ -37,6 +37,7 @@ export default class TicketAPI extends BaseAPI {
     limit: number,
     filter?: {
       search?: string;
+      category?: string;
       reason?: string;
       period?: string;
     }
@@ -59,6 +60,18 @@ export default class TicketAPI extends BaseAPI {
       return response.data;
     } catch (error) {
       console.error('Error fetching ticket list:', error);
+      throw error;
+    }
+  };
+
+  getHistoryCategories = async (): Promise<
+    ApiResponse<{ categories: ITicketHistoryCategory[] }>
+  > => {
+    try {
+      const response = await axios.axiosInstance.get(`/${tableName}/admin/history_categories`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching ticket history categories:', error);
       throw error;
     }
   };
@@ -216,13 +229,16 @@ export default class TicketAPI extends BaseAPI {
     spinType: ILuckySpinType
   ): Promise<ApiPaginatedResponse<ILuckySpinLog>> => {
     try {
-      const response = await axios.axiosInstanceWithLoading.get(`/${tableName}/admin/lucky_spin_log`, {
-        params: {
-          page,
-          limit,
-          filter: JSON.stringify({ spin_type: spinType }),
-        },
-      });
+      const response = await axios.axiosInstanceWithLoading.get(
+        `/${tableName}/admin/lucky_spin_log`,
+        {
+          params: {
+            page,
+            limit,
+            filter: JSON.stringify({ spin_type: spinType }),
+          },
+        }
+      );
       return response.data;
     } catch (error) {
       console.error('Error fetching lucky spin logs:', error);

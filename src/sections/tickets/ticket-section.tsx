@@ -31,7 +31,7 @@ const ticketGradeLabels: Record<string, string> = {
 
 const ticketCsvColumns: CsvColumn<ITicket>[] = [
   { header: '닉네임', accessor: (t) => t.nickname },
-  { header: '카카오톡 ID', accessor: (t) => t.kakao_nickname },
+  { header: '카카오톡 ID', accessor: (t) => t.kakao_info?.email },
   { header: '식별자', accessor: (t) => t.identified_id },
   { header: '사유', accessor: (t) => t.description },
   { header: '티켓 등급', accessor: (t) => ticketGradeLabels[t.ticket_type] ?? t.ticket_type },
@@ -44,6 +44,7 @@ export const TicketsSection: React.FC = () => {
   const {
     tickets,
     stats,
+    categories,
     isLoading,
     filters,
     setFilters,
@@ -90,7 +91,10 @@ export const TicketsSection: React.FC = () => {
       </InfoBox>
 
       <div className="toolbar">
-        <TicketFilters onApplyFilters={(newFilters) => setFilters({ ...filters, ...newFilters })} />
+        <TicketFilters
+          categories={categories}
+          onApplyFilters={(newFilters) => setFilters({ ...filters, ...newFilters })}
+        />
         <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
           <button
             type="button"
@@ -115,7 +119,7 @@ export const TicketsSection: React.FC = () => {
           로딩 중...
         </div>
       ) : (
-        <TicketTable tickets={tickets} pagination={paginationProps} />
+        <TicketTable tickets={tickets} pagination={paginationProps} categories={categories} />
       )}
 
       <TicketManualModal

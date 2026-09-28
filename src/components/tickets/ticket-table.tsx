@@ -1,19 +1,15 @@
-import React from 'react';
-import type { ITicket } from 'src/types/tickets/ticket';
+import React, { useMemo } from 'react';
+import type { ITicket, ITicketHistoryCategory } from 'src/types/tickets/ticket';
 import type { PaginationProps } from '../common/pagination';
 import { Pagination } from '../common/pagination';
-import { transactionTypeGroupOptions } from './ticket-filters';
 import { TicketNameByGrade } from '../common/ticket-chip';
 import type { IUsageStatus } from 'src/types/common';
 
 interface TicketTableProps {
   tickets: ITicket[];
   pagination?: PaginationProps;
+  categories?: ITicketHistoryCategory[];
 }
-
-const transactionTypeLabels: Record<string, string> = Object.fromEntries(
-  transactionTypeGroupOptions.filter((opt) => opt.value).map((opt) => [opt.value, opt.label])
-);
 
 const usageStatusBadgeMap: Record<
   IUsageStatus,
@@ -69,7 +65,16 @@ const renderDateTime = (date: string) => {
   );
 };
 
-export const TicketTable: React.FC<TicketTableProps> = ({ tickets, pagination }) => {
+export const TicketTable: React.FC<TicketTableProps> = ({
+  tickets,
+  pagination,
+  categories = [],
+}) => {
+  const transactionTypeLabels: Record<string, string> = useMemo(
+    () => Object.fromEntries(categories.map((category) => [category.code, category.label])),
+    [categories]
+  );
+
   return (
     <div className="card">
       <div className="card-header">
@@ -101,7 +106,7 @@ export const TicketTable: React.FC<TicketTableProps> = ({ tickets, pagination })
                 <td>
                   <div style={{ fontWeight: 500 }}>{ticket.nickname}</div>
                   <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
-                    {ticket.kakao_nickname ?? '게스트(비연동)'}
+                    {ticket.kakao_info?.email ?? '게스트(비연동)'}
                   </div>
                   <div
                     style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}
