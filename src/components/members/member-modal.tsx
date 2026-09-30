@@ -112,9 +112,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
             <div className="warn-box">탈퇴한 회원입니다. 정보를 수정할 수 없습니다.</div>
           )}
           {isSuspendedMember && (
-            <div className="amber-box">
-              차단된 회원입니다. 닉네임과 상태만 변경할 수 있습니다.
-            </div>
+            <div className="amber-box">차단된 회원입니다. 닉네임과 상태만 변경할 수 있습니다.</div>
           )}
           <div className="form-row">
             <div className="form-group">
@@ -350,7 +348,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   id="m-event-count"
                   style={{ fontSize: '15px', fontWeight: 800, color: '#c084fc' }}
                 >
-                  {member.pending_event_tickets}
+                  {member.ticket_event_total}
                 </span>
               </div>
             </div>
