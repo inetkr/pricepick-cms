@@ -1,17 +1,28 @@
 import React from 'react';
-
-interface Activity {
-  mall: string;
-  nickname: string;
-  amount: string;
-  tickets: string;
-  datetime: string;
-}
+import type { IDashboardRecentPurchase } from 'src/types/dashboard/dashboard';
+import { merchantLabels } from './constants';
 
 interface RecentActivityTableProps {
-  data: Activity[];
+  data: IDashboardRecentPurchase[];
   onViewLogs?: () => void;
 }
+
+const renderDateTime = (date: string) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const seconds = String(d.getSeconds()).padStart(2, '0');
+
+  return (
+    <>
+      <div>{`${year}/${month}/${day}`}</div>
+      <div>{`${hours}:${minutes}:${seconds}`}</div>
+    </>
+  );
+};
 
 export const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data, onViewLogs }) => {
   return (
@@ -35,15 +46,32 @@ export const RecentActivityTable: React.FC<RecentActivityTableProps> = ({ data, 
           </tr>
         </thead>
         <tbody>
-          {data.map((item, idx) => (
-            <tr key={idx}>
-              <td>{item.mall}</td>
-              <td>{item.nickname}</td>
-              <td>{item.amount}</td>
-              <td style={{ color: 'var(--success)' }}>{item.tickets}</td>
-              <td style={{ color: 'var(--text-2)', fontSize: '12px' }}>{item.datetime}</td>
+          {data.length === 0 ? (
+            <tr>
+              <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-2)' }}>
+                최근 구매 내역이 없습니다.
+              </td>
             </tr>
-          ))}
+          ) : (
+            data.map((item) => (
+              <tr key={item.id}>
+                <td>{merchantLabels[item.merchant_name] ?? item.merchant_name}</td>
+                <td>
+                  <div style={{ fontWeight: 500 }}>{item.user?.nickname ?? '-'}</div>
+                  <div
+                    style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}
+                  >
+                    {item.user?.identified_id ?? '-'}
+                  </div>
+                </td>
+                <td>{`${(item.purchase_amount ?? 0).toLocaleString('ko-KR')}원`}</td>
+                <td style={{ color: 'var(--success)' }}>{`+${item.ticket_amount ?? 0}장`}</td>
+                <td style={{ color: 'var(--text-2)', fontSize: '12px' }}>
+                  {renderDateTime(item.purchased_at)}
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

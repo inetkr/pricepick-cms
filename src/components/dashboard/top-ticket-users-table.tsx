@@ -1,15 +1,8 @@
 import React from 'react';
-
-interface UserTicket {
-  rank: number;
-  nickname: string;
-  id: string;
-  monthly: number;
-  total: number;
-}
+import type { IDashboardTopMember } from 'src/types/dashboard/dashboard';
 
 interface TopTicketUsersTableProps {
-  data: UserTicket[];
+  data: IDashboardTopMember[];
 }
 
 export const TopTicketUsersTable: React.FC<TopTicketUsersTableProps> = ({ data }) => {
@@ -29,19 +22,33 @@ export const TopTicketUsersTable: React.FC<TopTicketUsersTableProps> = ({ data }
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
-            <tr key={item.rank}>
-              <td style={{ textAlign: 'center' }}>{item.rank}</td>
-              <td>
-                <div style={{ fontWeight: 500 }}>{item.nickname}</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}>
-                  ({item.id})
-                </div>
+          {data.length === 0 ? (
+            <tr>
+              <td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-2)' }}>
+                적립 회원 데이터가 없습니다.
               </td>
-              <td style={{ textAlign: 'center', color: 'var(--success)' }}>{item.monthly}장</td>
-              <td style={{ textAlign: 'center' }}>{item.total}장</td>
             </tr>
-          ))}
+          ) : (
+            data.map((item) => (
+              <tr key={item.rank}>
+                <td style={{ textAlign: 'center' }}>{item.rank}</td>
+                <td>
+                  <div style={{ fontWeight: 500 }}>{item.user?.nickname ?? '-'}</div>
+                  <div
+                    style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}
+                  >
+                    ({item.user?.kakao_email ?? item.user?.identified_id ?? '-'})
+                  </div>
+                </td>
+                <td style={{ textAlign: 'center', color: 'var(--success)' }}>
+                  {(item.month_ticket_amount ?? 0).toLocaleString('ko-KR')}장
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  {(item.total_ticket_amount ?? 0).toLocaleString('ko-KR')}장
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

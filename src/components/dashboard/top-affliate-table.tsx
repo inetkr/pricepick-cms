@@ -1,14 +1,9 @@
 import React from 'react';
-
-interface Affiliate {
-  rank: number;
-  name: string;
-  clicks: number;
-  conversions: number;
-}
+import type { IDashboardTopMerchant } from 'src/types/dashboard/dashboard';
+import { merchantLabels } from './constants';
 
 interface TopAffiliatesTableProps {
-  data: Affiliate[];
+  data: IDashboardTopMerchant[];
 }
 
 export const TopAffiliatesTable: React.FC<TopAffiliatesTableProps> = ({ data }) => {
@@ -28,16 +23,26 @@ export const TopAffiliatesTable: React.FC<TopAffiliatesTableProps> = ({ data }) 
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
-            <tr key={item.rank}>
-              <td style={{ textAlign: 'center' }}>{item.rank}</td>
-              <td style={{ fontWeight: 600 }}>{item.name}</td>
-              <td style={{ textAlign: 'center' }}>{item.clicks.toLocaleString()}</td>
-              <td style={{ textAlign: 'center', color: 'var(--success)' }}>
-                {item.conversions.toLocaleString()}건
+          {data.length === 0 ? (
+            <tr>
+              <td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-2)' }}>
+                제휴몰 데이터가 없습니다.
               </td>
             </tr>
-          ))}
+          ) : (
+            data.map((item) => (
+              <tr key={item.rank}>
+                <td style={{ textAlign: 'center' }}>{item.rank}</td>
+                <td style={{ fontWeight: 600 }}>
+                  {merchantLabels[item.merchant_name] ?? item.merchant_name}
+                </td>
+                <td style={{ textAlign: 'center' }}>-</td>
+                <td style={{ textAlign: 'center', color: 'var(--success)' }}>
+                  {(item.order_count ?? 0).toLocaleString('ko-KR')}건
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
