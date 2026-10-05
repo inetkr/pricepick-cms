@@ -5,8 +5,6 @@ import { Pagination } from '../common/pagination';
 import { TicketNameByGrade } from '../common/ticket-chip';
 import type { IUsageStatus } from 'src/types/common';
 
-const LEGACY_ADMIN_ADD_DESCRIPTION = '티켓 부여';
-
 interface TicketTableProps {
   tickets: ITicket[];
   pagination?: PaginationProps;
@@ -79,8 +77,6 @@ export const TicketTable: React.FC<TicketTableProps> = ({
 
   const renderReason = (ticket: ITicket) => {
     if (ticket.category) return transactionTypeLabels[ticket.category] ?? ticket.category;
-    // 예전 수동 지급 기록은 사유가 '티켓 부여'로 남아 있다
-    if (ticket.description === LEGACY_ADMIN_ADD_DESCRIPTION) return '관리자 지급';
     return transactionTypeLabels[ticket.description] ?? ticket.description;
   };
 
