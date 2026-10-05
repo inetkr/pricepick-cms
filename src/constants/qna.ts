@@ -2,27 +2,18 @@ import type { IQnaState, IQnaType } from 'src/types/qna';
 
 export const QNA_STATE_LABELS: Record<IQnaState, string> = {
   PENDING: '미처리',
-  PROCESSING: '처리 중',
-  COMPLETED: '완료',
+  COMPLETED: '처리 완료',
 };
 
 export const QNA_STATE_BADGE_CLASS: Record<IQnaState, string> = {
   PENDING: 'badge-red',
-  PROCESSING: 'badge-amber',
   COMPLETED: 'badge-green',
 };
 
 export const QNA_STATE_FILTER_OPTIONS: { value: string; label: string }[] = [
   { value: '', label: '전체 상태' },
-  { value: 'PENDING', label: '미처리' },
-  { value: 'PROCESSING', label: '처리 중' },
-  { value: 'COMPLETED', label: '완료' },
-];
-
-export const QNA_STATE_SELECT_OPTIONS: { value: IQnaState; label: string }[] = [
-  { value: 'PENDING', label: '미처리' },
-  { value: 'PROCESSING', label: '처리 중' },
-  { value: 'COMPLETED', label: '완료' },
+  { value: 'PENDING', label: QNA_STATE_LABELS.PENDING },
+  { value: 'COMPLETED', label: QNA_STATE_LABELS.COMPLETED },
 ];
 
 export const QNA_TYPE_LABELS: Record<IQnaType, string> = {

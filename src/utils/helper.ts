@@ -181,3 +181,18 @@ export const formatDate = (date: string | undefined | null, pattern = 'YYYY/MM/D
   const day = String(d.getDate()).padStart(2, '0');
   return pattern.replace('YYYY', String(year)).replace('MM', month).replace('DD', day);
 }
+
+// 서버가 시각을 숫자 문자열(epoch)로 주는 필드가 있다 — 예: last_online "1789117435557".
+// new Date("1789117435557")은 Invalid Date라 숫자로 바꿔서 읽는다. 10자리(초)도 받아 준다.
+export const parseTimestamp = (value: string | number | null | undefined): Date | null => {
+  if (value === null || value === undefined || value === '') return null;
+  const isNumeric = typeof value === 'number' || /^\d+$/.test(value);
+  let d: Date;
+  if (isNumeric) {
+    const n = Number(value);
+    d = new Date(n < 1e12 ? n * 1000 : n);
+  } else {
+    d = new Date(value);
+  }
+  return Number.isNaN(d.getTime()) ? null : d;
+};

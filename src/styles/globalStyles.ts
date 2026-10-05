@@ -1959,30 +1959,33 @@ export const globalStyles = css`
     width: 120px;
   } /* 닉네임 */
   #sec-members table th:nth-child(2) {
-    width: 160px;
-  } /* 가입 유형 */
+    width: 120px;
+  } /* 연동 상태 */
   #sec-members table th:nth-child(3) {
     width: 90px;
   } /* 가입일 */
   #sec-members table th:nth-child(4) {
+    width: 90px;
+  } /* 최근 접속 */
+  #sec-members table th:nth-child(5) {
     width: 70px;
   } /* 랜덤 티켓 */
-  #sec-members table th:nth-child(5) {
+  #sec-members table th:nth-child(6) {
     width: 90px;
   } /* 전환예정 */
-  #sec-members table th:nth-child(6) {
+  #sec-members table th:nth-child(7) {
     width: 160px;
   } /* 등급 티켓 */
-  #sec-members table th:nth-child(7) {
-    width: 70px;
-  } /* 이벤트 티켓 */
   #sec-members table th:nth-child(8) {
     width: 90px;
-  } /* 마케팅 수신 */
+  } /* 이벤트 티켓 */
   #sec-members table th:nth-child(9) {
-    width: 60px;
-  } /* 상태 */
+    width: 90px;
+  } /* 마케팅 수신 */
   #sec-members table th:nth-child(10) {
+    width: 100px;
+  } /* 상태 */
+  #sec-members table th:nth-child(11) {
     width: 60px;
   } /* 관리 */
   #sec-members table td,

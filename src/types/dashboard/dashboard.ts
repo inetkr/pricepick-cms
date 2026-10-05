@@ -1,19 +1,14 @@
+export type IDashboardTicketType = 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT';
+
 export type IDashboardSummary = {
   profit_amount: number;
   affiliate_commission_amount: number;
-  gift_revenue_amount: number;
   ticket_accrual_cost_amount: number;
   member_count: number;
   new_member_this_month_count: number;
   issued_ticket_count: number;
   // 등급별 발행 수 — 오늘 발행 티켓 카드에 함께 보여 준다
-  issued_ticket_breakdown?: {
-    random?: number;
-    bronze?: number;
-    silver?: number;
-    gold?: number;
-    event?: number;
-  };
+  issued_ticket_breakdown?: Partial<Record<IDashboardTicketType, number>>;
   qna_pending_count: number;
 };
 

@@ -14,7 +14,6 @@ const defaultFilters: InquiryFilterValues = { search: '', state: '', type: '' };
 
 const defaultStats: IQnaStats = {
   pending: 0,
-  processing: 0,
   completed: 0,
   avg_response_hours: 0,
 };

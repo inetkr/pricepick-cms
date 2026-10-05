@@ -82,11 +82,10 @@ export const DashboardSection: React.FC = () => {
   const breakdown = summary?.issued_ticket_breakdown;
   const issuedBreakdown = breakdown
     ? [
-        ['랜덤', breakdown.random],
-        ['브론즈', breakdown.bronze],
-        ['실버', breakdown.silver],
-        ['골드', breakdown.gold],
-        ['이벤트', breakdown.event],
+        ['브론즈', breakdown.BRONZE],
+        ['실버', breakdown.SILVER],
+        ['골드', breakdown.GOLD],
+        ['이벤트', breakdown.EVENT],
       ]
         .filter(([, n]) => n !== undefined)
         .map(([name, n]) => `${name} ${formatCount(n as number)}`)

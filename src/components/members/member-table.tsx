@@ -1,3 +1,4 @@
+import { parseTimestamp } from 'src/utils/helper';
 import React from 'react';
 import type { IUser } from 'src/types/users/user';
 import { MemberActions } from './member-actions';
@@ -14,22 +15,49 @@ interface MemberTableProps {
   isSuperAdmin?: boolean;
 }
 
+const MEMBER_TABLE_HEADERS = [
+  '닉네임(카카오ID)',
+  '연동 상태',
+  '가입일',
+  '최근 접속',
+  '랜덤 티켓',
+  '전환예정',
+  '등급 티켓 (브론즈/실버/골드)',
+  '이벤트 티켓',
+  '마케팅 수신',
+  '상태',
+  '관리',
+];
+
+// 칸이 좁아 긴 값은 말줄임하고 마우스를 올리면 전체를 보여 준다
 const renderMemberInfo: (member: IUser) => JSX.Element = (member) => {
-  if (member.kakao_id && member.kakao_info) {
-    return (
-      <>
-        <div style={{ fontWeight: 500 }}>{member.nickname}</div>
-        <div style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}>
-          {member.kakao_info?.email}
-        </div>
-      </>
-    );
-  }
+  const isLinked = Boolean(member.kakao_id && member.kakao_info);
+  const sub = isLinked ? (member.kakao_info?.email ?? '') : '미연동';
   return (
     <>
-      <div style={{ fontWeight: 500 }}>{member.nickname}</div>
-      <div style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}>
-        미연동
+      <div
+        title={member.nickname}
+        style={{
+          fontWeight: 500,
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {member.nickname}
+      </div>
+      <div
+        title={sub || undefined}
+        style={{
+          fontSize: '11px',
+          color: 'var(--text-2)',
+          fontFamily: 'monospace',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {sub}
       </div>
     </>
   );
@@ -57,7 +85,7 @@ const renderLinkStatus = (member: IUser) => {
   );
 };
 
-const renderDateTime = (date: string) => {
+const renderDateTime = (date: string | Date) => {
   const d = new Date(date);
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -72,6 +100,11 @@ const renderDateTime = (date: string) => {
       <div style={{ color: 'var(--text-3)' }}>{`${hours}:${minutes}:${seconds}`}</div>
     </>
   );
+};
+
+const renderLastOnline = (value: IUser['last_online']) => {
+  const d = parseTimestamp(value);
+  return d ? renderDateTime(d) : '-';
 };
 
 // Helper render marketing badge
@@ -185,93 +218,92 @@ export const MemberTable: React.FC<MemberTableProps> = ({
 }) => {
   return (
     <div className="card">
-      <table>
-        <thead>
-          <tr>
-            <th>닉네임(카카오ID)</th>
-            <th>연동 상태</th>
-            <th>가입일</th>
-            <th>최근 접속</th>
-            <th>랜덤 티켓</th>
-            <th>전환예정</th>
-            <th>등급 티켓 (브론즈/실버/골드)</th>
-            <th>이벤트 티켓</th>
-            <th>마케팅 수신</th>
-            <th>상태</th>
-            <th>관리</th>
-          </tr>
-        </thead>
-        <tbody>
-          {members.length === 0 ? (
+      <div style={{ overflowX: 'auto' }}>
+        <table>
+          <thead>
             <tr>
-              <td
-                colSpan={11}
-                style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}
-              >
-                검색 결과가 없습니다.
-              </td>
+              {/* 칸이 좁아 머리글이 말줄임될 수 있어 마우스를 올리면 전체 이름을 보여 준다 */}
+              {MEMBER_TABLE_HEADERS.map((label) => (
+                <th key={label} title={label}>
+                  {label}
+                </th>
+              ))}
             </tr>
-          ) : (
-            members.map((member) => (
-              <tr key={member.id}>
-                <td>{renderMemberInfo(member)}</td>
-                <td>{renderLinkStatus(member)}</td>
-                <td style={{ textAlign: 'center' }}>{renderDateTime(member.created_at)}</td>
-                <td style={{ textAlign: 'center' }}>
-                  {member.last_online ? renderDateTime(member.last_online) : '-'}
+          </thead>
+          <tbody>
+            {members.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={MEMBER_TABLE_HEADERS.length}
+                  style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}
+                >
+                  검색 결과가 없습니다.
                 </td>
-                <td>
-                  {member.pending_random_tickets > 0 ? (
-                    <div className="rnd-chip-wrap">
+              </tr>
+            ) : (
+              members.map((member) => (
+                <tr key={member.id}>
+                  <td>{renderMemberInfo(member)}</td>
+                  <td>{renderLinkStatus(member)}</td>
+                  <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                    {renderDateTime(member.created_at)}
+                  </td>
+                  <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                    {renderLastOnline(member.last_online)}
+                  </td>
+                  <td>
+                    {member.pending_random_tickets > 0 ? (
+                      <div className="rnd-chip-wrap">
+                        <TicketChip
+                          grade="RANDOM"
+                          quantity={member.pending_random_tickets}
+                          size="small"
+                          showName={false}
+                        />
+                        <span className="conv-arrow">→</span>
+                      </div>
+                    ) : (
                       <TicketChip
                         grade="RANDOM"
                         quantity={member.pending_random_tickets}
                         size="small"
                         showName={false}
+                        dim
                       />
-                      <span className="conv-arrow">→</span>
-                    </div>
-                  ) : (
+                    )}
+                  </td>
+                  <td>{getPendingBadge(member)}</td>
+                  <td>{getActiveBadge(member)}</td>
+                  <td>
                     <TicketChip
-                      grade="RANDOM"
-                      quantity={member.pending_random_tickets}
+                      grade="EVENT"
+                      quantity={member.ticket_event_total}
                       size="small"
                       showName={false}
-                      dim
+                      dim={member.ticket_event_total === 0}
                     />
-                  )}
-                </td>
-                <td>{getPendingBadge(member)}</td>
-                <td>{getActiveBadge(member)}</td>
-                <td>
-                  <TicketChip
-                    grade="EVENT"
-                    quantity={member.ticket_event_total}
-                    size="small"
-                    showName={false}
-                    dim={member.ticket_event_total === 0}
-                  />
-                </td>
-                <td>{renderMarketing(member.user_setting?.marketing_consent)}</td>
-                <td>
-                  <span className={`badge ${getMemberStatus(member.account_status).className}`}>
-                    {getMemberStatus(member.account_status).label}
-                  </span>
-                </td>
-                <td>
-                  <MemberActions
-                    memberId={member.id}
-                    status={member.account_status}
-                    onViewDetail={onViewDetail}
-                    onStatusChange={onStatusChange}
-                    isSuperAdmin={isSuperAdmin}
-                  />
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+                  </td>
+                  <td>{renderMarketing(member.user_setting?.marketing_consent)}</td>
+                  <td>
+                    <span className={`badge ${getMemberStatus(member.account_status).className}`}>
+                      {getMemberStatus(member.account_status).label}
+                    </span>
+                  </td>
+                  <td>
+                    <MemberActions
+                      memberId={member.id}
+                      status={member.account_status}
+                      onViewDetail={onViewDetail}
+                      onStatusChange={onStatusChange}
+                      isSuperAdmin={isSuperAdmin}
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
       {pagination && <Pagination {...pagination} />}
     </div>
   );

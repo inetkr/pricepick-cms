@@ -2,8 +2,8 @@
 
 import { formatDate } from 'src/utils/helper';
 import React, { useEffect, useState } from 'react';
-import { QNA_STATE_SELECT_OPTIONS, QNA_TYPE_LABELS } from 'src/constants/qna';
-import type { IQna, IQnaState, IUpdateQnaPayload } from 'src/types/qna';
+import { QNA_TYPE_LABELS } from 'src/constants/qna';
+import type { IQna, IUpdateQnaPayload } from 'src/types/qna';
 
 interface InquiryDetailModalProps {
   open: boolean;
@@ -29,14 +29,11 @@ export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
   onSubmit,
 }) => {
   const [answer, setAnswer] = useState('');
-  const [state, setState] = useState<IQnaState>('PENDING');
   const [attempted, setAttempted] = useState(false);
 
   useEffect(() => {
     if (open && inquiry) {
       setAnswer(inquiry.answer || '');
-      // 답변 발송 = 처리 완료가 기본값 — 상태를 따로 바꾸지 않아도 「처리 중」에 남지 않는다
-      setState('COMPLETED');
       setAttempted(false);
     }
   }, [open, inquiry]);
@@ -49,7 +46,8 @@ export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
   const handleSubmit = () => {
     setAttempted(true);
     if (!isValid) return;
-    onSubmit(inquiry.id, { answer, state });
+    // 답변을 등록하면 자동으로 처리 완료 — 상태를 따로 고르지 않는다
+    onSubmit(inquiry.id, { answer, state: 'COMPLETED' });
   };
 
   return (
@@ -139,24 +137,6 @@ export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
               onChange={(e) => setAnswer(e.target.value)}
             />
             {answerError && <div className="field-error">{answerError}</div>}
-          </div>
-
-          <div className="form-group">
-            <label className="form-label" htmlFor="inq-state">
-              처리 상태
-            </label>
-            <select
-              id="inq-state"
-              className="form-select"
-              value={state}
-              onChange={(e) => setState(e.target.value as IQnaState)}
-            >
-              {QNA_STATE_SELECT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
         <div className="modal-footer">

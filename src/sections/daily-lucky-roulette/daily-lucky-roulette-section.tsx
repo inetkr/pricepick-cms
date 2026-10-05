@@ -143,8 +143,8 @@ export const DailyLuckyRouletteSection: React.FC = () => {
           {statusText}
         </div>
         {/* 「기본값 복원」을 누르기 전에 어떤 값으로 돌아가는지 확인할 수 있게 한다 */}
-        <div style={{ padding: '0 16px 14px', fontSize: '12px', color: 'var(--text-2)' }}>
-          <strong>기본값</strong> —{' '}
+        <div style={{ padding: '0 16px 14px', fontSize: '12px', color: 'var(--text-3)' }}>
+          기본값 —{' '}
           {defaultSlots
             .map((slot, idx) => {
               const meta = REWARD_TYPE_META[slot.type];

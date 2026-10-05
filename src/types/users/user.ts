@@ -12,7 +12,8 @@ export type IUser = IBase & {
   kakao_info: IKakaoUserInfo;
   account_status: IAccountStatus;
   last_ip: string;
-  last_online: string | null;
+  // epoch 밀리초를 문자열로 준다 — parseTimestamp로 읽는다
+  last_online: string | number | null;
   total_points: number;
   pending_random_tickets: number;
   pending_bronze: number;

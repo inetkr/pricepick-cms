@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import type { IAccountStatus } from 'src/types/common';
 import type { IUser } from 'src/types/users/user';
-import { formatDate } from 'src/utils/helper';
+import { formatDate, parseTimestamp } from 'src/utils/helper';
 
 interface MemberModalProps {
   isOpen: boolean;
@@ -233,7 +233,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                 className="form-input"
                 id="m-last-online"
                 disabled
-                value={formatDate(member.last_online, 'YYYY/MM/DD')}
+                value={formatDate(parseTimestamp(member.last_online)?.toISOString(), 'YYYY/MM/DD')}
               />
             </div>
           </div>
