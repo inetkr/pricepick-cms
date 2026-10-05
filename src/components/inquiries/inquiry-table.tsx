@@ -42,6 +42,7 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
           <th>작성자</th>
           <th style={{ textAlign: 'center' }}>유형</th>
           <th style={{ textAlign: 'center' }}>작성일</th>
+          <th style={{ textAlign: 'center' }}>답변일</th>
           <th style={{ textAlign: 'center' }}>상태</th>
           <th style={{ textAlign: 'center' }}>관리</th>
         </tr>
@@ -50,7 +51,7 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
         {isLoading ? (
           <tr>
             <td
-              colSpan={6}
+              colSpan={7}
               style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}
             >
               불러오는 중...
@@ -59,7 +60,7 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
         ) : inquiries.length === 0 ? (
           <tr>
             <td
-              colSpan={6}
+              colSpan={7}
               style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}
             >
               조건에 맞는 문의가 없습니다.
@@ -87,6 +88,9 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
                   {QNA_TYPE_LABELS[item.type] ?? item.type}
                 </td>
                 <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{date}</td>
+                <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                  {item.answer && item.processed_at ? formatDateTime(item.processed_at).date : '-'}
+                </td>
                 <td style={{ textAlign: 'center' }}>
                   <InquiryStateBadge state={item.state} />
                 </td>

@@ -78,17 +78,28 @@ export const DashboardSection: React.FC = () => {
   const formatCount = (value?: number) => (value ?? 0).toLocaleString('ko-KR');
   const formatWon = (value?: number) => `${formatCount(value)}원`;
 
+  // 티켓은 등급마다 가치가 달라 합계만으로는 읽을 수 없다 — 등급별 수를 함께 적는다
+  const breakdown = summary?.issued_ticket_breakdown;
+  const issuedBreakdown = breakdown
+    ? [
+        ['랜덤', breakdown.random],
+        ['브론즈', breakdown.bronze],
+        ['실버', breakdown.silver],
+        ['골드', breakdown.gold],
+        ['이벤트', breakdown.event],
+      ]
+        .filter(([, n]) => n !== undefined)
+        .map(([name, n]) => `${name} ${formatCount(n as number)}`)
+        .join(' · ')
+    : null;
+
+  // 기프티콘은 회원이 보유 포인트로 교환하는 구조라 매출이 아니다 — 매출 카드에서 뺀다(QA #1)
   const statsRow1 = [
     { label: '이번달 순수익', value: formatWon(summary?.profit_amount), color: 'green' as const },
     {
       label: '제휴 수수료 매출',
       value: formatWon(summary?.affiliate_commission_amount),
       color: 'purple' as const,
-    },
-    {
-      label: '기프티콘 판매 수익',
-      value: formatWon(summary?.gift_revenue_amount),
-      color: 'blue' as const,
     },
     {
       label: '티켓 적립 비용',
@@ -103,6 +114,7 @@ export const DashboardSection: React.FC = () => {
     {
       label: '오늘 발행 티켓',
       value: formatCount(summary?.issued_ticket_count),
+      change: issuedBreakdown ? { type: 'neutral' as const, text: issuedBreakdown } : undefined,
       color: 'green' as const,
     },
     {
@@ -127,7 +139,7 @@ export const DashboardSection: React.FC = () => {
   return (
     <div className="section active">
       {/* Hàng 1: 4 stat cards */}
-      <div className="stats-grid">
+      <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
         {statsRow1.map((stat, idx) => (
           <StatCard key={idx} {...stat} />
         ))}

@@ -47,6 +47,17 @@ export const PbCaret: React.FC = () => (
 /* 시각 칸 — 큰 글씨는 제휴사가 보낸 주문 시각이고 원문 문자열을 그 밑에 그대로 남긴다.
    제휴사 시각이 안 왔으면 우리가 받은 시각(created_at)으로 넘어가고, 그럴 땐 그렇다고 적는다 —
    둘은 다른 값이라 말없이 섞으면 안 된다. */
+// 취소 건은 취소 일시를 함께 적는다 — 서버 값이 없으면 취소 포스트백을 받은 시각을 쓴다
+const PbCancelDate: React.FC<{ row: IPostbackLog }> = ({ row }) => {
+  const cancelAt = row.cancelled_at ?? (row.action === 'CANCEL' ? row.created_at : null);
+  if (!cancelAt) return null;
+  return (
+    <div style={{ fontSize: '11px', color: 'var(--danger)' }}>
+      취소 {pbDt(cancelAt)} {pbTm(cancelAt)}
+    </div>
+  );
+};
+
 export const PbTimeCell: React.FC<{ row: IPostbackLog }> = ({ row }) => {
   const { raw, at, hasTime } = pbMerchantTime(row);
   if (at) {
@@ -57,6 +68,7 @@ export const PbTimeCell: React.FC<{ row: IPostbackLog }> = ({ row }) => {
             받지도 않은 값을 적는 셈이 된다 */}
         {hasTime && <div className="pb-dim">{pbTm(at)}</div>}
         {Boolean(raw) && <div className="pb-raw">{raw}</div>}
+        <PbCancelDate row={row} />
       </>
     );
   }
@@ -65,6 +77,8 @@ export const PbTimeCell: React.FC<{ row: IPostbackLog }> = ({ row }) => {
       <div style={{ fontWeight: 700 }}>{pbDt(row.created_at)}</div>
       <div className="pb-dim">{pbTm(row.created_at)}</div>
       <div className="pb-raw">{raw ? `${raw} · 수신 시각` : '수신 시각'}</div>
+      {/* 수신 시각을 이미 적었으므로 서버가 준 취소 일시만 덧붙인다 */}
+      {row.cancelled_at && <PbCancelDate row={row} />}
     </>
   );
 };

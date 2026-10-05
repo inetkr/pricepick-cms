@@ -9,6 +9,7 @@ interface AnnouncementTableProps {
   pagination?: PaginationProps;
   onEdit: (announcement: IAnnouncement) => void;
   onDelete: (announcement: IAnnouncement) => void;
+  onTogglePublish: (announcement: IAnnouncement) => void;
 }
 
 const TYPE_BADGE_CLASS: Record<IAnnouncementType, string> = {
@@ -32,6 +33,7 @@ export const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
   pagination,
   onEdit,
   onDelete,
+  onTogglePublish,
 }) => (
   <div className="card">
     <div className="card-header">
@@ -77,7 +79,7 @@ export const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 <span
                   className={`badge ${announcement.is_published ? 'badge-green' : 'badge-amber'}`}
                 >
-                  {announcement.is_published ? '게시' : '임시저장'}
+                  {announcement.is_published ? '게시' : '비게시'}
                 </span>
               </td>
               <td style={{ textAlign: 'center' }}>
@@ -88,6 +90,13 @@ export const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                     onClick={() => onEdit(announcement)}
                   >
                     수정
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => onTogglePublish(announcement)}
+                  >
+                    {announcement.is_published ? '비게시' : '게시'}
                   </button>
                   <button
                     type="button"

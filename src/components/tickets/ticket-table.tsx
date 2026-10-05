@@ -5,6 +5,8 @@ import { Pagination } from '../common/pagination';
 import { TicketNameByGrade } from '../common/ticket-chip';
 import type { IUsageStatus } from 'src/types/common';
 
+const LEGACY_ADMIN_ADD_DESCRIPTION = '티켓 부여';
+
 interface TicketTableProps {
   tickets: ITicket[];
   pagination?: PaginationProps;
@@ -15,7 +17,7 @@ const usageStatusBadgeMap: Record<
   IUsageStatus,
   { color: string; background: string; border: string; label: string }
 > = {
-  HOLDING: { color: '#1f9d57', background: '#e6f7ec', border: '#b6e6c8', label: '보유 중' },
+  HOLDING: { color: '#1f9d57', background: '#e6f7ec', border: '#b6e6c8', label: '지급' },
   USED: { color: '#6b7280', background: '#f3f4f6', border: '#e5e7eb', label: '사용 완료' },
   EXPIRED: { color: '#9ca3af', background: '#f3f4f6', border: '#e5e7eb', label: '만료' },
   PENDING: { color: '#d97a17', background: '#fdf1e3', border: '#f3d2a0', label: '가지급(대기)' },
@@ -75,6 +77,13 @@ export const TicketTable: React.FC<TicketTableProps> = ({
     [categories]
   );
 
+  const renderReason = (ticket: ITicket) => {
+    if (ticket.category) return transactionTypeLabels[ticket.category] ?? ticket.category;
+    // 예전 수동 지급 기록은 사유가 '티켓 부여'로 남아 있다
+    if (ticket.description === LEGACY_ADMIN_ADD_DESCRIPTION) return '관리자 지급';
+    return transactionTypeLabels[ticket.description] ?? ticket.description;
+  };
+
   return (
     <div className="card">
       <div className="card-header">
@@ -115,9 +124,15 @@ export const TicketTable: React.FC<TicketTableProps> = ({
                   </div>
                 </td>
                 <td style={{ textAlign: 'center' }}>
-                  <span style={{ color: 'var(--success)' }}>
-                    {transactionTypeLabels[ticket.description] ?? ticket.description}
-                  </span>
+                  {/* 사유 = 거래유형 이름. 알림 문구 같은 description은 밑에 작게 덧붙인다 */}
+                  <span style={{ color: 'var(--success)' }}>{renderReason(ticket)}</span>
+                  {ticket.category &&
+                    ticket.description &&
+                    ticket.description !== renderReason(ticket) && (
+                      <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
+                        {ticket.description}
+                      </div>
+                    )}
                 </td>
                 <td style={{ textAlign: 'center' }}>
                   <TicketNameByGrade grade={ticket.ticket_type} quantity={ticket.amount} />

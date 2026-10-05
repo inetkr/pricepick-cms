@@ -137,6 +137,7 @@ export const useDailyLuckyRoulette = () => {
 
   return {
     slots,
+    defaultSlots,
     stats,
     valueOverrides,
     isLoading,

@@ -1,3 +1,4 @@
+import { INVITE_MONTHLY_LIMIT } from 'src/constants/invite';
 import React from 'react';
 
 const acquisitionRows = [
@@ -63,7 +64,7 @@ export const OpPolicyEventTab: React.FC = () => (
       </div>
       <div className="policy-item">
         <div className="policy-label">초대자 월 한도</div>
-        <div className="policy-value">월 최대 50명</div>
+        <div className="policy-value">월 최대 {INVITE_MONTHLY_LIMIT}명</div>
         <div className="policy-desc">성사 기준. 자기 초대·동일 IP/기기 차단.</div>
       </div>
       <div className="policy-item">

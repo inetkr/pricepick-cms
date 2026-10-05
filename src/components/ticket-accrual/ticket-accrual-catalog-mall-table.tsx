@@ -401,10 +401,11 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
           >
             {isSyncingLinkprice ? '갱신 중...' : '링크프라이스 업데이트'}
           </button>
-          <span style={{ width: '1px', height: '22px', background: 'var(--border)' }} />
+          {/* 제휴몰 추가는 숨긴다 — 수동 추가 몰이 대표 제휴몰로 섞이는 문제가 있어 링크프라이스 업데이트로만 등록한다(QA #13~#16) */}
+          {/* <span style={{ width: '1px', height: '22px', background: 'var(--border)' }} />
           <button type="button" className="btn btn-ghost btn-sm" onClick={onOpenAddMall}>
             제휴몰 추가
-          </button>
+          </button> */}
           <span style={{ width: '1px', height: '22px', background: 'var(--border)' }} />
           <button
             type="button"

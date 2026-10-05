@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { REWARD_TYPE_META } from 'src/utils/roulette';
 import { StatCard } from 'src/components/common/stat-card';
 import { InfoBox } from 'src/components/common/info-box';
 import { RouletteSlotEditor } from 'src/components/roulette/roulette-slot-editor';
@@ -15,6 +16,7 @@ export const DailyLuckyRouletteSection: React.FC = () => {
 
   const {
     slots,
+    defaultSlots,
     stats,
     valueOverrides,
     isLoading,
@@ -139,6 +141,18 @@ export const DailyLuckyRouletteSection: React.FC = () => {
           }}
         >
           {statusText}
+        </div>
+        {/* 「기본값 복원」을 누르기 전에 어떤 값으로 돌아가는지 확인할 수 있게 한다 */}
+        <div style={{ padding: '0 16px 14px', fontSize: '12px', color: 'var(--text-2)' }}>
+          <strong>기본값</strong> —{' '}
+          {defaultSlots
+            .map((slot, idx) => {
+              const meta = REWARD_TYPE_META[slot.type];
+              const reward =
+                slot.type === 'MISS' ? meta.label : `${meta.label} ${slot.qty}${meta.unit}`;
+              return `${idx + 1}번 ${reward} (${slot.prob}%)`;
+            })
+            .join(' · ')}
         </div>
         <div style={{ padding: '0 16px 14px', fontSize: '12px', color: 'var(--text-3)' }}>
           가치 환산 기준 — 포인트 {pointsPerWon}P = 1원 · 이벤트 티켓{' '}

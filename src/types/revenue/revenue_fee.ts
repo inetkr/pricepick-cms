@@ -91,6 +91,8 @@ export type IAffiliateRevenueOrderProduct = {
   partner_status: string;
   is_cancelled: boolean;
   is_counted_in_amount: boolean;
+  // 일부 지급 주문에서 이 상품에 티켓이 나갔는지 — 서버가 아직 안 주면 취소 안 된 상품을 지급분으로 본다
+  is_granted?: boolean;
 };
 
 export type IAffiliateRevenueOrder = {
@@ -119,6 +121,10 @@ export type IAffiliateRevenueOrder = {
   profit_rate_p: number | null;
   status: IAffiliateOrderStatus;
   ticket_status: IAffiliateTicketStatus;
+  // 상태 이름표 — 검색칸 상태 목록(ticket_statuses)과 같은 이름을 서버가 실어 준다
+  ticket_status_label?: string;
+  // 취소·환수된 건의 취소 일시
+  cancelled_at?: string | null;
   ticket_amount: number;
   ticket_unlock_date: string;
   is_counted_in_revenue: boolean;

@@ -129,7 +129,7 @@ export const TicketAccrualSection: React.FC = () => {
         emptyMessage={
           filters.category || filters.approvalStatus || filters.applied
             ? '조건에 맞는 제휴몰이 없습니다.'
-            : '등록된 제휴몰이 없습니다. "제휴몰 추가"로 등록하세요.'
+            : '등록된 제휴몰이 없습니다. "링크프라이스 업데이트"로 불러오세요.'
         }
       />
 

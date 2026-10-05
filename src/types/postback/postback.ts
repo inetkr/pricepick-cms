@@ -43,6 +43,8 @@ export interface IPostbackLog {
   source: IPostbackSource;
   action: IPostbackAction;
   created_at: string; // 우리가 받은 시각(ISO)
+  // 취소된 주문의 취소 일시 — 서버가 대사로 찾아 실어 준다
+  cancelled_at?: string | null;
   user_id: string | null;
   user_nickname: string | null;
   sub_id: string | null; // 쿠팡 subid

@@ -25,4 +25,6 @@ export type ICreateEmployeePayload = {
 export type IUpdateEmployeePayload = {
     fullname: string;
     role: IAdminRole;
+    // 비워 두면 비밀번호를 바꾸지 않는다
+    password?: string;
 }

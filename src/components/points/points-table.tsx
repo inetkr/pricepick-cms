@@ -98,6 +98,13 @@ export const PointsTable: React.FC<PointsTableProps> = ({ points, pagination }) 
                 </td>
                 <td style={{ textAlign: 'center' }}>
                   {renderTransactionTypeBadge(point.transaction_type)}
+                  {/* 수동 지급·회수 때 입력한 처리 사유 */}
+                  {point.description &&
+                    point.description !== transactionTypeConfig[point.transaction_type]?.label && (
+                      <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
+                        {point.description}
+                      </div>
+                    )}
                 </td>
                 <td style={{ textAlign: 'center' }}>{renderPoints(point.amount)}</td>
                 <td style={{ textAlign: 'center', fontWeight: 600 }}>

@@ -168,7 +168,7 @@ const getMemberStatus: (accountStatus: IAccountStatus) => { label: string; class
     case 'NORMAL':
       return { label: '정상', className: 'badge-green' };
     case 'BLOCK':
-      return { label: '차단', className: 'badge-red' };
+      return { label: '정지', className: 'badge-red' };
     case 'DELETE':
       return { label: '탈퇴', className: 'badge-gray' };
     default:
@@ -191,6 +191,7 @@ export const MemberTable: React.FC<MemberTableProps> = ({
             <th>닉네임(카카오ID)</th>
             <th>연동 상태</th>
             <th>가입일</th>
+            <th>최근 접속</th>
             <th>랜덤 티켓</th>
             <th>전환예정</th>
             <th>등급 티켓 (브론즈/실버/골드)</th>
@@ -204,7 +205,7 @@ export const MemberTable: React.FC<MemberTableProps> = ({
           {members.length === 0 ? (
             <tr>
               <td
-                colSpan={10}
+                colSpan={11}
                 style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}
               >
                 검색 결과가 없습니다.
@@ -216,6 +217,9 @@ export const MemberTable: React.FC<MemberTableProps> = ({
                 <td>{renderMemberInfo(member)}</td>
                 <td>{renderLinkStatus(member)}</td>
                 <td style={{ textAlign: 'center' }}>{renderDateTime(member.created_at)}</td>
+                <td style={{ textAlign: 'center' }}>
+                  {member.last_online ? renderDateTime(member.last_online) : '-'}
+                </td>
                 <td>
                   {member.pending_random_tickets > 0 ? (
                     <div className="rnd-chip-wrap">

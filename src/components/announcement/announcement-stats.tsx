@@ -21,7 +21,7 @@ export const AnnouncementStats: React.FC<AnnouncementStatsProps> = ({ stats }) =
       change={{ type: 'neutral', text: '등록 누적' }}
     />
     <StatCard
-      label="임시저장"
+      label="비게시"
       value={`${stats.draft?.toLocaleString()}건`}
       color="amber"
       change={{ type: 'neutral', text: '미게시' }}

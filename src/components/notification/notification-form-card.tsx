@@ -38,16 +38,24 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
   const [sendAttempted, setSendAttempted] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
+  // 예약 일시는 지금 이후여야 한다 — 지난 시각을 보내면 서버가 거절한다
+  const scheduledAtMs = scheduledAt.trim() ? new Date(scheduledAt).getTime() : NaN;
+  const isScheduledInPast = !Number.isNaN(scheduledAtMs) && scheduledAtMs <= Date.now();
+
   const isValid =
     title.trim().length > 0 &&
     content.trim().length > 0 &&
-    (sendType === 'NOW' || scheduledAt.trim().length > 0);
+    (sendType === 'NOW' || (scheduledAt.trim().length > 0 && !isScheduledInPast));
 
   const titleError = attempted && title.trim().length === 0 ? '제목을 입력해주세요.' : null;
   const contentError = attempted && content.trim().length === 0 ? '내용을 입력해주세요.' : null;
   const scheduledAtError =
-    sendAttempted && sendType === 'SCHEDULED' && scheduledAt.trim().length === 0
-      ? '예약 발송 일시를 선택해주세요.'
+    sendAttempted && sendType === 'SCHEDULED'
+      ? scheduledAt.trim().length === 0
+        ? '예약 발송 일시를 선택해주세요.'
+        : isScheduledInPast
+          ? '예약 발송 일시는 현재 이후로 선택해주세요.'
+          : null
       : null;
 
   const resetForm = () => {

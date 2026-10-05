@@ -71,6 +71,9 @@ export const RevenueFeeOrderTable: React.FC<RevenueFeeOrderTableProps> = ({
   // 여러 줄을 동시에 펼쳐 놓고 견줄 일이 있어 하나만 열리게 막지 않는다
   const [openIds, setOpenIds] = useState<Record<string, boolean>>({});
   const toggle = (id: string) => setOpenIds((prev) => ({ ...prev, [id]: !prev[id] }));
+  const statusLabelByValue: Record<string, string> = Object.fromEntries(
+    ticketStatusOptions.map((opt) => [opt.value, opt.label])
+  );
 
   return (
     <div className="card">
@@ -98,7 +101,7 @@ export const RevenueFeeOrderTable: React.FC<RevenueFeeOrderTableProps> = ({
         <div className="toolbar" style={{ marginBottom: '14px' }}>
           <input
             className="search-box"
-            placeholder="주문번호·회원 검색..."
+            placeholder="주문번호·닉네임 검색..."
             value={filters.search}
             onChange={(e) => onFiltersChange({ search: e.target.value })}
           />
@@ -165,6 +168,16 @@ export const RevenueFeeOrderTable: React.FC<RevenueFeeOrderTableProps> = ({
                 const isCoupang = o.order_source === 'COUPANG';
                 const products = o.products ?? [];
                 const open = Boolean(openIds[o.id]);
+                // 검색칸의 상태 이름과 같은 이름을 쓴다 — 서버 이름표가 먼저, 없으면 화면 이름표
+                const statusLabel =
+                  o.ticket_status_label ??
+                  statusLabelByValue[o.ticket_status] ??
+                  RF_STATUS_LABEL[statusKey];
+                // 일부 지급 — 티켓이 나간 상품 이름을 상태 밑에 적는다
+                const grantedProducts =
+                  statusKey === 'partially_granted'
+                    ? products.filter((it) => it.is_granted ?? !it.is_cancelled)
+                    : [];
                 return (
                   <React.Fragment key={o.id}>
                     <tr
@@ -190,6 +203,11 @@ export const RevenueFeeOrderTable: React.FC<RevenueFeeOrderTableProps> = ({
                         <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
                           {rfTm(o.created_at)}
                         </div>
+                        {rfIsCanceled(o) && o.cancelled_at && (
+                          <div style={{ fontSize: '11px', color: 'var(--danger)' }}>
+                            취소 {rfDt(o.cancelled_at)}
+                          </div>
+                        )}
                       </td>
                       <td style={dim}>
                         {o.merchant_name}{' '}
@@ -238,9 +256,17 @@ export const RevenueFeeOrderTable: React.FC<RevenueFeeOrderTableProps> = ({
                       <td
                         title={`주문 ${RF_ORDER_STATUS_LABEL[o.status] ?? o.status} · 티켓 ${rfN(o.ticket_amount)}장 · 전환일 ${rfDt(o.ticket_unlock_date)}`}
                       >
-                        <span className={RF_STATUS_BADGE[statusKey]}>
-                          {RF_STATUS_LABEL[statusKey]}
-                        </span>
+                        <span className={RF_STATUS_BADGE[statusKey]}>{statusLabel}</span>
+                        {grantedProducts.length > 0 && (
+                          <div
+                            className="pb-dim"
+                            style={{ marginTop: '4px', maxWidth: '160px' }}
+                            title={grantedProducts.map((it) => it.product_name).join(', ')}
+                          >
+                            지급: {grantedProducts[0].product_name}
+                            {grantedProducts.length > 1 && ` 외 ${grantedProducts.length - 1}건`}
+                          </div>
+                        )}
                       </td>
                       {products.length > 0 ? <RfCaret /> : <td className="pb-caret" />}
                     </tr>

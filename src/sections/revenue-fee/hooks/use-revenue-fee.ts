@@ -35,9 +35,9 @@ const BUCKET_PAGE_SIZE = 12;
 // 검색어를 눌러 담는 시간 — 다른 화면의 회원 검색과 같은 값이다
 const SEARCH_DEBOUNCE_MS = 500;
 
-// 기본 조회 기간 = 최근 6개월. 30일만 잡으면 티켓 지급 대기(쿠팡 미연동 · 링크프라이스
-// 기본이 30일이다)를 막 지날 건뿐이라 「지급 완료」가 통째로 0원으로 찍힌다.
-const DEFAULT_RANGE_DAYS = 180;
+// 기본 조회 기간 = 최근 30일. 6개월을 한 번에 불러오면 데이터가 많아 화면이 느려진다(QA 지적).
+// 더 긴 기간은 조회 기간을 직접 넓혀서 본다.
+const DEFAULT_RANGE_DAYS = 30;
 
 const today = () => {
   const d = new Date();

@@ -16,7 +16,7 @@ import { formatDate } from 'src/utils/helper';
 const usageStatusLabels: Record<string, string> = {
   USED: '사용 완료',
   PENDING: '가지급(대기)',
-  HOLDING: '보유 중',
+  HOLDING: '지급',
   ADMIN_SUB: '회수',
   REJECTED: '거절',
 };

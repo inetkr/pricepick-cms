@@ -77,6 +77,14 @@ export const AnnouncementSection: React.FC = () => {
           pagination={paginationProps}
           onEdit={handleEdit}
           onDelete={deleteAnnouncement}
+          onTogglePublish={(announcement) =>
+            updateAnnouncement(announcement.id, {
+              title: announcement.title,
+              content: announcement.content,
+              type: announcement.type,
+              is_published: !announcement.is_published,
+            })
+          }
         />
       )}
       <AnnouncementEditModal

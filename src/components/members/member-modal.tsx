@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import type { IAccountStatus } from 'src/types/common';
 import type { IUser } from 'src/types/users/user';
+import { formatDate } from 'src/utils/helper';
 
 interface MemberModalProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ interface MemberModalProps {
 
 const MEMBER_STATUS_OPTIONS = [
   { value: 'NORMAL', label: '정상' },
-  { value: 'BLOCK', label: '차단' },
+  { value: 'BLOCK', label: '정지' },
   { value: 'DELETE', label: '탈퇴' },
 ];
 
@@ -69,14 +70,14 @@ export const MemberModal: React.FC<MemberModalProps> = ({
     onClose();
   };
 
-  const handleTicketGrant = () => {
+  const handleTicketGrant = (action: 'ADMIN_ADD' | 'ADMIN_SUB') => {
     if (onTicketGrant && member) {
       onTicketGrant({
         user_identifier: member.id,
-        action: 'ADMIN_ADD',
+        action,
         ticket_type: ticketGrade as 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD',
         amount: ticketQty,
-        description: '티켓 부여',
+        description: action === 'ADMIN_ADD' ? '관리자 지급' : '관리자 회수',
       });
     }
     onClose();
@@ -112,7 +113,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
             <div className="warn-box">탈퇴한 회원입니다. 정보를 수정할 수 없습니다.</div>
           )}
           {isSuspendedMember && (
-            <div className="amber-box">차단된 회원입니다. 닉네임과 상태만 변경할 수 있습니다.</div>
+            <div className="amber-box">정지된 회원입니다. 닉네임과 상태만 변경할 수 있습니다.</div>
           )}
           <div className="form-row">
             <div className="form-group">
@@ -211,6 +212,28 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                 disabled
                 value={member.identified_id}
                 style={{ fontFamily: 'monospace', fontSize: '12px' }}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="m-total-points">
+                보유 포인트
+              </label>
+              <input
+                className="form-input"
+                id="m-total-points"
+                disabled
+                value={`${(member.total_points ?? 0).toLocaleString('ko-KR')}P`}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="m-last-online">
+                최근 접속
+              </label>
+              <input
+                className="form-input"
+                id="m-last-online"
+                disabled
+                value={formatDate(member.last_online, 'YYYY/MM/DD')}
               />
             </div>
           </div>
@@ -361,7 +384,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
           {canEditTickets && (
             <div className="form-group">
               <label className="form-label" htmlFor="member-ticket-grade">
-                티켓 수동 지급
+                티켓 수동 지급 / 회수
               </label>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <select
@@ -388,12 +411,23 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   onChange={(e) => setTicketQty(Number(e.target.value))}
                   min={1}
                 />
-                <button type="button" className="btn btn-success" onClick={handleTicketGrant}>
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={() => handleTicketGrant('ADMIN_ADD')}
+                >
                   지급
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleTicketGrant('ADMIN_SUB')}
+                >
+                  회수
                 </button>
               </div>
               <div className="form-hint">
-                지급 이력은 티켓 내역에 &apos;관리자 지급&apos;으로 기록됩니다.
+                이력은 티켓 내역에 &apos;관리자 지급&apos; / &apos;관리자 회수&apos;로 기록됩니다.
               </div>
             </div>
           )}

@@ -1,5 +1,5 @@
 import type { IBase } from '../base';
-import type { ITransactionTypeGroup, IUsageStatus, TicketGrade } from '../common';
+import type { IUsageStatus, TicketGrade } from '../common';
 
 export type ITicket = IBase & {
   id: string;
@@ -11,7 +11,8 @@ export type ITicket = IBase & {
   amount: number;
   description: string;
   usage_status: IUsageStatus;
-  // transaction_type: ITransactionTypeGroup;
+  // 거래유형 코드 — /ticket/admin/history_categories 의 code
+  category?: string;
   merchant_name: string;
 };
 

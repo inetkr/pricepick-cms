@@ -1,5 +1,6 @@
 'use client';
 
+import { formatDate } from 'src/utils/helper';
 import React, { useEffect, useState } from 'react';
 import { QNA_STATE_SELECT_OPTIONS, QNA_TYPE_LABELS } from 'src/constants/qna';
 import type { IQna, IQnaState, IUpdateQnaPayload } from 'src/types/qna';
@@ -34,7 +35,8 @@ export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
   useEffect(() => {
     if (open && inquiry) {
       setAnswer(inquiry.answer || '');
-      setState((inquiry.state as IQnaState) || 'PENDING');
+      // 답변 발송 = 처리 완료가 기본값 — 상태를 따로 바꾸지 않아도 「처리 중」에 남지 않는다
+      setState('COMPLETED');
       setAttempted(false);
     }
   }, [open, inquiry]);
@@ -47,9 +49,7 @@ export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
   const handleSubmit = () => {
     setAttempted(true);
     if (!isValid) return;
-    // 답변을 저장하는데 상태가 아직 미처리인 경우, 자동으로 처리 중 이상으로 올려준다.
-    const nextState = state === 'PENDING' ? 'PROCESSING' : state;
-    onSubmit(inquiry.id, { answer, state: nextState });
+    onSubmit(inquiry.id, { answer, state });
   };
 
   return (
@@ -103,7 +103,14 @@ export const InquiryDetailModal: React.FC<InquiryDetailModalProps> = ({
 
           {inquiry.answer && (
             <div className="form-group">
-              <div className="form-label">기존 답변</div>
+              <div className="form-label">
+                기존 답변
+                {inquiry.processed_at && (
+                  <span style={{ marginLeft: '8px', fontWeight: 400, color: 'var(--text-3)' }}>
+                    답변일 {formatDate(inquiry.processed_at, 'YYYY/MM/DD')}
+                  </span>
+                )}
+              </div>
               <div
                 style={{
                   background: 'var(--main-soft)',

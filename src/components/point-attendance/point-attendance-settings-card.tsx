@@ -11,11 +11,8 @@ interface AttendanceSettingsCardProps {
   onSave: (config: IAttendanceConfigValue) => void;
 }
 
-const linkedStoreOptions = [
-  { value: 'COUPANG', label: '쿠팡 (단독)' },
-  // { value: 'COUPANG_11ST', label: '쿠팡 + 11번가' },
-  // { value: 'ALL', label: '전체 제휴몰' },
-];
+// 연결 제휴몰은 쿠팡 하나뿐이라 고르는 칸 없이 쿠팡으로 고정한다
+const LINKED_STORE = 'COUPANG';
 
 const streakBonusOptions = [
   { value: '1', label: '이벤트 티켓 1장' },
@@ -47,7 +44,7 @@ export const AttendanceSettingsCard: React.FC<AttendanceSettingsCardProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(form);
+    onSave({ ...form, linked_store: LINKED_STORE });
   };
 
   return (
@@ -76,12 +73,12 @@ export const AttendanceSettingsCard: React.FC<AttendanceSettingsCardProps> = ({
             <span style={{ color: 'var(--text-2)', fontSize: '13px' }}>P / 1일 1회</span>
           </div>
 
-          <FormSelect
+          <FormInput
             label="연결 제휴몰"
-            options={linkedStoreOptions}
-            value={form.linked_store}
-            onChange={(e) => handleChange('linked_store', e.target.value)}
-            hint="현재 쿠팡 전용. 회원은 쿠팡 방문 후 복귀해야 출석이 인정됩니다."
+            value="쿠팡"
+            disabled
+            style={{ maxWidth: '200px' }}
+            hint="쿠팡 전용. 회원은 쿠팡 방문 후 복귀해야 출석이 인정됩니다."
           />
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>

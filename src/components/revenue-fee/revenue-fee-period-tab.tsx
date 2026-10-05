@@ -127,6 +127,19 @@ export const RevenueFeePeriodTab: React.FC<RevenueFeePeriodTabProps> = ({
 
   return (
     <>
+      {/* 월별/일별/기간별은 쿠팡·링크프라이스 두 표에 함께 걸리므로 두 표 위에 둔다 */}
+      <div className="toolbar" style={{ marginBottom: '14px' }}>
+        <select
+          className="filter-sel"
+          value={view}
+          onChange={(e) => onViewChange(e.target.value as IRevenueFeeView)}
+        >
+          <option value="month">월별</option>
+          <option value="day">일별</option>
+          <option value="range">기간별</option>
+        </select>
+      </div>
+
       {/* 쿠팡은 따로 얹는다 — 제휴몰별 탭과 같은 결이다. 아래 표는 링크프라이스만 그린다. */}
       <div className="card">
         <div className="card-header">
@@ -170,17 +183,6 @@ export const RevenueFeePeriodTab: React.FC<RevenueFeePeriodTabProps> = ({
               {viewName} 내역 <RfTitleNote>링크프라이스</RfTitleNote>
             </div>
             <div className="card-sub">{rfN(rowCount)}개 구간</div>
-          </div>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <select
-              className="filter-sel"
-              value={view}
-              onChange={(e) => onViewChange(e.target.value as IRevenueFeeView)}
-            >
-              <option value="month">월별</option>
-              <option value="day">일별</option>
-              <option value="range">기간별</option>
-            </select>
           </div>
         </div>
         <table id="rf-bd-table">

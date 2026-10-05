@@ -6,7 +6,6 @@ import { Pagination } from '../common/pagination';
 interface WithdrawalTableProps {
   members: IUser[];
   pagination?: PaginationProps;
-  onViewDetail: (member: IUser) => void;
 }
 
 const renderMemberInfo = (member: IUser) => (
@@ -60,11 +59,7 @@ const renderDateTime = (date: string | null) => {
   );
 };
 
-export const WithdrawalTable: React.FC<WithdrawalTableProps> = ({
-  members,
-  pagination,
-  onViewDetail,
-}) => (
+export const WithdrawalTable: React.FC<WithdrawalTableProps> = ({ members, pagination }) => (
   <div className="card">
     <div className="card-header">
       <div className="card-title">탈퇴 회원 목록</div>
@@ -76,13 +71,15 @@ export const WithdrawalTable: React.FC<WithdrawalTableProps> = ({
           <th style={{ textAlign: 'center' }}>가입 유형(탈퇴 전)</th>
           <th style={{ textAlign: 'center' }}>탈퇴일시</th>
           <th style={{ textAlign: 'center' }}>상태</th>
-          <th style={{ textAlign: 'center' }}>상세</th>
         </tr>
       </thead>
       <tbody>
         {members.length === 0 ? (
           <tr>
-            <td colSpan={5} style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}>
+            <td
+              colSpan={4}
+              style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}
+            >
               탈퇴 회원이 없습니다.
             </td>
           </tr>
@@ -94,15 +91,6 @@ export const WithdrawalTable: React.FC<WithdrawalTableProps> = ({
               <td style={{ textAlign: 'center' }}>{renderDateTime(member.deleted_at)}</td>
               <td style={{ textAlign: 'center' }}>
                 <span className="badge badge-gray">탈퇴 완료</span>
-              </td>
-              <td style={{ textAlign: 'center' }}>
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => onViewDetail(member)}
-                >
-                  상세
-                </button>
               </td>
             </tr>
           ))

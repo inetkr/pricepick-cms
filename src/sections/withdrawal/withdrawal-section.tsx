@@ -1,33 +1,29 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import type { PaginationProps } from 'src/components/common/pagination';
 import { InfoBox } from 'src/components/common/info-box';
-import { WithdrawalDetailModal } from 'src/components/withdrawal/withdrawal-detail-modal';
 import { WithdrawalFlowCard } from 'src/components/withdrawal/withdrawal-flow-card';
 import { WithdrawalPolicyCard } from 'src/components/withdrawal/withdrawal-policy-card';
 import { WithdrawalStats } from 'src/components/withdrawal/withdrawal-stats';
 import { WithdrawalTable } from 'src/components/withdrawal/withdrawal-table';
 import { WithdrawalToolbar } from 'src/components/withdrawal/withdrawal-toolbar';
 import { useWithdrawal } from 'src/sections/withdrawal/hooks/use-withdrawal';
-import type { IUser } from 'src/types/users/user';
 
 export const WithdrawalSection: React.FC = () => {
-  const { members, stats, isLoading, filters, setFilters, page, setPage, limit, setLimit, totalPages, totalItems } =
-    useWithdrawal();
-  const [selectedMember, setSelectedMember] = useState<IUser | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleViewDetail = (member: IUser) => {
-    setSelectedMember(member);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedMember(null);
-  };
-
+  const {
+    members,
+    stats,
+    isLoading,
+    filters,
+    setFilters,
+    page,
+    setPage,
+    limit,
+    setLimit,
+    totalPages,
+    totalItems,
+  } = useWithdrawal();
   const paginationProps: PaginationProps = {
     currentPage: page,
     totalPages,
@@ -58,16 +54,10 @@ export const WithdrawalSection: React.FC = () => {
           로딩 중...
         </div>
       ) : (
-        <WithdrawalTable members={members} pagination={paginationProps} onViewDetail={handleViewDetail} />
+        <WithdrawalTable members={members} pagination={paginationProps} />
       )}
 
       <WithdrawalPolicyCard />
-
-      <WithdrawalDetailModal
-        isOpen={isModalOpen}
-        member={selectedMember}
-        onClose={handleCloseModal}
-      />
     </div>
   );
 };

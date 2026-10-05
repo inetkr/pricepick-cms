@@ -63,7 +63,7 @@ export function LoginContainer() {
           <input
             type="text"
             className="login-input"
-            placeholder="이메일"
+            placeholder="아이디"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required

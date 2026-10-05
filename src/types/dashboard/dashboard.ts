@@ -6,6 +6,14 @@ export type IDashboardSummary = {
   member_count: number;
   new_member_this_month_count: number;
   issued_ticket_count: number;
+  // 등급별 발행 수 — 오늘 발행 티켓 카드에 함께 보여 준다
+  issued_ticket_breakdown?: {
+    random?: number;
+    bronze?: number;
+    silver?: number;
+    gold?: number;
+    event?: number;
+  };
   qna_pending_count: number;
 };
 

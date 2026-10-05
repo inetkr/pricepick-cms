@@ -22,6 +22,8 @@ export const AccountEditModal: React.FC<AccountEditModalProps> = ({
 }) => {
   const [form, setForm] = useState<IUpdateEmployeePayload>(initialForm);
   const [attempted, setAttempted] = useState(false);
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
 
   useEffect(() => {
     if (open && account) {
@@ -29,19 +31,33 @@ export const AccountEditModal: React.FC<AccountEditModalProps> = ({
         fullname: account.fullname || '',
         role: 'ADMIN',
       });
+      setPassword('');
+      setPasswordConfirm('');
       setAttempted(false);
     }
   }, [open, account]);
 
   if (!open || !account) return null;
 
-  const isValid = form.fullname.trim() !== '';
+  // 비밀번호는 바꿀 때만 입력한다 — 생성 화면과 같은 6자 이상 규칙
+  const isChangingPassword = password.length > 0 || passwordConfirm.length > 0;
+  const passwordError =
+    attempted && isChangingPassword && password.trim().length < 6
+      ? '비밀번호는 6자 이상 입력해주세요.'
+      : null;
+  const passwordConfirmError =
+    attempted && isChangingPassword && password !== passwordConfirm
+      ? '비밀번호가 일치하지 않습니다.'
+      : null;
+  const isValid =
+    form.fullname.trim() !== '' &&
+    (!isChangingPassword || (password.trim().length >= 6 && password === passwordConfirm));
   const fullnameError = attempted && form.fullname.trim() === '' ? '이름을 입력해주세요.' : null;
 
   const handleSubmit = () => {
     setAttempted(true);
     if (!isValid) return;
-    onSubmit(account.id, form);
+    onSubmit(account.id, isChangingPassword ? { ...form, password } : form);
   };
 
   return (
@@ -97,12 +113,48 @@ export const AccountEditModal: React.FC<AccountEditModalProps> = ({
             />
             {fullnameError && <div className="field-error">{fullnameError}</div>}
           </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label" htmlFor="ae-password">
+                새 비밀번호
+              </label>
+              <input
+                id="ae-password"
+                className={`form-input${passwordError ? ' has-error' : ''}`}
+                type="password"
+                placeholder="변경할 때만 입력"
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              {passwordError && <div className="field-error">{passwordError}</div>}
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="ae-password-confirm">
+                새 비밀번호 확인
+              </label>
+              <input
+                id="ae-password-confirm"
+                className={`form-input${passwordConfirmError ? ' has-error' : ''}`}
+                type="password"
+                autoComplete="new-password"
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+              />
+              {passwordConfirmError && <div className="field-error">{passwordConfirmError}</div>}
+            </div>
+          </div>
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-ghost" onClick={onClose}>
             취소
           </button>
-          <button type="button" className="btn btn-primary" onClick={handleSubmit} disabled={isSaving}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleSubmit}
+            disabled={isSaving}
+          >
             {isSaving ? '저장 중...' : '저장'}
           </button>
         </div>

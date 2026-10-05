@@ -9,7 +9,7 @@ type IFilters = {
   account_status: string;
   kakao_status: string;
   marketing_consent: string;
-}
+};
 
 export const useMembers = () => {
   const [members, setMembers] = useState<IUser[]>([]);
@@ -17,7 +17,7 @@ export const useMembers = () => {
     total_users: 0,
     total_kakao_linked: 0,
     total_kakao_not_linked: 0,
-    total_marketing_consent: 0
+    total_marketing_consent: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState<IFilters>({
@@ -39,18 +39,13 @@ export const useMembers = () => {
         Object.entries(filters).filter(([_, value]) => value)
       ) as IFilters;
 
-      const responseData = await userAPI.getUserList(
-        page,
-        limit,
-        filter
-      );
+      const responseData = await userAPI.getUserList(page, limit, filter);
 
       if (responseData && responseData.result && responseData.result.object) {
         setMembers(responseData.result.object.rows);
         setTotalItems(responseData.result.object.count);
         setTotalPages(Math.ceil(responseData.result.object.count / limit));
       }
-
     } catch (error) {
       console.error('Failed to load members:', error);
     } finally {
@@ -105,24 +100,33 @@ export const useMembers = () => {
     loadMembers();
   }, [filters, page, limit]);
 
-  const grantTicket = useCallback(async (data: {
-    user_identifier: string; // 닉네임 또는 UID
-    action: 'ADMIN_ADD' | 'ADMIN_SUB';
-    ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
-    amount: number;
-    description: string;
-  }) => {
-    try {
-      const responseData = await ticketAPI.addSubTicket(data);
-      if (responseData && responseData.result && responseData.result.object) {
-        toast.success('티켓이 성공적으로 부여되었습니다.');
-        loadMembers();
+  const grantTicket = useCallback(
+    async (data: {
+      user_identifier: string; // 닉네임 또는 UID
+      action: 'ADMIN_ADD' | 'ADMIN_SUB';
+      ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+      amount: number;
+      description: string;
+    }) => {
+      try {
+        const responseData = await ticketAPI.addSubTicket(data);
+        if (responseData && responseData.result && responseData.result.object) {
+          toast.success(
+            data.action === 'ADMIN_SUB'
+              ? '티켓이 회수되었습니다.'
+              : '티켓이 성공적으로 지급되었습니다.'
+          );
+          loadMembers();
+        }
+      } catch (error) {
+        console.error('Failed to grant ticket:', error);
+        toast.error(
+          data.action === 'ADMIN_SUB' ? '티켓 회수에 실패했습니다.' : '티켓 지급에 실패했습니다.'
+        );
       }
-    } catch (error) {
-      console.error('Failed to grant ticket:', error);
-      toast.error('티켓 부여에 실패했습니다.');
-    }
-  }, []);
+    },
+    []
+  );
 
   return {
     members,
@@ -137,6 +141,6 @@ export const useMembers = () => {
     setLimit: handleSetLimit,
     totalPages,
     totalItems,
-    updateMember
+    updateMember,
   };
 };
