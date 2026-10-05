@@ -11,7 +11,7 @@ export const TicketStats: React.FC<TicketStatsProps> = ({ stats }) => {
     <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
       <StatCard
         label="누적 발행 (적립)"
-        value={`${stats.total_transactions.toLocaleString()}`}
+        value={`${stats.total_accumulation_transactions.toLocaleString()}`}
         change={{ type: 'neutral', text: '전체 누적' }}
         color="purple"
       />
@@ -23,7 +23,7 @@ export const TicketStats: React.FC<TicketStatsProps> = ({ stats }) => {
       />
       <StatCard
         label="전체 원장 레코드"
-        value={`${stats.total_accumulation_transactions.toLocaleString()}`}
+        value={`${stats.total_transactions.toLocaleString()}`}
         change={{ type: 'neutral', text: 'append-only' }}
         color="amber"
       />
