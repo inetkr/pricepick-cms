@@ -21,10 +21,10 @@ export const AnnouncementStats: React.FC<AnnouncementStatsProps> = ({ stats }) =
       change={{ type: 'neutral', text: '등록 누적' }}
     />
     <StatCard
-      label="비게시"
+      label="미게시"
       value={`${stats.draft?.toLocaleString()}건`}
       color="amber"
-      change={{ type: 'neutral', text: '미게시' }}
+      change={{ type: 'neutral', text: '임시저장 · 비게시' }}
     />
   </div>
 );

@@ -1,5 +1,9 @@
 import React from 'react';
-import { ANNOUNCEMENT_TYPE_LABEL } from 'src/constants/announcement';
+import {
+  ANNOUNCEMENT_STATE_BADGE,
+  ANNOUNCEMENT_TYPE_LABEL,
+  getAnnouncementState,
+} from 'src/constants/announcement';
 import type { IAnnouncement, IAnnouncementType } from 'src/types/announcement';
 import type { PaginationProps } from '../common/pagination';
 import { Pagination } from '../common/pagination';
@@ -77,9 +81,9 @@ export const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
               </td>
               <td style={{ textAlign: 'center' }}>
                 <span
-                  className={`badge ${announcement.is_published ? 'badge-green' : 'badge-amber'}`}
+                  className={`badge ${ANNOUNCEMENT_STATE_BADGE[getAnnouncementState(announcement)].className}`}
                 >
-                  {announcement.is_published ? '게시' : '비게시'}
+                  {ANNOUNCEMENT_STATE_BADGE[getAnnouncementState(announcement)].label}
                 </span>
               </td>
               <td style={{ textAlign: 'center' }}>

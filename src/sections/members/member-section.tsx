@@ -14,7 +14,7 @@ import { formatDate } from 'src/utils/helper';
 
 const accountStatusLabels: Record<string, string> = {
   NORMAL: '정상',
-  BLOCK: '차단',
+  BLOCK: '정지',
   DELETE: '탈퇴',
 };
 

@@ -159,7 +159,8 @@ const TICKET_STATUS_TO_KEY: Record<IAffiliateTicketStatus, IRevenueFeeStatusKey>
   PENDING: 'pending_grant',
   GRANTED: 'granted',
   PARTIALLY_GRANTED: 'partially_granted',
-  PARTIAL: 'partially_granted',
+  // 서버 이름표가 「부분 환수」다 — 일부 지급(PARTIALLY_GRANTED)과 다른 상태다
+  PARTIAL: 'clawed_back_partial',
   REJECTED_LIMIT: 'rejected_limit',
   CANCELLED: 'canceled',
   REVOKED: 'clawed_back',
@@ -180,9 +181,10 @@ export const RF_STATUS_LABEL: Record<IRevenueFeeStatusKey, string> = {
   pending_grant: '지급 대기',
   granted: '지급 완료',
   partially_granted: '일부 지급',
-  rejected_limit: '한도 초과',
-  canceled: '취소',
-  clawed_back: '취소(환수)',
+  rejected_limit: '적립 한도 초과',
+  canceled: '미전환 환수',
+  clawed_back: '전환 후 환수',
+  clawed_back_partial: '부분 환수',
 };
 
 /* 배지 색 — 취소 둘은 죽은 건이라 회색 계열로 두되, 받았다 도로 빼앗긴 것만 테두리를 둘러
@@ -196,6 +198,8 @@ export const RF_STATUS_BADGE: Record<IRevenueFeeStatusKey, string> = {
   rejected_limit: 'badge badge-red',
   canceled: 'badge badge-gray',
   clawed_back: 'badge badge-gray-out',
+  // 부분 환수는 잔여가 살아 있는 건이라 다 빼앗긴 것과 같은 회색으로 두지 않는다
+  clawed_back_partial: 'badge badge-ts-part',
 };
 
 // 합계에서 빠지는 줄 — 흐리게 그린다. 지워 버리면 왜 합계가 다른지 알 수 없다.

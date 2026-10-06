@@ -72,7 +72,7 @@ export type IAffiliateTicketStatus =
   | 'PENDING'
   | 'GRANTED'
   | 'PARTIALLY_GRANTED'
-  | 'PARTIAL' // 실제 응답이 쓰는 표기 — PARTIALLY_GRANTED 와 같은 뜻이다
+  | 'PARTIAL' // 부분 환수 — 일부 상품만 취소돼 그 몫만 도로 뺏었다(나머지는 살아 있다)
   | 'REJECTED_LIMIT'
   | 'CANCELLED' // 주문이 취소돼 티켓 자체가 없던 일이 된 건
   | 'REVOKED';
@@ -259,4 +259,5 @@ export type IRevenueFeeStatusKey =
   | 'partially_granted'
   | 'rejected_limit'
   | 'canceled'
-  | 'clawed_back';
+  | 'clawed_back'
+  | 'clawed_back_partial';

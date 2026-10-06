@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { ANNOUNCEMENT_TYPE_OPTIONS } from 'src/constants/announcement';
+import { ANNOUNCEMENT_TYPE_OPTIONS, getAnnouncementState } from 'src/constants/announcement';
 import { Modal } from '../common/modal';
 import type { IAnnouncement, IAnnouncementType } from 'src/types/announcement';
 
@@ -36,6 +36,8 @@ export const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   }, [announcement]);
 
   const canSubmit = title.trim().length > 0 && content.trim().length > 0 && !isSaving;
+  // 한 번도 게시된 적 없는 초안만 「임시저장」이다 — 게시된 적 있는 공지를 내리는 것은 「비게시」다
+  const isDraft = announcement ? getAnnouncementState(announcement) === 'DRAFT' : true;
 
   const handleSubmit = (is_published: boolean) => {
     if (!announcement || !canSubmit) return;
@@ -58,7 +60,7 @@ export const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             disabled={!canSubmit}
             onClick={() => handleSubmit(false)}
           >
-            임시저장
+            {isDraft ? '임시저장' : '비게시'}
           </button>
           <button
             type="button"

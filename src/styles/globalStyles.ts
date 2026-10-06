@@ -924,6 +924,12 @@ export const globalStyles = css`
     color: var(--text-3);
     border: 1px solid var(--border);
   }
+  /* 「부분 환수」 전용 — 잔여가 남은 건이라 다 빼앗긴 것과 같은 회색으로 둘 수 없다.
+     앱 「티켓 적립 내역」과 같은 색값을 쓴다. */
+  .badge-ts-part {
+    background: #fdf2e6;
+    color: #d97706;
+  }
   .rlt-jackpot-badge {
     display: inline-block;
     margin-left: 6px;

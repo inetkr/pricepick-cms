@@ -175,9 +175,9 @@ export const RevenueFeeOrderTable: React.FC<RevenueFeeOrderTableProps> = ({
                   o.ticket_status_label ??
                   statusLabelByValue[o.ticket_status] ??
                   RF_STATUS_LABEL[statusKey];
-                // 일부 지급 — 티켓이 나간 상품 이름을 상태 밑에 적는다
+                // 일부 지급·부분 환수 — 티켓이 살아 있는 상품 이름을 상태 밑에 적는다
                 const grantedProducts =
-                  statusKey === 'partially_granted'
+                  statusKey === 'partially_granted' || statusKey === 'clawed_back_partial'
                     ? products.filter((it) => it.is_granted ?? !it.is_cancelled)
                     : [];
                 return (
@@ -268,7 +268,8 @@ export const RevenueFeeOrderTable: React.FC<RevenueFeeOrderTableProps> = ({
                       {/* 취소 확인일 — 포스트백 로그와 같은 이름·같은 형식이다. 쿠팡은 취소 포스트백을
                           받은 시각(분까지), 링크프라이스는 실적조회에서 310 을 확인한 날(날짜만). */}
                       <td style={{ whiteSpace: 'nowrap', fontSize: '12px', ...dim }}>
-                        {(rfIsCanceled(o) && cancelSeenText(o.cancelled_at, o.order_source)) || (
+                        {((rfIsCanceled(o) || statusKey === 'clawed_back_partial') &&
+                          cancelSeenText(o.cancelled_at, o.order_source)) || (
                           <span style={{ color: 'var(--text-3)' }}>—</span>
                         )}
                       </td>
