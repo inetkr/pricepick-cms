@@ -42,6 +42,18 @@ export const pbTm = (v: string | Date | null | undefined) => {
   return [hh, mi, ss].join(':');
 };
 
+/* 취소 확인일 — 「취소일」이 아니라 우리가 취소를 안 날이다.
+   쿠팡은 취소 포스트백을 받은 시각(분까지), 링크프라이스는 실적조회에서 310 을 확인한 날(날짜만).
+   예: 2026-10-05 14:23 / 2026-10-05. 값이 없으면 빈 문자열. */
+export const cancelSeenText = (
+  v: string | Date | null | undefined,
+  source: IPostbackSource | null | undefined
+) => {
+  const date = pbDt(v).split('/').join('-');
+  if (!date) return '';
+  return source === 'COUPANG' ? `${date} ${pbTm(v).slice(0, 5)}` : date;
+};
+
 /* 제휴사가 보낸 시각 문자열을 Date 로 — 유닉스 초/밀리초, YYYYMMDDHHMMSS(링크프라이스
    day+time), 그 외 ISO 계열을 받는다. 해석이 안 되면 null 을 돌려 원문만 그대로 보이게 둔다. */
 export const pbTimeDate = (v: string | number | null | undefined): Date | null => {

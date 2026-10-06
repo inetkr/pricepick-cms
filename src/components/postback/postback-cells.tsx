@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {
+  cancelSeenText,
   pbDt,
   pbHasValue,
   pbLineCellClass,
@@ -76,15 +77,14 @@ export const PbTimeCell: React.FC<{ row: IPostbackLog }> = ({ row }) => {
      링크프라이스  실적조회에서 310 확인한 날   2026-10-05 (날짜만)
      취소 아닌 건                            —                                    */
 export const PbCancelSeenCell: React.FC<{ row: IPostbackLog }> = ({ row }) => {
-  const isCoupang = row.source === 'COUPANG';
-  const seenAt = isCoupang
-    ? row.action === 'CANCEL'
-      ? (row.cancelled_at ?? row.created_at)
-      : null
-    : (row.cancelled_at ?? null);
-  const date = pbDt(seenAt).split('/').join('-');
-  if (!date) return <PbNone />;
-  return <>{isCoupang ? `${date} ${pbTm(seenAt).slice(0, 5)}` : date}</>;
+  const seenAt =
+    row.source === 'COUPANG'
+      ? row.action === 'CANCEL'
+        ? (row.cancelled_at ?? row.created_at)
+        : null
+      : (row.cancelled_at ?? null);
+  const text = cancelSeenText(seenAt, row.source);
+  return text ? <>{text}</> : <PbNone />;
 };
 
 /* 펼치면 나오는 수신 원문 필드 — 접힌 화면에 이미 나온 것도 빼지 않는다.

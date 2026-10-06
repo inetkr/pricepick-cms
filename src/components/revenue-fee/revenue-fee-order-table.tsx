@@ -8,6 +8,7 @@ import {
   RfOrderProducts,
 } from 'src/components/revenue-fee/revenue-fee-cells';
 import { RevenueFeePagination } from 'src/components/revenue-fee/revenue-fee-pagination';
+import { cancelSeenText } from 'src/utils/postback';
 import type { IRevenueFeeOrderFilters } from 'src/sections/revenue-fee/hooks/use-revenue-fee';
 import type {
   IAffiliateRevenueMerchantOption,
@@ -29,7 +30,7 @@ import {
 } from 'src/utils/revenue-fee';
 
 // 상품 표를 여는 펼침 칸까지 합친 칸 수 — 빈 줄이 표 너비를 다 채우도록
-const COL_SPAN = 10;
+const COL_SPAN = 11;
 
 interface RevenueFeeOrderTableProps {
   orders: IAffiliateRevenueOrder[];
@@ -136,18 +137,19 @@ export const RevenueFeeOrderTable: React.FC<RevenueFeeOrderTableProps> = ({
         <table id="rf-od-table">
           <thead>
             <tr>
-              <th style={{ width: '9%' }}>주문일</th>
-              <th style={{ width: '14%' }}>제휴몰</th>
-              <th style={{ width: '12%' }}>주문번호</th>
-              <th style={{ width: '13%' }}>회원</th>
-              <th style={{ width: '11%' }}>거래액</th>
-              <th style={{ width: '11%' }}>수수료</th>
-              <th style={{ width: '11%' }}>유저 적립</th>
-              <th style={{ width: '10%' }} className="rf-net-col">
+              <th style={{ width: '8%' }}>주문일</th>
+              <th style={{ width: '13%' }}>제휴몰</th>
+              <th style={{ width: '11%' }}>주문번호</th>
+              <th style={{ width: '12%' }}>회원</th>
+              <th style={{ width: '10%' }}>거래액</th>
+              <th style={{ width: '10%' }}>수수료</th>
+              <th style={{ width: '10%' }}>유저 적립</th>
+              <th style={{ width: '8%' }} className="rf-net-col">
                 수익
               </th>
-              <th style={{ width: '5%' }}>상태</th>
-              <th style={{ width: '4%' }} aria-label="펼치기" />
+              <th style={{ width: '6%' }}>상태</th>
+              <th style={{ width: '9%' }}>취소 확인일</th>
+              <th style={{ width: '3%' }} aria-label="펼치기" />
             </tr>
           </thead>
           <tbody>
@@ -203,11 +205,6 @@ export const RevenueFeeOrderTable: React.FC<RevenueFeeOrderTableProps> = ({
                         <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
                           {rfTm(o.created_at)}
                         </div>
-                        {rfIsCanceled(o) && o.cancelled_at && (
-                          <div style={{ fontSize: '11px', color: 'var(--danger)' }}>
-                            취소 {rfDt(o.cancelled_at)}
-                          </div>
-                        )}
                       </td>
                       <td style={dim}>
                         {o.merchant_name}{' '}
@@ -266,6 +263,13 @@ export const RevenueFeeOrderTable: React.FC<RevenueFeeOrderTableProps> = ({
                             지급: {grantedProducts[0].product_name}
                             {grantedProducts.length > 1 && ` 외 ${grantedProducts.length - 1}건`}
                           </div>
+                        )}
+                      </td>
+                      {/* 취소 확인일 — 포스트백 로그와 같은 이름·같은 형식이다. 쿠팡은 취소 포스트백을
+                          받은 시각(분까지), 링크프라이스는 실적조회에서 310 을 확인한 날(날짜만). */}
+                      <td style={{ whiteSpace: 'nowrap', fontSize: '12px', ...dim }}>
+                        {(rfIsCanceled(o) && cancelSeenText(o.cancelled_at, o.order_source)) || (
+                          <span style={{ color: 'var(--text-3)' }}>—</span>
                         )}
                       </td>
                       {products.length > 0 ? <RfCaret /> : <td className="pb-caret" />}
