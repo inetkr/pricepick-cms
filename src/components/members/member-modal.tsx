@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import type { IAccountStatus } from 'src/types/common';
 import type { IUser } from 'src/types/users/user';
 import { formatDate, parseTimestamp } from 'src/utils/helper';
+import { MemberReceivedNotifications } from './member-received-notifications';
 
 interface MemberModalProps {
   isOpen: boolean;
@@ -380,6 +381,8 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               환수.
             </div>
           </div>
+
+          <MemberReceivedNotifications userId={member.id} />
 
           {canEditTickets && (
             <div className="form-group">

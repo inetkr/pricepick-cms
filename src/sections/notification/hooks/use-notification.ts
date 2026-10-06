@@ -1,8 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { notificationAPI } from 'src/api';
-import { NOTIFICATION_ERROR_MESSAGE } from 'src/constants/notification';
-import type { INotification, INotificationStat, ISendNotificationPayload } from 'src/types/notification';
+import {
+  getNotificationFailReasonLabel,
+  NOTIFICATION_ERROR_MESSAGE,
+} from 'src/constants/notification';
+import type {
+  INotification,
+  INotificationStat,
+  INotificationTestUser,
+  ISendNotificationPayload,
+} from 'src/types/notification';
 
 type IFilters = {
   title: string;
@@ -87,7 +95,8 @@ export const useNotification = () => {
     try {
       const responseData = await notificationAPI.sendNotification(payload);
       if (responseData && responseData.result && responseData.result.object) {
-        const successMessage = payload.send_type === 'SCHEDULED' ? '알림이 예약되었습니다.' : '알림이 발송되었습니다.';
+        const successMessage =
+          payload.send_type === 'SCHEDULED' ? '알림이 예약되었습니다.' : '알림이 발송되었습니다.';
         toast.success(successMessage);
         setPage(1);
         reload();
@@ -103,11 +112,41 @@ export const useNotification = () => {
     }
   };
 
-  const sendTestNotification = async (payload: Omit<ISendNotificationPayload, 'is_test'>) => {
+  // DEVQA 23 · 고른 회원에게만 즉시 발송 — 발송 내역에는 「테스트」로 남는다
+  const sendTestNotification = async (
+    payload: { title: string; content: string },
+    users: INotificationTestUser[]
+  ) => {
+    if (!users.length) {
+      toast.error('테스트로 보낼 회원을 선택하세요.');
+      return false;
+    }
     setIsSendingTest(true);
     try {
-      await notificationAPI.sendNotification({ ...payload, is_test: true });
-      toast.success('테스트 발송이 완료되었습니다. (본인)');
+      const responseData = await notificationAPI.sendTestNotification({
+        title: payload.title,
+        content: payload.content,
+        test_user_ids: users.map((u) => u.id),
+      });
+      const results = responseData?.result?.object?.results || [];
+      const failed = results.filter((r) => r.result !== 'SENT');
+      const successCount = results.length - failed.length;
+
+      if (!failed.length) {
+        toast.success(`테스트 발송 완료 · ${successCount}명`);
+      } else {
+        // 실패한 회원과 사유를 바로 보여준다 — 예: 「SuperHero: 등록된 기기 없음」
+        const detail = failed
+          .map((r) => {
+            const reason = r.fail_reason || (r.result !== 'FAILED' ? r.result : null);
+            const name = r.nickname || r.identified_id || r.user_id;
+            return `${name}: ${getNotificationFailReasonLabel(reason) || '실패'}`;
+          })
+          .join(', ');
+        toast.warning(`테스트 발송 · 성공 ${successCount}명 / 실패 ${failed.length}명`, {
+          description: detail,
+        });
+      }
       reload();
       return true;
     } catch (error) {

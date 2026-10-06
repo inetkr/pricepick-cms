@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { NOTIFICATION_TARGET_AUDIENCE_OPTIONS } from 'src/constants/notification';
 import type { INotificationSendType, INotificationTargetAudience } from 'src/types/notification';
 import { InfoBox } from '../stats/info-box';
-import { NotificationPreviewModal } from './notification-preview-modal';
 
 interface NotificationFormCardProps {
   isSaving: boolean;
@@ -16,11 +15,12 @@ interface NotificationFormCardProps {
     send_type: INotificationSendType;
     scheduled_at: number | null;
   }) => Promise<boolean>;
+  // 테스트 발송 대상 선택 모달을 연다 (DEVQA 23)
   onSendTest: (data: {
     title: string;
     content: string;
     target_audience: INotificationTargetAudience;
-  }) => Promise<boolean>;
+  }) => void;
 }
 
 export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
@@ -36,7 +36,6 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
   const [scheduledAt, setScheduledAt] = useState('');
   const [attempted, setAttempted] = useState(false);
   const [sendAttempted, setSendAttempted] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
 
   // 예약 일시는 지금 이후여야 한다 — 지난 시각을 보내면 서버가 거절한다
   const scheduledAtMs = scheduledAt.trim() ? new Date(scheduledAt).getTime() : NaN;
@@ -82,11 +81,10 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
     if (ok) resetForm();
   };
 
-  const handleSendTest = async () => {
+  const handleSendTest = () => {
     setAttempted(true);
     if (title.trim().length === 0 || content.trim().length === 0 || isSendingTest) return;
-    setShowPreview(true);
-    await onSendTest({
+    onSendTest({
       title: title.trim(),
       content: content.trim(),
       target_audience: targetAudience,
@@ -200,7 +198,7 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
               disabled={isSendingTest}
               onClick={handleSendTest}
             >
-              {isSendingTest ? '전송 중...' : '테스트 발송'}
+              테스트 발송
             </button>
             <button
               type="button"
@@ -218,13 +216,6 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
           발송·경품 당첨)은 동의 여부와 무관하게 발송됩니다.
         </InfoBox>
       </div>
-
-      <NotificationPreviewModal
-        open={showPreview}
-        title={title.trim()}
-        content={content.trim()}
-        onClose={() => setShowPreview(false)}
-      />
     </div>
   );
 };

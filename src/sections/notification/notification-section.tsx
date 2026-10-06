@@ -3,11 +3,23 @@
 import React, { useState } from 'react';
 import { NotificationFormCard } from 'src/components/notification/notification-form-card';
 import { NotificationLimitPolicyCard } from 'src/components/notification/notification-limit-policy-card';
+import { NotificationRecipientsModal } from 'src/components/notification/notification-recipients-modal';
 import { NotificationStats } from 'src/components/notification/notification-stats';
 import { NotificationTable } from 'src/components/notification/notification-table';
+import { NotificationTestSendModal } from 'src/components/notification/notification-test-send-modal';
 import type { PaginationProps } from 'src/components/common/pagination';
-import { NOTIFICATION_STATUS_OPTIONS, NOTIFICATION_TARGET_AUDIENCE_OPTIONS } from 'src/constants/notification';
+import {
+  NOTIFICATION_STATUS_OPTIONS,
+  NOTIFICATION_TARGET_AUDIENCE_OPTIONS,
+} from 'src/constants/notification';
 import { useNotification } from 'src/sections/notification/hooks/use-notification';
+import type { INotification, INotificationTestUser } from 'src/types/notification';
+
+// 테스트 발송 내용 — 작성 중인 알림 또는 예약 건
+type ITestSource = {
+  title: string;
+  content: string;
+};
 
 export const NotificationSection: React.FC = () => {
   const {
@@ -31,6 +43,17 @@ export const NotificationSection: React.FC = () => {
   const [searchTitle, setSearchTitle] = useState(filters.title);
   const [targetAudienceFilter, setTargetAudienceFilter] = useState(filters.target_audience);
   const [statusFilter, setStatusFilter] = useState(filters.status);
+  const [testSource, setTestSource] = useState<ITestSource | null>(null);
+  const [recipientsTarget, setRecipientsTarget] = useState<INotification | null>(null);
+
+  const handleOpenTestFromScheduled = (notification: INotification) => {
+    setTestSource({ title: notification.title, content: notification.content });
+  };
+
+  const handleSendTest = (users: INotificationTestUser[]) => {
+    if (!testSource) return Promise.resolve(false);
+    return sendTestNotification(testSource, users);
+  };
 
   const handleApplyFilters = () => {
     setFilters({ title: searchTitle, target_audience: targetAudienceFilter, status: statusFilter });
@@ -65,16 +88,7 @@ export const NotificationSection: React.FC = () => {
             is_test: false,
           })
         }
-        onSendTest={({ title, content, target_audience }) =>
-          sendTestNotification({
-            channel: 'PUSH_APP',
-            title,
-            content,
-            target_audience,
-            send_type: 'NOW',
-            scheduled_at: null,
-          })
-        }
+        onSendTest={({ title, content }) => setTestSource({ title, content })}
       />
 
       <div className="toolbar">
@@ -97,7 +111,11 @@ export const NotificationSection: React.FC = () => {
             </option>
           ))}
         </select>
-        <select className="filter-sel" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+        <select
+          className="filter-sel"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
           <option value="">전체 상태</option>
           {NOTIFICATION_STATUS_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -115,8 +133,27 @@ export const NotificationSection: React.FC = () => {
           불러오는 중...
         </div>
       ) : (
-        <NotificationTable notifications={notifications} pagination={paginationProps} />
+        <NotificationTable
+          notifications={notifications}
+          pagination={paginationProps}
+          onRowClick={setRecipientsTarget}
+          onSendTest={handleOpenTestFromScheduled}
+        />
       )}
+
+      <NotificationTestSendModal
+        open={!!testSource}
+        title={testSource?.title || ''}
+        content={testSource?.content || ''}
+        isSending={isSendingTest}
+        onClose={() => setTestSource(null)}
+        onSend={handleSendTest}
+      />
+
+      <NotificationRecipientsModal
+        notification={recipientsTarget}
+        onClose={() => setRecipientsTarget(null)}
+      />
     </div>
   );
 };

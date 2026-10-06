@@ -47,17 +47,6 @@ export const PbCaret: React.FC = () => (
 /* 시각 칸 — 큰 글씨는 제휴사가 보낸 주문 시각이고 원문 문자열을 그 밑에 그대로 남긴다.
    제휴사 시각이 안 왔으면 우리가 받은 시각(created_at)으로 넘어가고, 그럴 땐 그렇다고 적는다 —
    둘은 다른 값이라 말없이 섞으면 안 된다. */
-// 취소 건은 취소 일시를 함께 적는다 — 서버 값이 없으면 취소 포스트백을 받은 시각을 쓴다
-const PbCancelDate: React.FC<{ row: IPostbackLog }> = ({ row }) => {
-  const cancelAt = row.cancelled_at ?? (row.action === 'CANCEL' ? row.created_at : null);
-  if (!cancelAt) return null;
-  return (
-    <div style={{ fontSize: '11px', color: 'var(--danger)' }}>
-      취소 {pbDt(cancelAt)} {pbTm(cancelAt)}
-    </div>
-  );
-};
-
 export const PbTimeCell: React.FC<{ row: IPostbackLog }> = ({ row }) => {
   const { raw, at, hasTime } = pbMerchantTime(row);
   if (at) {
@@ -68,7 +57,6 @@ export const PbTimeCell: React.FC<{ row: IPostbackLog }> = ({ row }) => {
             받지도 않은 값을 적는 셈이 된다 */}
         {hasTime && <div className="pb-dim">{pbTm(at)}</div>}
         {Boolean(raw) && <div className="pb-raw">{raw}</div>}
-        <PbCancelDate row={row} />
       </>
     );
   }
@@ -77,10 +65,26 @@ export const PbTimeCell: React.FC<{ row: IPostbackLog }> = ({ row }) => {
       <div style={{ fontWeight: 700 }}>{pbDt(row.created_at)}</div>
       <div className="pb-dim">{pbTm(row.created_at)}</div>
       <div className="pb-raw">{raw ? `${raw} · 수신 시각` : '수신 시각'}</div>
-      {/* 수신 시각을 이미 적었으므로 서버가 준 취소 일시만 덧붙인다 */}
-      {row.cancelled_at && <PbCancelDate row={row} />}
     </>
   );
+};
+
+/* ── 취소 확인일 (QA31) ──────────────────────────────────────────────────
+   「취소일」이 아니라 「취소 확인일」이다 — 우리가 취소를 안 날이지 취소가 난 날이 아니다.
+   링크프라이스는 취소 시점을 알려주지 않는다(공식 FAQ: 정산·취소 완료 시점은 확인 불가).
+     쿠팡        취소 포스트백을 받은 시각    2026-10-05 14:23
+     링크프라이스  실적조회에서 310 확인한 날   2026-10-05 (날짜만)
+     취소 아닌 건                            —                                    */
+export const PbCancelSeenCell: React.FC<{ row: IPostbackLog }> = ({ row }) => {
+  const isCoupang = row.source === 'COUPANG';
+  const seenAt = isCoupang
+    ? row.action === 'CANCEL'
+      ? (row.cancelled_at ?? row.created_at)
+      : null
+    : (row.cancelled_at ?? null);
+  const date = pbDt(seenAt).split('/').join('-');
+  if (!date) return <PbNone />;
+  return <>{isCoupang ? `${date} ${pbTm(seenAt).slice(0, 5)}` : date}</>;
 };
 
 /* 펼치면 나오는 수신 원문 필드 — 접힌 화면에 이미 나온 것도 빼지 않는다.

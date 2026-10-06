@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import {
+  PbCancelSeenCell,
   PbCaret,
   PbLinesTable,
   PbMoney,
@@ -17,7 +18,7 @@ import type {
 } from 'src/types/postback/postback';
 import { pbN, pbPayloadEntries } from 'src/utils/postback';
 
-const COL_SPAN = 9;
+const COL_SPAN = 10;
 
 interface PostbackLinkpriceTableProps {
   rows: IPostbackLog[];
@@ -135,6 +136,10 @@ export const PostbackLinkpriceTable: React.FC<PostbackLinkpriceTableProps> = ({
                 수수료
                 <span className="fk">commision</span>
               </th>
+              <th>
+                취소 확인일
+                <span className="fk">실적조회 310</span>
+              </th>
               <th aria-label="펼치기" />
             </tr>
           </thead>
@@ -195,6 +200,10 @@ export const PostbackLinkpriceTable: React.FC<PostbackLinkpriceTableProps> = ({
                       {/* 링크프라이스가 수수료 금액을 직접 보내 준다 — 화면에서 계산한 값이 아니다 */}
                       <td>
                         <PbMoney value={r.total_commission} />
+                      </td>
+                      {/* 취소 통보가 오지 않는다 — 실적조회에서 310(취소)으로 확인한 날만 적는다 */}
+                      <td style={{ whiteSpace: 'nowrap' }}>
+                        <PbCancelSeenCell row={r} />
                       </td>
                       <PbCaret />
                     </tr>

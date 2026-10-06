@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import {
+  PbCancelSeenCell,
   PbCaret,
   PbLinesTable,
   PbMoney,
@@ -14,7 +15,7 @@ import { PostbackPagination } from 'src/components/postback/postback-pagination'
 import type { IPostbackCoupangFilters, IPostbackLog } from 'src/types/postback/postback';
 import { PB_KIND_BADGE, pbCoupangPidKey, pbField, pbN, pbPayloadEntries } from 'src/utils/postback';
 
-const COL_SPAN = 8;
+const COL_SPAN = 9;
 
 interface PostbackCoupangTableProps {
   rows: IPostbackLog[];
@@ -124,6 +125,10 @@ export const PostbackCoupangTable: React.FC<PostbackCoupangTableProps> = ({
                 금액
                 <span className="fk">payment</span>
               </th>
+              <th>
+                취소 확인일
+                <span className="fk">수신 시각</span>
+              </th>
               <th aria-label="펼치기" />
             </tr>
           </thead>
@@ -209,6 +214,10 @@ export const PostbackCoupangTable: React.FC<PostbackCoupangTableProps> = ({
                       </td>
                       <td>
                         <PbMoney value={r.total_amount} />
+                      </td>
+                      {/* 취소 포스트백을 받은 시각이 곧 우리가 취소를 안 시점이다 */}
+                      <td style={{ whiteSpace: 'nowrap' }}>
+                        <PbCancelSeenCell row={r} />
                       </td>
                       <PbCaret />
                     </tr>

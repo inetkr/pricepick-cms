@@ -1,6 +1,14 @@
 import axios from 'src/utils/axios';
 import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
-import type { INotification, INotificationStat, ISendNotificationPayload } from 'src/types/notification';
+import type {
+  INotification,
+  INotificationRecipientListResponse,
+  INotificationStat,
+  ISendNotificationPayload,
+  ISendTestNotificationPayload,
+  ISendTestNotificationResult,
+  IUserReceivedNotification,
+} from 'src/types/notification';
 
 const tableName = 'push_campaign';
 
@@ -40,12 +48,65 @@ export default class NotificationAPI {
     }
   };
 
-  sendNotification = async (body: ISendNotificationPayload): Promise<ApiResponse<INotification>> => {
+  sendNotification = async (
+    body: ISendNotificationPayload
+  ): Promise<ApiResponse<INotification>> => {
     try {
       const res = await axios.axiosInstanceWithLoading.post(`/${tableName}/admin/send`, body);
       return res.data;
     } catch (error) {
       console.error('Failed to send push campaign:', error);
+      throw error;
+    }
+  };
+
+  // DEVQA 23 · 테스트 발송
+  sendTestNotification = async (
+    body: ISendTestNotificationPayload
+  ): Promise<ApiResponse<ISendTestNotificationResult>> => {
+    try {
+      const res = await axios.axiosInstanceWithLoading.post(`/${tableName}/admin/send_test`, body);
+      return res.data;
+    } catch (error) {
+      console.error('Failed to send test push campaign:', error);
+      throw error;
+    }
+  };
+
+  // DEVQA 24 · 발송 건의 수신자 목록 (검색·페이징)
+  getNotificationRecipients = async (
+    id: string,
+    page: number,
+    limit: number,
+    search?: string
+  ): Promise<INotificationRecipientListResponse> => {
+    try {
+      const requestParam: Record<string, string | number> = { page, limit };
+      if (search) {
+        requestParam.search = search;
+      }
+      const res = await axios.axiosInstance.get(`/${tableName}/admin/${id}/recipients`, {
+        params: requestParam,
+      });
+      return res.data;
+    } catch (error) {
+      console.error('Failed to fetch notification recipients:', error);
+      throw error;
+    }
+  };
+
+  // 회원 상세의 「받은 알림」
+  getUserReceivedNotifications = async (
+    userId: string,
+    limit: number = 20
+  ): Promise<ApiPaginatedResponse<IUserReceivedNotification>> => {
+    try {
+      const res = await axios.axiosInstance.get(`/${tableName}/admin/user/${userId}/received`, {
+        params: { page: 1, limit },
+      });
+      return res.data;
+    } catch (error) {
+      console.error('Failed to fetch received notifications:', error);
       throw error;
     }
   };

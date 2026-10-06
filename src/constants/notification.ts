@@ -1,5 +1,6 @@
 import type {
   INotificationChannel,
+  INotificationFailReason,
   INotificationSendType,
   INotificationStatus,
   INotificationTargetAudience,
@@ -49,6 +50,19 @@ export const NOTIFICATION_STATUS_OPTIONS: { value: INotificationStatus; label: s
   { value: 'SCHEDULED', label: '예약' },
   { value: 'FAILED', label: '실패' },
 ];
+
+export const NOTIFICATION_FAIL_REASON_LABEL: Record<INotificationFailReason, string> = {
+  NOT_FOUND: '회원 없음(삭제됨)',
+  NO_DEVICE: '등록된 기기 없음',
+  PUSH_FAILED: '푸시 거부(토큰 만료·앱 삭제)',
+  NOT_NORMAL: '정지·탈퇴 회원',
+  SEND_ERROR: '발송 오류',
+};
+
+export const getNotificationFailReasonLabel = (reason: string | null | undefined) => {
+  if (!reason) return '';
+  return NOTIFICATION_FAIL_REASON_LABEL[reason as INotificationFailReason] || reason;
+};
 
 // 백엔드 errorService.custom.customError(message, statusCode, type)의 type 값 → 한글 메시지
 export const NOTIFICATION_ERROR_MESSAGE: Record<string, string> = {
