@@ -2,8 +2,12 @@ import { INVITE_MONTHLY_LIMIT } from 'src/constants/invite';
 import React from 'react';
 
 const acquisitionRows = [
-  { path: '출석체크', reward: '이벤트 티켓 1장', condition: '5일 연속 출석 달성 시' },
-  { path: '룰렛', reward: '포인트·이벤트 티켓 (확률 미정)', condition: '하루 1회 / 확률 지급' },
+  { path: '출석 체크', reward: '이벤트티켓 1장', condition: '5일 연속 출석 달성 시' },
+  {
+    path: '매일 행운 룰렛',
+    reward: '포인트·이벤트티켓(확률 미정)',
+    condition: '하루 1회 / 확률 지급',
+  },
   { path: '온보딩 가입', reward: '+1장', condition: '신규 가입 시 (카카오 연동 후 지급)' },
 ];
 
@@ -11,7 +15,7 @@ export const OpPolicyEventTab: React.FC = () => (
   <div>
     <div className="info-box">
       <strong>정책 확정 반영</strong> — 이벤트 티켓 획득 경로·만료·한도 및 친구초대·온보딩 보상 확정
-      적용. <span style={{ color: 'var(--amber)' }}>경품 추첨 주기(월1/격주)만 미정.</span>
+      적용. 경품 추첨 주기는 매주(월요일 시작~일요일 마감)로 확정.
     </div>
 
     <div className="card-header">
@@ -35,7 +39,7 @@ export const OpPolicyEventTab: React.FC = () => (
           <tr key={row.path}>
             <td>{row.path}</td>
             <td>{row.reward}</td>
-            <td style={{ color: 'var(--text-2)' }}>{row.condition}</td>
+            <td>{row.condition}</td>
           </tr>
         ))}
       </tbody>
@@ -50,7 +54,7 @@ export const OpPolicyEventTab: React.FC = () => (
 
     <div className="card-header" style={{ marginTop: '18px' }}>
       <div className="card-title">
-        이벤트 티켓 발급·응모 한도{' '}
+        친구초대 보상{' '}
         <span style={{ fontSize: '11px', color: 'var(--success)', fontWeight: 600 }}>
           정책 확정
         </span>
@@ -59,8 +63,8 @@ export const OpPolicyEventTab: React.FC = () => (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
       <div className="policy-item">
         <div className="policy-label">초대 성사 기준</div>
-        <div className="policy-value">피초대자 첫 픽구매 완료</div>
-        <div className="policy-desc">가입만으로는 미성사. 첫 픽구매 완료 시점에 성사 처리.</div>
+        <div className="policy-value">피초대자 첫 구매 완료</div>
+        <div className="policy-desc">가입만으로는 미성사. 첫 구매 완료 시점에 성사 처리.</div>
       </div>
       <div className="policy-item">
         <div className="policy-label">초대자 월 한도</div>
@@ -75,7 +79,7 @@ export const OpPolicyEventTab: React.FC = () => (
       <div className="policy-item">
         <div className="policy-label">피초대자 보상</div>
         <div className="policy-value">500P (포인트)</div>
-        <div className="policy-desc">성사(첫 픽구매 완료) 시점에 지급 — 가입 즉시 아님.</div>
+        <div className="policy-desc">성사(첫 구매 완료) 시점에 지급 — 가입 즉시 아님.</div>
       </div>
     </div>
     <div className="card-header" style={{ marginTop: '18px' }}>
@@ -118,7 +122,7 @@ export const OpPolicyEventTab: React.FC = () => (
         <div className="policy-label">가입 즉시</div>
         <div className="policy-value">이벤트 티켓 1장 + 200P</div>
         <div className="policy-desc">
-          어뷰징 방지 — 이벤트 티켓·브론즈 보너스는 카카오 연동 후 지급.
+          어뷰징 방지 — 이벤트 티켓·실버 보너스는 카카오 연동 후 지급.
         </div>
       </div>
       <div className="policy-item">
@@ -128,15 +132,15 @@ export const OpPolicyEventTab: React.FC = () => (
       </div>
       <div className="policy-item">
         <div className="policy-label">첫 경유 구매 (가입 7일 내)</div>
-        <div className="policy-value">브론즈 티켓 1장</div>
+        <div className="policy-value">실버 티켓 1장</div>
         <div className="policy-desc">
-          구매 확정 후 지급 (연동 D+7 / 미연동 D+30, 취소 먹튀 방지).
+          구매 확정 후 지급 (쿠팡 기준 카카오톡 연동 D+7 / 미연동 D+30 · 취소 먹튀 방지).
         </div>
       </div>
       <div className="policy-item">
         <div className="policy-label">친구초대</div>
         <div className="policy-value">양쪽 각 500P</div>
-        <div className="policy-desc">피초대자 첫 픽구매 성사 시 양쪽 지급.</div>
+        <div className="policy-desc">피초대자 첫 구매 성사 시 양쪽 지급.</div>
       </div>
     </div>
     <div className="card-header" style={{ marginTop: '18px' }}>
@@ -147,7 +151,7 @@ export const OpPolicyEventTab: React.FC = () => (
         <div className="policy-label">응모 조건</div>
         <div className="policy-value">이벤트 티켓 1장 · 1회 추첨 최대 10장</div>
         <div className="policy-desc">
-          추첨 회차 기준. 추첨 주기(월1/격주)는 미정 — 운영 회의 후 확정.
+          추첨 회차 기준. 추첨 주기는 매주(월요일 시작~일요일 마감)로 확정.
         </div>
       </div>
       <div className="policy-item">
