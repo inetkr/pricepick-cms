@@ -82,7 +82,14 @@ export const JackpotRouletteSection: React.FC = () => {
         <StatCard
           label="이번 달 상자 열기"
           value={isLoading ? '—' : `${stats.total_spins_this_month.toLocaleString()}회`}
-          change={{ type: 'neutral', text: '실행 기록 없음' }}
+          // 「실행 기록 없음」은 이번 달 연 기록이 정말 없을 때만 — 기록이 있는데 같이 뜨면 모순이다(QA7)
+          change={{
+            type: 'neutral',
+            text:
+              !isLoading && stats.total_spins_this_month === 0
+                ? '실행 기록 없음'
+                : '실제 연 횟수 집계',
+          }}
           color="purple"
         />
         <StatCard

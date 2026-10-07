@@ -19,9 +19,8 @@ const accountStatusLabels: Record<string, string> = {
 };
 
 const marketingConsentLabels: Record<string, string> = {
-  ALL: '전체 동의',
-  SELECTIVE: '선택 동의',
-  NONE: '전체 거부',
+  ALL: '동의',
+  NONE: '거부',
 };
 
 const memberCsvColumns: CsvColumn<IUser>[] = [

@@ -36,9 +36,8 @@ export const MemberToolbar: React.FC<MemberToolbarProps> = ({
   ],
   marketingOptions = [
     { value: '', label: '전체 마케팅' },
-    { value: 'all', label: '전체 동의' },
-    { value: 'sel', label: '선택 동의' },
-    { value: 'none', label: '전체 거부' },
+    { value: 'all', label: '동의' },
+    { value: 'none', label: '거부' },
   ],
   onSearch,
   onTypeChange,

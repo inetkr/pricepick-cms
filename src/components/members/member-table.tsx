@@ -109,17 +109,16 @@ const renderLastOnline = (value: IUser['last_online']) => {
 
 // Helper render marketing badge
 const renderMarketing = (type?: IMarketingConsent) => {
-  if (!type) return '-';
-  const classes = {
+  const classes: Record<IMarketingConsent, string> = {
     ALL: 'mkt-badge all',
-    SELECTIVE: 'mkt-badge sel',
     NONE: 'mkt-badge none',
   };
-  const labels = {
-    ALL: '전체 동의',
-    SELECTIVE: '선택 동의',
-    NONE: '전체 거부',
+  const labels: Record<IMarketingConsent, string> = {
+    ALL: '동의',
+    NONE: '거부',
   };
+  // 모르는 값(예전 SELECTIVE 등)은 지어내지 않고 「-」로 둔다
+  if (!type || !labels[type]) return '-';
   return <span className={classes[type]}>{labels[type]}</span>;
 };
 

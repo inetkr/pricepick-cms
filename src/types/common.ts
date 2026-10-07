@@ -8,7 +8,8 @@ export type IDatePickerControl = Dayjs | null;
 
 export type IAccountStatus = 'NORMAL' | 'BLOCK' | 'DELETE';
 
-export type IMarketingConsent = 'ALL' | 'SELECTIVE' | 'NONE';
+// 앱의 마케팅 정보 수신 토글 하나만 반영한다 — 동의(ALL) / 거부(NONE) (QA11)
+export type IMarketingConsent = 'ALL' | 'NONE';
 
 export type ILoginType = 'INAPP' | 'KAKAO';
 

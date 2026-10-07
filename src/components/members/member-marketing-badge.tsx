@@ -1,6 +1,6 @@
 import React from 'react';
 
-type MarketingType = 'all' | 'sel' | 'none';
+type MarketingType = 'all' | 'none';
 
 interface MemberMarketingBadgeProps {
   type: MarketingType;
@@ -8,9 +8,8 @@ interface MemberMarketingBadgeProps {
 
 export const MemberMarketingBadge: React.FC<MemberMarketingBadgeProps> = ({ type }) => {
   const typeMap = {
-    all: { className: 'mkt-badge all', label: '전체 동의' },
-    sel: { className: 'mkt-badge sel', label: '선택 동의' },
-    none: { className: 'mkt-badge none', label: '전체 거부' },
+    all: { className: 'mkt-badge all', label: '동의' },
+    none: { className: 'mkt-badge none', label: '거부' },
   };
 
   const info = typeMap[type];
