@@ -141,7 +141,7 @@ export const WeeklyDrawEntrantsModal: React.FC<WeeklyDrawEntrantsModalProps> = (
         <div>
           <div style={{ fontWeight: 500 }}>{row.user?.nickname ?? '—'}</div>
           <div style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}>
-            {row.user?.kakao_info?.email ?? (row.user?.kakao_id ? row.user.kakao_id : '미연동')}
+            {row.user?.kakao_info ? (row.user.kakao_info.email ?? '-') : '미연동'}
           </div>
         </div>
       ),

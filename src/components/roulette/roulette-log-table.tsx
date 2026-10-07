@@ -84,7 +84,8 @@ export const RouletteLogTable: React.FC<RouletteLogTableProps> = ({
                 <td>
                   <div style={{ fontWeight: 500 }}>{log.nickname ?? '알 수 없음'}</div>
                   <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
-                    {log.kakao_id ?? '카카오 미연동'}
+                    {/* 카카오톡 ID는 모든 화면에서 이메일로 통일한다 (QA9) */}
+                    {log.kakao_info ? (log.kakao_info.email ?? '-') : '카카오 미연동'}
                   </div>
                 </td>
                 <td style={{ color: 'var(--text-2)' }}>{rouletteTypeLabel}</td>

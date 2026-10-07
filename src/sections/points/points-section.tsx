@@ -9,28 +9,13 @@ import { PointsFilter } from 'src/components/points/points-filter';
 import { PointsStats } from 'src/components/points/points-stats';
 import { PointsTable } from 'src/components/points/points-table';
 import { usePoints } from 'src/sections/points/hooks/use-point';
-import type { IPoint, IPointTransactionType } from 'src/types/points/point';
+import type { IPoint } from 'src/types/points/point';
 import { formatDate } from 'src/utils/helper';
 
-const transactionTypeCsvLabels: Record<IPointTransactionType, string> = {
-  ATTENDANCE: '출석(쿠팡 구경하기)',
-  FRIEND_INVITE: '친구초대 보상',
-  ONBOARDING: '온보딩 보상',
-  LUCKY_SPIN: '행운룰렛 당첨',
-  CONVERT_FROM_TICKET: '티켓→포인트 전환',
-  EXPIRED: '만료 소멸',
-  ADMIN_ADD: '관리자 지급',
-  ADMIN_SUB: '관리자 회수',
-  CONVERT_TO_TICKET: '포인트→티켓 전환',
-  COUPANG_FIRST_VIEW: '쿠팡 첫 방문 보상',
-};
-
+// 유형 이름은 화면 표와 같이 서버가 준 transaction_type_label 을 그대로 쓴다
 const pointsCsvColumns: CsvColumn<IPoint>[] = [
   { header: '회원', accessor: (p) => p.nickname },
-  {
-    header: '유형',
-    accessor: (p) => transactionTypeCsvLabels[p.transaction_type] ?? p.transaction_type,
-  },
+  { header: '유형', accessor: (p) => p.transaction_type_label || p.transaction_type },
   { header: '포인트', accessor: (p) => p.amount },
   { header: '일시', accessor: (p) => formatDate(p.created_at) },
 ];
@@ -40,6 +25,7 @@ export const PointsSection: React.FC = () => {
     points,
     stats,
     isLoading,
+    categoryGroups,
     filters,
     setFilters,
     page,
@@ -85,7 +71,10 @@ export const PointsSection: React.FC = () => {
       <PointsStats stats={stats} />
 
       <div className="toolbar">
-        <PointsFilter onApplyFilters={(newFilters) => setFilters({ ...filters, ...newFilters })} />
+        <PointsFilter
+          categoryGroups={categoryGroups}
+          onApplyFilters={(newFilters) => setFilters({ ...filters, ...newFilters })}
+        />
         <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
           <button
             type="button"

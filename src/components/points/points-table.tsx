@@ -8,23 +8,21 @@ interface PointsTableProps {
   pagination?: PaginationProps;
 }
 
-const transactionTypeConfig: Record<IPointTransactionType, { color: string; label: string }> = {
-  ATTENDANCE: { color: '#c084fc', label: '출석(쿠팡 구경하기)' },
-  FRIEND_INVITE: { color: '#c084fc', label: '친구초대 보상' },
-  ONBOARDING: { color: '#c084fc', label: '온보딩 보상' },
-  LUCKY_SPIN: { color: '#c084fc', label: '행운룰렛 당첨' },
-  CONVERT_FROM_TICKET: { color: 'var(--success)', label: '티켓→포인트 전환' },
-  EXPIRED: { color: 'var(--text-2)', label: '만료 소멸' },
-  ADMIN_ADD: { color: 'var(--success)', label: '관리자 지급' },
-  ADMIN_SUB: { color: 'var(--danger)', label: '관리자 회수' },
-  CONVERT_TO_TICKET: { color: 'var(--danger)', label: '포인트→티켓 전환' },
-  COUPANG_FIRST_VIEW: { color: '#c084fc', label: '쿠팡 첫 방문 보상' },
+// 유형 이름은 서버가 준 transaction_type_label 을 그대로 쓴다 — 화면은 색만 정한다
+const transactionTypeColor: Partial<Record<IPointTransactionType, string>> = {
+  CONVERT_FROM_TICKET: 'var(--success)',
+  ADMIN_ADD: 'var(--success)',
+  EXPIRED: 'var(--text-2)',
+  ADMIN_SUB: 'var(--danger)',
+  CONVERT_TO_TICKET: 'var(--danger)',
 };
 
-const renderTransactionTypeBadge = (type: IPointTransactionType) => {
-  const config = transactionTypeConfig[type] || { color: 'var(--text-2)', label: type };
-  return <span style={{ color: config.color }}>{config.label}</span>;
-};
+// 위 표에 없는 유형은 묶음으로 색을 정한다 — 적립은 보라, 사용·차감은 빨강
+const transactionColor = (point: IPoint) =>
+  transactionTypeColor[point.transaction_type] ??
+  (point.group === 'USE' ? 'var(--danger)' : '#c084fc');
+
+const transactionLabel = (point: IPoint) => point.transaction_type_label || point.transaction_type;
 
 const renderPoints = (amount: number) => {
   const isPositive = amount > 0;
@@ -88,7 +86,7 @@ export const PointsTable: React.FC<PointsTableProps> = ({ points, pagination }) 
                 <td>
                   <div style={{ fontWeight: 500 }}>{point.nickname}</div>
                   <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
-                    {point.kakao_id ?? '게스트(비연동)'}
+                    {point.kakao_info ? (point.kakao_info.email ?? '-') : '게스트(비연동)'}
                   </div>
                   <div
                     style={{ fontSize: '11px', color: 'var(--text-3)', fontFamily: 'monospace' }}
@@ -97,14 +95,7 @@ export const PointsTable: React.FC<PointsTableProps> = ({ points, pagination }) 
                   </div>
                 </td>
                 <td style={{ textAlign: 'center' }}>
-                  {renderTransactionTypeBadge(point.transaction_type)}
-                  {/* 수동 지급·회수 때 입력한 처리 사유 */}
-                  {point.description &&
-                    point.description !== transactionTypeConfig[point.transaction_type]?.label && (
-                      <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
-                        {point.description}
-                      </div>
-                    )}
+                  <span style={{ color: transactionColor(point) }}>{transactionLabel(point)}</span>
                 </td>
                 <td style={{ textAlign: 'center' }}>{renderPoints(point.amount)}</td>
                 <td style={{ textAlign: 'center', fontWeight: 600 }}>

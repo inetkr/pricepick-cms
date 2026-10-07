@@ -31,7 +31,7 @@ const MEMBER_TABLE_HEADERS = [
 
 // 칸이 좁아 긴 값은 말줄임하고 마우스를 올리면 전체를 보여 준다
 const renderMemberInfo: (member: IUser) => JSX.Element = (member) => {
-  const isLinked = Boolean(member.kakao_id && member.kakao_info);
+  const isLinked = Boolean(member.kakao_info);
   const sub = isLinked ? (member.kakao_info?.email ?? '') : '미연동';
   return (
     <>
@@ -65,7 +65,7 @@ const renderMemberInfo: (member: IUser) => JSX.Element = (member) => {
 
 // Helper render link status
 const renderLinkStatus = (member: IUser) => {
-  if (member.kakao_id) {
+  if (member.kakao_info) {
     return <span className="member-type-kakao">카카오 연동</span>;
   }
 

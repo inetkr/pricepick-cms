@@ -76,7 +76,8 @@ export const RevenueGiftiDetailRows: React.FC<RevenueGiftiDetailRowsProps> = ({
                     nickname: order.user.nickname,
                     // The server doesn't send a separate linked flag — a kakao ID present is treated as linked
                     linkedKakao: Boolean(order.user.kakao_id),
-                    kakaoLoginId: order.user.kakao_id,
+                    // 카카오톡 ID는 모든 화면에서 이메일로 통일한다 (QA9)
+                    kakaoLoginId: order.user.kakao_email,
                   }}
                   userId={order.user.identified_id}
                 />

@@ -199,7 +199,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               <input
                 id="member-join-type"
                 className="form-input"
-                value={member.kakao_id ? '카카오 연동' : '게스트 (미연동)'}
+                value={member.kakao_info ? '카카오 연동' : '게스트 (미연동)'}
                 disabled
               />
             </div>

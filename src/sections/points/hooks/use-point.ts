@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { pointAPI } from 'src/api';
-import type { IPoint } from 'src/types/points/point';
+import type { IPoint, IPointTransactionCategoryGroup } from 'src/types/points/point';
 import type { IPointStat } from 'src/types/points/point_stat';
 
 type IFilters = {
@@ -19,6 +19,8 @@ export const usePoints = () => {
     total_expired: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
+  // 「전체 유형」 거르개 목록 — 서버가 준 묶음 그대로 쓴다
+  const [categoryGroups, setCategoryGroups] = useState<IPointTransactionCategoryGroup[]>([]);
   const [filters, setFilters] = useState<IFilters>({
     search: '',
     category: '',
@@ -108,8 +110,18 @@ export const usePoints = () => {
     setLimit(newLimit);
   };
 
+  const loadCategories = useCallback(async () => {
+    try {
+      const responseData = await pointAPI.getTransactionCategories();
+      setCategoryGroups(responseData?.result?.object?.groups ?? []);
+    } catch (error) {
+      console.error('Failed to load point transaction categories:', error);
+    }
+  }, []);
+
   useEffect(() => {
     loadStats();
+    loadCategories();
   }, []);
 
   useEffect(() => {
@@ -120,6 +132,7 @@ export const usePoints = () => {
     points,
     stats,
     isLoading,
+    categoryGroups,
     filters,
     setFilters: handleSetFilters,
     page,

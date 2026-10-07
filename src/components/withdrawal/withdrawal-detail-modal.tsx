@@ -53,7 +53,7 @@ export const WithdrawalDetailModal: React.FC<WithdrawalDetailModalProps> = ({
           </div>
           <div className="policy-item">
             <div className="policy-label">가입 유형(탈퇴 전)</div>
-            <div className="policy-value">{member.kakao_id ? '카카오 연동' : '게스트'}</div>
+            <div className="policy-value">{member.kakao_info ? '카카오 연동' : '게스트'}</div>
           </div>
           <div className="policy-item">
             <div className="policy-label">탈퇴일시</div>

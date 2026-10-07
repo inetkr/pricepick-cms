@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
+import type { IPointTransactionCategoryGroup } from 'src/types/points/point';
 
 interface Option {
   value: string;
   label: string;
-}
-
-interface OptionGroup {
-  label: string;
-  options: Option[];
 }
 
 export interface PointsFilterValues {
@@ -19,32 +15,10 @@ export interface PointsFilterValues {
 interface PointsFilterProps {
   onApplyFilters: (filters: PointsFilterValues) => void;
   searchPlaceholder?: string;
-  categoryGroups?: OptionGroup[];
+  // /point/admin/transaction_categories 가 준 묶음 — 화면에서 따로 목록을 두지 않는다
+  categoryGroups: IPointTransactionCategoryGroup[];
   periodOptions?: Option[];
 }
-
-const categoryGroups: OptionGroup[] = [
-  {
-    label: '적립',
-    options: [
-      { value: 'ATTENDANCE', label: '출석(쿠팡 구경하기)' },
-      { value: 'FRIEND_INVITE', label: '친구초대 보상' },
-      { value: 'ONBOARDING', label: '온보딩 보상' },
-      { value: 'LUCKY_SPIN', label: '행운룰렛 당첨' },
-      { value: 'CONVERT_FROM_TICKET', label: '티켓→포인트 전환' },
-      { value: 'ADMIN_ADD', label: '관리자 지급' },
-      { value: 'COUPANG_FIRST_VIEW', label: '쿠팡 첫 방문 보상' },
-    ],
-  },
-  {
-    label: '사용·차감',
-    options: [
-      { value: 'CONVERT_TO_TICKET', label: '포인트→티켓 전환' },
-      { value: 'EXPIRED', label: '만료 소멸' },
-      { value: 'ADMIN_SUB', label: '관리자 회수' },
-    ],
-  },
-];
 
 const periodOptions: Option[] = [
   { value: '', label: '전체 기간' },
@@ -56,7 +30,7 @@ const periodOptions: Option[] = [
 export const PointsFilter: React.FC<PointsFilterProps> = ({
   onApplyFilters,
   searchPlaceholder = '닉네임, 카카오 ID 검색',
-  categoryGroups: categoryGroupsProp = categoryGroups,
+  categoryGroups,
   periodOptions: periodOptionsProp = periodOptions,
 }) => {
   const [search, setSearch] = useState('');
@@ -78,11 +52,11 @@ export const PointsFilter: React.FC<PointsFilterProps> = ({
       />
       <select className="filter-sel" value={category} onChange={(e) => setCategory(e.target.value)}>
         <option value="">전체 유형</option>
-        {categoryGroupsProp.map((group) => (
-          <optgroup key={group.label} label={group.label}>
-            {group.options.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
+        {categoryGroups.map((group) => (
+          <optgroup key={group.code} label={group.label}>
+            {group.categories.map((item) => (
+              <option key={item.code} value={item.code}>
+                {item.label}
               </option>
             ))}
           </optgroup>

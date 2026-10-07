@@ -2,7 +2,7 @@ import axios from 'src/utils/axios';
 import BaseAPI from './base-api';
 import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
 import type { IPointStat } from 'src/types/points/point_stat';
-import type { IPoint } from 'src/types/points/point';
+import type { IPoint, IPointTransactionCategoryGroup } from 'src/types/points/point';
 import type { IAttendanceStat } from 'src/types/points/attendance_stat';
 import type { IConversionRates } from 'src/types/points/conversion_rate';
 import type { IPointPolicyConfig } from 'src/types/config/point_policy_config';
@@ -29,6 +29,18 @@ export default class PointAPI extends BaseAPI {
       return response.data;
     } catch (error) {
       console.error('Error fetching point attendance statistics:', error);
+      throw error;
+    }
+  };
+
+  getTransactionCategories = async (): Promise<
+    ApiResponse<{ groups: IPointTransactionCategoryGroup[] }>
+  > => {
+    try {
+      const response = await axios.axiosInstance.get(`/${tableName}/admin/transaction_categories`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching point transaction categories:', error);
       throw error;
     }
   };

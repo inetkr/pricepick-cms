@@ -12,7 +12,7 @@ const renderMemberInfo = (member: IUser) => (
   <>
     <div style={{ fontWeight: 500 }}>{member.nickname}</div>
     <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
-      {member.kakao_id ?? '게스트(비연동)'}
+      {member.kakao_info ? (member.kakao_info.email ?? '-') : '게스트(비연동)'}
     </div>
     <div style={{ fontSize: '11px', color: 'var(--text-3)', fontFamily: 'monospace' }}>
       {member.identified_id}
@@ -21,7 +21,7 @@ const renderMemberInfo = (member: IUser) => (
 );
 
 const renderJoinType = (member: IUser) => {
-  if (member.kakao_id) {
+  if (member.kakao_info) {
     return <span className="member-type-kakao">카카오 연동</span>;
   }
   return (

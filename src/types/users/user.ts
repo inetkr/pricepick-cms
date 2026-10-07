@@ -9,7 +9,8 @@ export type IUser = IBase & {
   email: string | null;
   login_type: ILoginType;
   kakao_id: string | number | null;
-  kakao_info: IKakaoUserInfo;
+  // 연동 여부는 kakao_info 로 본다 — 미연동이면 null
+  kakao_info: IKakaoUserInfo | null;
   account_status: IAccountStatus;
   last_ip: string;
   // epoch 밀리초를 문자열로 준다 — parseTimestamp로 읽는다
