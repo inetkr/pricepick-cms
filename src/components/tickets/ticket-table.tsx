@@ -4,6 +4,7 @@ import type { PaginationProps } from '../common/pagination';
 import { Pagination } from '../common/pagination';
 import { TicketNameByGrade } from '../common/ticket-chip';
 import type { IUsageStatus } from 'src/types/common';
+import { maskKakaoEmail } from 'src/utils/helper';
 
 interface TicketTableProps {
   tickets: ITicket[];
@@ -111,7 +112,7 @@ export const TicketTable: React.FC<TicketTableProps> = ({
                 <td>
                   <div style={{ fontWeight: 500 }}>{ticket.nickname}</div>
                   <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
-                    {ticket.kakao_info?.email ?? '게스트(비연동)'}
+                    {ticket.kakao_info?.email ? maskKakaoEmail(ticket.kakao_info.email) : '-'}
                   </div>
                   <div
                     style={{ fontSize: '11px', color: 'var(--text-2)', fontFamily: 'monospace' }}

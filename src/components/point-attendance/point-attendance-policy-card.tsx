@@ -1,9 +1,13 @@
 import React from 'react';
-import type { IAttendanceConfigValue } from 'src/types/config/attendance_config';
+import type {
+  IAttendanceConfigValue,
+  IAttendanceRecognitionConditionOption,
+} from 'src/types/config/attendance_config';
 import { PolicyItem } from '../common/policy-item';
 
 interface AttendancePolicyCardProps {
   config: IAttendanceConfigValue;
+  recognitionConditionOptions: IAttendanceRecognitionConditionOption[];
 }
 
 const linkedStoreLabels: Record<string, string> = {
@@ -12,12 +16,15 @@ const linkedStoreLabels: Record<string, string> = {
   ALL: '전체 제휴몰',
 };
 
-const conditionLabels: Record<string, string> = {
-  RETURN_FROM_STORE: '제휴몰 방문 후 앱 복귀',
-  MANUAL_CHECKIN: '앱 진입만으로 인정',
-};
+export const AttendancePolicyCard: React.FC<AttendancePolicyCardProps> = ({
+  config,
+  recognitionConditionOptions,
+}) => {
+  // 출석 인정 조건 라벨은 백엔드(recognition_condition_options)에서 관리한다
+  const conditionLabel =
+    recognitionConditionOptions.find((option) => option.code === config.recognition_condition)
+      ?.label || config.recognition_condition;
 
-export const AttendancePolicyCard: React.FC<AttendancePolicyCardProps> = ({ config }) => {
   return (
     <div className="card">
       <div className="card-header">
@@ -27,7 +34,7 @@ export const AttendancePolicyCard: React.FC<AttendancePolicyCardProps> = ({ conf
         <PolicyItem
           label="일일 지급"
           value={`${config.daily_points}P (${(config.daily_points / 10).toLocaleString()}원 상당)`}
-          description={`1일 1회, ${conditionLabels[config.recognition_condition] || config.recognition_condition} 시 지급`}
+          description={`1일 1회, ${conditionLabel}`}
         />
         <PolicyItem
           label="연결 제휴몰"

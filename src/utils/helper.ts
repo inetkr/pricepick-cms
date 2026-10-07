@@ -159,7 +159,16 @@ export const formatPhoneNumber = (phoneNumber: string) => {
   return phoneNumber;
 };
 
-export const getAgeFromBirthday = (birthday: string) => {
+// 카카오 이메일의 @ 앞부분 끝 3글자를 가린다 — 예: 9xabc@kakao.com → 9x***@kakao.com
+export const maskKakaoEmail = (email: string | null | undefined): string => {
+  if (!email) return '';
+  const atIndex = email.lastIndexOf('@');
+  const local = atIndex >= 0 ? email.slice(0, atIndex) : email;
+  const domain = atIndex >= 0 ? email.slice(atIndex) : '';
+  return `${local.slice(0, Math.max(local.length - 3, 0))}***${domain}`;
+};
+
+export const getAgeFromBirthday =(birthday: string) => {
   const birthDate = new Date(birthday);
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();

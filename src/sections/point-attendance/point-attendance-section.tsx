@@ -10,7 +10,15 @@ import { usePointAttendance } from 'src/sections/point-attendance/hooks/use-poin
 import type { IAttendanceConfigValue } from 'src/types/config/attendance_config';
 
 export const PointAttendanceSection: React.FC = () => {
-  const { config, isLoading, isSaving, saveConfig, stats, isStatsLoading } = usePointAttendance();
+  const {
+    config,
+    recognitionConditionOptions,
+    isLoading,
+    isSaving,
+    saveConfig,
+    stats,
+    isStatsLoading,
+  } = usePointAttendance();
 
   const handleSaveSettings = async (data: IAttendanceConfigValue) => {
     const ok = await saveConfig(data);
@@ -37,8 +45,16 @@ export const PointAttendanceSection: React.FC = () => {
         </div>
       ) : (
         <div className="card-grid">
-          <AttendanceSettingsCard config={config} isSaving={isSaving} onSave={handleSaveSettings} />
-          <AttendancePolicyCard config={config} />
+          <AttendanceSettingsCard
+            config={config}
+            recognitionConditionOptions={recognitionConditionOptions}
+            isSaving={isSaving}
+            onSave={handleSaveSettings}
+          />
+          <AttendancePolicyCard
+            config={config}
+            recognitionConditionOptions={recognitionConditionOptions}
+          />
         </div>
       )}
     </div>

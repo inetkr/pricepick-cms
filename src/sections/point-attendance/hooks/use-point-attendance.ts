@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { configAPI, pointAPI } from 'src/api';
-import type { IAttendanceConfig, IAttendanceConfigValue } from 'src/types/config/attendance_config';
+import type {
+  IAttendanceConfig,
+  IAttendanceConfigValue,
+  IAttendanceRecognitionConditionOption,
+} from 'src/types/config/attendance_config';
 import type { IAttendanceStat } from 'src/types/points/attendance_stat';
 
 const CONFIG_KEY = 'ATTENDANCE_CONFIG';
@@ -16,6 +20,9 @@ const defaultConfig: IAttendanceConfigValue = {
 
 export const usePointAttendance = () => {
   const [config, setConfig] = useState<IAttendanceConfigValue>(defaultConfig);
+  const [recognitionConditionOptions, setRecognitionConditionOptions] = useState<
+    IAttendanceRecognitionConditionOption[]
+  >([]);
   const [stats, setStats] = useState<IAttendanceStat>({
     checked_in_today: 0,
     points_granted_today: 0,
@@ -31,6 +38,7 @@ export const usePointAttendance = () => {
       const responseData = await configAPI.getConfig<IAttendanceConfig>(CONFIG_KEY);
       if (responseData && responseData.result && responseData.result.object && responseData.result.object.value) {
         setConfig(responseData.result.object.value);
+        setRecognitionConditionOptions(responseData.result.object.recognition_condition_options ?? []);
       }
     } catch (error) {
       console.error('Failed to load attendance config:', error);
@@ -80,6 +88,7 @@ export const usePointAttendance = () => {
 
   return {
     config,
+    recognitionConditionOptions,
     isLoading,
     isSaving,
     saveConfig,

@@ -1,12 +1,16 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import type { IAttendanceConfigValue } from 'src/types/config/attendance_config';
+import type {
+  IAttendanceConfigValue,
+  IAttendanceRecognitionConditionOption,
+} from 'src/types/config/attendance_config';
 import { FormInput } from '../common/form-input';
 import { FormSelect } from '../common/form-select';
 
 interface AttendanceSettingsCardProps {
   config: IAttendanceConfigValue;
+  recognitionConditionOptions: IAttendanceRecognitionConditionOption[];
   isSaving?: boolean;
   onSave: (config: IAttendanceConfigValue) => void;
 }
@@ -19,17 +23,19 @@ const streakBonusOptions = [
   { value: '2', label: '이벤트 티켓 2장' },
 ];
 
-const conditionOptions = [
-  { value: 'RETURN_FROM_STORE', label: '제휴몰 방문 후 복귀 시 지급' },
-  { value: 'MANUAL_CHECKIN', label: '앱 진입만으로 인정' },
-];
-
 export const AttendanceSettingsCard: React.FC<AttendanceSettingsCardProps> = ({
   config,
+  recognitionConditionOptions,
   isSaving = false,
   onSave,
 }) => {
   const [form, setForm] = useState<IAttendanceConfigValue>(config);
+
+  // 출석 인정 조건 목록은 ATTENDANCE_CONFIG의 recognition_condition_options 값을 그대로 사용한다
+  const conditionOptions = recognitionConditionOptions.map((option) => ({
+    value: option.code,
+    label: option.label,
+  }));
 
   useEffect(() => {
     setForm(config);

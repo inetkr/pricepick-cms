@@ -1,5 +1,6 @@
 import React from 'react';
 import type { IPoint, IPointTransactionType } from 'src/types/points/point';
+import { maskKakaoEmail } from 'src/utils/helper';
 import type { PaginationProps } from '../common/pagination';
 import { Pagination } from '../common/pagination';
 
@@ -86,12 +87,12 @@ export const PointsTable: React.FC<PointsTableProps> = ({ points, pagination }) 
                 <td>
                   <div style={{ fontWeight: 500 }}>{point.nickname}</div>
                   <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
-                    {point.kakao_info ? (point.kakao_info.email ?? '-') : '게스트(비연동)'}
+                    {point.kakao_info?.email ? maskKakaoEmail(point.kakao_info.email) : '-'}
                   </div>
                   <div
                     style={{ fontSize: '11px', color: 'var(--text-3)', fontFamily: 'monospace' }}
                   >
-                    {point.identified_id}
+                    {point.identified_id ?? '-'}
                   </div>
                 </td>
                 <td style={{ textAlign: 'center' }}>

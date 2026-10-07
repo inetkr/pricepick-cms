@@ -1,9 +1,16 @@
 export type IAttendanceRecognitionCondition = 'RETURN_FROM_STORE' | 'MANUAL_CHECKIN';
 
+export type IAttendanceRecognitionConditionOption = {
+  code: IAttendanceRecognitionCondition;
+  label: string;
+};
+
 export type IAttendanceConfig = {
   key: string;
   configured: boolean;
   value: IAttendanceConfigValue;
+  updated_at?: string;
+  recognition_condition_options?: IAttendanceRecognitionConditionOption[];
 }
 
 export type IAttendanceConfigValue = {
