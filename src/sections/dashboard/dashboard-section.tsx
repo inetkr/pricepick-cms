@@ -111,7 +111,7 @@ export const DashboardSection: React.FC = () => {
   const statsRow2 = [
     { label: '전체 회원', value: formatCount(summary?.member_count), color: 'purple' as const },
     {
-      label: '오늘 발행 티켓',
+      label: '발행 티켓 (누적 적립)',
       value: formatCount(summary?.issued_ticket_count),
       change: issuedBreakdown ? { type: 'neutral' as const, text: issuedBreakdown } : undefined,
       color: 'green' as const,

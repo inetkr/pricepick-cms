@@ -4,5 +4,6 @@ export type ITicketStat = {
   total_gifticon_purchases: number;
   total_expired: number;
   total_admin_sub: number;
+  issued_ticket_count: number;
 };
 

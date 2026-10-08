@@ -32,15 +32,19 @@ export const Pagination: React.FC<PaginationProps> = ({
   // Nếu chỉ có 1 trang hoặc 0 trang, không hiển thị
   if (totalPages <= 0) return null;
 
-  const startIndex = (currentPage - 1) * itemsPerPage + 1;
+  // 목록이 비어 있으면 0–0 으로 표시하고 이전·다음 버튼을 모두 막는다
+  const isEmpty = !totalItems;
+  const startIndex = isEmpty ? 0 : (currentPage - 1) * itemsPerPage + 1;
   const endIndex = Math.min(currentPage * itemsPerPage, totalItems || 0);
+  const isPrevDisabled = isEmpty || currentPage <= 1;
+  const isNextDisabled = isEmpty || currentPage >= totalPages;
 
   const handlePrev = () => {
-    if (currentPage > 1) onPageChange(currentPage - 1);
+    if (!isPrevDisabled) onPageChange(currentPage - 1);
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) onPageChange(currentPage + 1);
+    if (!isNextDisabled) onPageChange(currentPage + 1);
   };
 
   return (
@@ -70,7 +74,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <button
           type="button"
           className="page-btn"
-          disabled={currentPage === 1}
+          disabled={isPrevDisabled}
           onClick={handlePrev}
           aria-label="Previous page"
         >
@@ -86,7 +90,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <button
           type="button"
           className="page-btn"
-          disabled={currentPage === totalPages}
+          disabled={isNextDisabled}
           onClick={handleNext}
           aria-label="Next page"
         >

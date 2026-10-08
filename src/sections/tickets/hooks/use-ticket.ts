@@ -18,6 +18,7 @@ export const useTickets = () => {
     total_accumulation_transactions: 0,
     total_expired: 0,
     total_admin_sub: 0,
+    issued_ticket_count: 0,
   });
   const [categories, setCategories] = useState<ITicketHistoryCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);

@@ -11,7 +11,7 @@ export const TicketStats: React.FC<TicketStatsProps> = ({ stats }) => {
     <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
       <StatCard
         label="누적 발행 (적립)"
-        value={`${stats.total_accumulation_transactions.toLocaleString()}`}
+        value={`${(stats.issued_ticket_count ?? 0).toLocaleString()}`}
         change={{ type: 'neutral', text: '전체 누적' }}
         color="purple"
       />

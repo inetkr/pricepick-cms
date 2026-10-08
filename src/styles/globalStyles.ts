@@ -1806,6 +1806,15 @@ export const globalStyles = css`
     color: white;
     border-color: var(--main);
   }
+  /* 막힌 버튼은 눌리는 것처럼 보이지 않게 — 마우스를 올려도 색이 바뀌지 않는다 */
+  .page-btn:disabled,
+  .page-btn:disabled:hover {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: transparent;
+    color: var(--text-2);
+    border-color: var(--border);
+  }
 
   /* ── 회원 유형 배지 ── */
   .member-type-kakao {
