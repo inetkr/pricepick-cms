@@ -1,17 +1,12 @@
 // src/components/point-policy/ExchangeRateCard.tsx
 import React from 'react';
 import type { IConversionRateItem, IConversionRates } from 'src/types/points/conversion_rate';
+import { TicketChipOnlyName } from '../common/ticket-chip';
 
 interface ExchangeRateCardProps {
   data: IConversionRates | null;
   exchangeRate: { point: number; won: number };
 }
-
-const gradeLabels: Record<IConversionRateItem['ticket_type'], string> = {
-  BRONZE: '브론즈',
-  SILVER: '실버',
-  GOLD: '골드',
-};
 
 const gradeOrder: IConversionRateItem['ticket_type'][] = ['BRONZE', 'SILVER', 'GOLD'];
 
@@ -45,9 +40,7 @@ export const ExchangeRateCard: React.FC<ExchangeRateCardProps> = ({ data, exchan
             return (
               <tr key={item.ticket_type}>
                 <td>
-                  <span className={`tk-chip ${item.ticket_type.toLowerCase()} bare`}>
-                    {gradeLabels[item.ticket_type]}
-                  </span>
+                  <TicketChipOnlyName grade={item.ticket_type} bare />
                 </td>
                 <td style={{ textAlign: 'center' }}>
                   {`${item.point_amount.toLocaleString()}P → ${item.ticket_amount}장`}
