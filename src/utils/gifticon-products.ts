@@ -47,20 +47,13 @@ export type IGifticonTicketPart = {
   quantity: number;
 };
 
-const TICKET_GRADE_ORDER: Array<Extract<TicketGrade, 'GOLD' | 'SILVER' | 'BRONZE'>> = [
-  'GOLD',
-  'SILVER',
-  'BRONZE',
-];
-
-// GET /gift/admin/products가 내려주는 ticket_price를 화면 공용 형식으로 바꾼다 — 등급별
-// 실제 환산 비율은 서버(티켓 가치 설정)가 정하므로 여기서 다시 계산하지 않는다.
+// GET /gift/admin/products가 내려주는 ticket_price를 화면 공용 형식으로 바꾼다 — 필요 장수는
+// 서버(티켓 가치 설정)가 정하므로 여기서 다시 계산하지 않는다.
+// 티켓 단일화 후에는 필요 장수 하나(숫자)로 온다 → 「티켓 300」 한 줄. 0이면 환산값 미설정.
 export const apiTicketPriceToParts = (
   ticketPrice: IGifticonProductTicketPrice | null | undefined
 ): IGifticonTicketPart[] =>
-  TICKET_GRADE_ORDER.map((grade) => ({ grade, quantity: ticketPrice?.[grade] ?? 0 })).filter(
-    (p) => p.quantity > 0
-  );
+  ticketPrice && ticketPrice > 0 ? [{ grade: 'TICKET', quantity: ticketPrice }] : [];
 
 // 등급 티켓 조각을 "골드 10 + 실버 2"처럼 한 줄 텍스트로 합친다 — 상품 목록 판매가격 칸은
 // 칩(TicketChip)이 아니라 이 굵은 글씨 한 줄 + 아래 회색 원화 병기로 보여준다(포인츠허브 그대로).

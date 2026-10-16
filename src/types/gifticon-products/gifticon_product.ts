@@ -3,11 +3,8 @@
 // 이 모델 하나를 목록/상세/토글/저장 어디서나 그대로 쓴다.
 // ----------------------------------------------------------------------
 
-export interface IGifticonProductTicketPrice {
-  GOLD: number;
-  SILVER: number;
-  BRONZE: number;
-}
+// 티켓 단일화 — 필요 티켓 장수 하나(숫자)로 온다. 예: price_won 2000 → ticket_price 200
+export type IGifticonProductTicketPrice = number;
 
 export interface IGifticonProduct {
   id: string;

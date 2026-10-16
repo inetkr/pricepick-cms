@@ -106,7 +106,7 @@ export const GifticonProductDetailModal: React.FC<GifticonProductDetailModalProp
     ? ''
     : ticketParts.length > 0
       ? `${formatGifticonTicketComboText(ticketParts)} (${product.price_won.toLocaleString('ko-KR')}원)`
-      : '티켓 환산값이 설정되지 않았습니다 — 「티켓 가치 설정」에서 등급별 환산가치를 먼저 넣어 주세요.';
+      : '티켓 환산값이 설정되지 않았습니다 — 「티켓 가치 설정」에서 티켓 가치를 먼저 넣어 주세요.';
 
   const handleSave = async () => {
     const trimmedName = name.trim();
