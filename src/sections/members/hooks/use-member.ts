@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { ticketAPI, userAPI } from 'src/api';
+import type { IAdminTicketType } from 'src/types/common';
 import type { IUser } from 'src/types/users/user';
 import type { IUserStat } from 'src/types/users/user_stat';
 
@@ -104,7 +105,7 @@ export const useMembers = () => {
     async (data: {
       user_identifier: string; // 닉네임 또는 UID
       action: 'ADMIN_ADD' | 'ADMIN_SUB';
-      ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+      ticket_type: IAdminTicketType;
       amount: number;
       description: string;
     }) => {

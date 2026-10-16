@@ -1,10 +1,5 @@
-export type IRouletteRewardType =
-  | 'MISS'
-  | 'POINT'
-  | 'EVENT_TICKET'
-  | 'BRONZE_TICKET'
-  | 'SILVER_TICKET'
-  | 'GOLD_TICKET';
+// 티켓 단일화 — 브론즈·실버·골드 티켓 보상칸이 「티켓」(TICKET) 하나로 합쳐졌다
+export type IRouletteRewardType = 'MISS' | 'POINT' | 'TICKET' | 'EVENT_TICKET';
 
 export type IRouletteSlot = {
   type: IRouletteRewardType;
@@ -13,8 +8,16 @@ export type IRouletteSlot = {
 };
 
 // 매일 행운 룰렛(Lucky Spin) 백엔드 API 계약. 슬롯 보상 유형은 IRouletteRewardType과 이름 체계가
-// 다르다(NO_WIN vs MISS, BRONZE vs BRONZE_TICKET 등) — src/utils/roulette.ts의 매핑 함수로 변환한다.
-export type ILuckySpinPrizeType = 'NO_WIN' | 'POINT' | 'EVENT_TICKET' | 'BRONZE' | 'SILVER' | 'GOLD';
+// 다르다(NO_WIN vs MISS) — src/utils/roulette.ts의 매핑 함수로 변환한다.
+// BRONZE·SILVER·GOLD 는 단일화 전 기록(당첨 로그 등)을 읽을 때만 남겨 둔다 — 화면에는 티켓으로 적는다.
+export type ILuckySpinPrizeType =
+  | 'NO_WIN'
+  | 'POINT'
+  | 'TICKET'
+  | 'EVENT_TICKET'
+  | 'BRONZE'
+  | 'SILVER'
+  | 'GOLD';
 
 export type ILuckySpinConfigSlot = {
   prize_type: ILuckySpinPrizeType;

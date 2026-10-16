@@ -9,14 +9,14 @@ interface PointPolicyCardProps {
 }
 
 const expiryLabels: Record<IPointPolicyConfigValue['expiry_policy'], string> = {
-  ONE_YEAR: '적립일로부터 1년',
-  SIX_MONTHS: '적립일로부터 6개월',
+  ONE_YEAR: '적립일 + 1년 (먼저 적립된 것부터 소멸)',
+  SIX_MONTHS: '적립일 + 6개월 (먼저 적립된 것부터 소멸)',
   NO_EXPIRY: '만료 없음',
 };
 
 const directionLabels: Record<IPointPolicyConfigValue['conversion_direction'], string> = {
-  BIDIRECTIONAL: '포인트 ↔ 티켓 양방향 교환',
-  ONE_WAY_POINT_TO_TICKET: '포인트 → 티켓 단방향 교환',
+  BIDIRECTIONAL: '포인트 ↔ 티켓 양방향',
+  ONE_WAY_POINT_TO_TICKET: '포인트 → 티켓 단방향',
 };
 
 const formatScheduledAt = (value: string | null) => {

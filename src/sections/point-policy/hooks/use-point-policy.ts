@@ -6,7 +6,7 @@ const CONFIG_KEY = 'POINT_POLICY';
 const DEFAULT_DAILY_POINTS = 100;
 
 const defaultConfig: IPointPolicyConfigValue = {
-  exchange_rate: { point: 10, won: 1 },
+  exchange_rate: { point: 1, won: 1 },
   expiry_policy: 'ONE_YEAR',
   daily_accumulation_limit: null,
   conversion_direction: 'BIDIRECTIONAL',

@@ -9,6 +9,7 @@ import { MemberModal } from 'src/components/members/member-modal';
 import { MemberStats } from 'src/components/members/member-stats';
 import { MemberTable } from 'src/components/members/member-table';
 import { useMembers } from 'src/sections/members/hooks/use-member';
+import type { IAdminTicketType } from 'src/types/common';
 import type { IUser } from 'src/types/users/user';
 import { formatDate } from 'src/utils/helper';
 
@@ -29,10 +30,9 @@ const memberCsvColumns: CsvColumn<IUser>[] = [
   { header: '연동 상태', accessor: (m) => (m.kakao_info ? '카카오 연동' : '게스트(미연동)') },
   { header: '가입일', accessor: (m) => formatDate(m.created_at) },
   { header: '랜덤 티켓', accessor: (m) => m.pending_random_tickets },
-  { header: '브론즈 티켓', accessor: (m) => m.ticket_bronze_total },
-  { header: '실버 티켓', accessor: (m) => m.ticket_silver_total },
-  { header: '골드 티켓', accessor: (m) => m.ticket_gold_total },
-  { header: '이벤트 티켓', accessor: (m) => m.ticket_event_total },
+  { header: '전환예정', accessor: (m) => m.pending_ticket },
+  { header: '티켓', accessor: (m) => m.ticket_total },
+  { header: '이벤트 티켓', accessor: (m) => m.event_ticket_total },
   {
     header: '마케팅 수신',
     accessor: (m) => marketingConsentLabels[m.user_setting?.marketing_consent] ?? '',
@@ -79,7 +79,7 @@ export const MembersSection: React.FC = () => {
   const handleGrantTicket = (data: {
     user_identifier: string; // 닉네임 또는 UID
     action: 'ADMIN_ADD' | 'ADMIN_SUB';
-    ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+    ticket_type: IAdminTicketType;
     amount: number;
     description: string;
   }) => {

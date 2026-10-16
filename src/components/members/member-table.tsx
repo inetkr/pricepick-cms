@@ -1,9 +1,9 @@
-import { parseTimestamp } from 'src/utils/helper';
+import { maskKakaoEmail, parseTimestamp } from 'src/utils/helper';
 import React from 'react';
 import type { IUser } from 'src/types/users/user';
 import { MemberActions } from './member-actions';
 import { TicketChip } from '../common/ticket-chip';
-import type { IAccountStatus, IMarketingConsent, TicketGrade } from 'src/types/common';
+import type { IAccountStatus, IMarketingConsent } from 'src/types/common';
 import type { PaginationProps } from '../common/pagination';
 import { Pagination } from '../common/pagination';
 
@@ -22,17 +22,18 @@ const MEMBER_TABLE_HEADERS = [
   '최근 접속',
   '랜덤 티켓',
   '전환예정',
-  '등급 티켓 (브론즈/실버/골드)',
+  '티켓',
   '이벤트 티켓',
   '마케팅 수신',
   '상태',
   '관리',
 ];
 
-// 칸이 좁아 긴 값은 말줄임하고 마우스를 올리면 전체를 보여 준다
+// 칸이 좁아 긴 값은 말줄임하고 마우스를 올리면 전체를 보여 준다.
+// 닉네임 밑에는 카카오 이메일을 끝 3글자를 가려 적는다(예: 9x***@kakao.com) — 이메일이 없으면 「미연동」.
 const renderMemberInfo: (member: IUser) => JSX.Element = (member) => {
-  const isLinked = Boolean(member.kakao_info);
-  const sub = isLinked ? (member.kakao_info?.email ?? '') : '미연동';
+  const email = member.kakao_info?.email;
+  const sub = email ? maskKakaoEmail(email) : '미연동';
   return (
     <>
       <div
@@ -122,76 +123,31 @@ const renderMarketing = (type?: IMarketingConsent) => {
   return <span className={classes[type]}>{labels[type]}</span>;
 };
 
+// 전환예정 — 랜덤 티켓이 확정되면 받을 티켓 수(pending_ticket)
 const getPendingBadge = (user: IUser) => {
-  if (user.pending_gold > 0 || user.pending_bronze > 0 || user.pending_silver > 0) {
-    return (
-      <div className="conv-preview">
-        {user.pending_bronze > 0 && (
-          <TicketChip
-            grade="BRONZE"
-            quantity={user.pending_bronze}
-            size="small"
-            showName={false}
-            prefix="+"
-          />
-        )}
-        {user.pending_silver > 0 && (
-          <TicketChip
-            grade="SILVER"
-            quantity={user.pending_silver}
-            size="small"
-            showName={false}
-            prefix="+"
-          />
-        )}
-        {user.pending_gold > 0 && (
-          <TicketChip
-            grade="GOLD"
-            quantity={user.pending_gold}
-            size="small"
-            showName={false}
-            prefix="+"
-          />
-        )}
-      </div>
-    );
-  }
-  return null;
-};
-
-const getActiveBadge = (user: IUser) => {
-  const tickets: Array<{ grade: TicketGrade; quantity: number }> = [
-    { grade: 'BRONZE', quantity: user.ticket_bronze_total },
-    { grade: 'SILVER', quantity: user.ticket_silver_total },
-    { grade: 'GOLD', quantity: user.ticket_gold_total },
-  ];
-  const dim =
-    user.ticket_bronze_total === 0 &&
-    user.ticket_silver_total === 0 &&
-    user.ticket_gold_total === 0;
-
+  if (!(user.pending_ticket > 0)) return null;
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '4px',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      {tickets.map((t) => (
-        <TicketChip
-          key={t.grade}
-          grade={t.grade.toUpperCase() as TicketGrade}
-          quantity={t.quantity}
-          showName={false}
-          dim={dim}
-        />
-      ))}
+    <div className="conv-preview">
+      <TicketChip
+        grade="TICKET"
+        quantity={user.pending_ticket}
+        size="small"
+        showName={false}
+        prefix="+"
+      />
     </div>
   );
 };
+
+// 보유 티켓 — 등급 없이 한 줄로 적는다
+const getActiveBadge = (user: IUser) => (
+  <TicketChip
+    grade="TICKET"
+    quantity={user.ticket_total ?? 0}
+    showName={false}
+    dim={!user.ticket_total}
+  />
+);
 
 const getMemberStatus: (accountStatus: IAccountStatus) => { label: string; className: string } = (
   accountStatus
@@ -275,11 +231,11 @@ export const MemberTable: React.FC<MemberTableProps> = ({
                   <td>{getActiveBadge(member)}</td>
                   <td>
                     <TicketChip
-                      grade="EVENT"
-                      quantity={member.ticket_event_total}
+                      grade="EVENT_TICKET"
+                      quantity={member.event_ticket_total ?? 0}
                       size="small"
                       showName={false}
-                      dim={member.ticket_event_total === 0}
+                      dim={!member.event_ticket_total}
                     />
                   </td>
                   <td>{renderMarketing(member.user_setting?.marketing_consent)}</td>

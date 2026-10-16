@@ -3,17 +3,10 @@
 // 이 모델 하나를 구매내역/미사용취소/취소내역 어디서나 그대로 쓴다.
 // ----------------------------------------------------------------------
 
-export interface IGifticonOrderTicketCounts {
-  GOLD?: number;
-  SILVER?: number;
-  BRONZE?: number;
-}
-
+// 주문 시점의 티켓 1장 원화 가치 — 티켓 단일화 후 TICKET/EVENT_TICKET 두 가지만 온다
 export interface IGifticonOrderTicketValueSnapshot {
-  GOLD?: number;
-  SILVER?: number;
-  BRONZE?: number;
-  EVENT?: number;
+  TICKET?: number;
+  EVENT_TICKET?: number;
 }
 
 export interface IGifticonOrderUser {
@@ -35,8 +28,8 @@ export interface IGifticonOrder {
   brand_name: string;
   image_url: string | null;
   price_won: number;
-  tickets_used: IGifticonOrderTicketCounts;
-  tickets_used_total: number;
+  // 티켓 단일화 — 등급별 수량이 아니라 티켓 장수 하나로 온다
+  tickets_used: number;
   status: string;
   status_label: string;
   valid_days: number | null;
@@ -48,7 +41,8 @@ export interface IGifticonOrder {
   voucher_pin: string | null;
   voucher_url: string | null;
   is_simulated: boolean;
-  user: IGifticonOrderUser;
+  // 탈퇴 등으로 회원 정보가 없으면 null 로 온다
+  user: IGifticonOrderUser | null;
   provider: string;
   provider_order_id: string | null;
   cancelled_at: string | null;
@@ -56,10 +50,9 @@ export interface IGifticonOrder {
   cancel_reason_label: string | null;
   cancel_note: string | null;
   cancelled_by: string | null;
-  refunded_tickets: IGifticonOrderTicketCounts;
-  refunded_total: number;
-  // 지금 이 시점 기준으로 회원이 들고 있는 등급 티켓 — 취소내역의 「보유 티켓」 칸에 쓴다.
-  tickets_after: IGifticonOrderTicketCounts;
+  refunded_tickets: number;
+  // 지금 이 시점 기준으로 회원이 들고 있는 티켓 장수 — 취소내역의 「보유 티켓」 칸에 쓴다.
+  tickets_after: number;
   tickets_after_won: number;
   ticket_value_snapshot: IGifticonOrderTicketValueSnapshot;
 }

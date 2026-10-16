@@ -15,13 +15,14 @@ interface AttendanceSettingsCardProps {
   onSave: (config: IAttendanceConfigValue) => void;
 }
 
-// 연결 제휴몰은 쿠팡 하나뿐이라 고르는 칸 없이 쿠팡으로 고정한다
+// 연결 제휴몰은 현재 쿠팡 하나뿐이다 — 고르는 칸은 두되 선택지는 쿠팡만 있다
 const LINKED_STORE = 'COUPANG';
+const linkedStoreOptions = [{ value: LINKED_STORE, label: '쿠팡' }];
 
-const streakBonusOptions = [
-  { value: '1', label: '이벤트 티켓 1장' },
-  { value: '2', label: '이벤트 티켓 2장' },
-];
+// 연속 보너스는 「보너스 포인트」 하나뿐이다. 서버 설정에는 아직 보너스 종류를 고르는 값이 없어
+// 이 칸은 표시만 하고, 저장할 때 streak_reward_event_ticket_amount는 받은 값을 그대로 돌려보낸다.
+const STREAK_BONUS_POINT = 'BONUS_POINT';
+const streakBonusOptions = [{ value: STREAK_BONUS_POINT, label: '보너스 포인트' }];
 
 export const AttendanceSettingsCard: React.FC<AttendanceSettingsCardProps> = ({
   config,
@@ -79,25 +80,21 @@ export const AttendanceSettingsCard: React.FC<AttendanceSettingsCardProps> = ({
             <span style={{ color: 'var(--text-2)', fontSize: '13px' }}>P / 1일 1회</span>
           </div>
 
-          <FormInput
+          <FormSelect
             label="연결 제휴몰"
-            value="쿠팡"
-            disabled
-            style={{ maxWidth: '200px' }}
-            hint="쿠팡 전용. 회원은 쿠팡 방문 후 복귀해야 출석이 인정됩니다."
+            options={linkedStoreOptions}
+            value={LINKED_STORE}
+            onChange={() => undefined}
+            hint="현재 쿠팡 전용. 회원은 쿠팡 방문 후 복귀해야 출석이 인정됩니다."
           />
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
-            <FormSelect
-              label="5일 연속 보너스"
-              options={streakBonusOptions}
-              value={String(form.streak_reward_event_ticket_amount)}
-              onChange={(e) =>
-                handleChange('streak_reward_event_ticket_amount', Number(e.target.value) as 1 | 2)
-              }
-              style={{ maxWidth: '200px' }}
-            />
-          </div>
+          <FormSelect
+            label={`${form.streak_milestone_days ?? 5}일 연속 보너스`}
+            options={streakBonusOptions}
+            value={STREAK_BONUS_POINT}
+            onChange={() => undefined}
+            style={{ maxWidth: '200px' }}
+          />
 
           <FormSelect
             label="출석 인정 조건"

@@ -29,12 +29,77 @@ const TK_P2 =
 const TK_P3 =
   'M180.7,298.9l-5.2,5.2,27.4,27.4-4.7,4.7-27.4-27.4-5.2,5.2-4.2-4.2,15.1-15.1,4.2,4.2ZM215.3,319.1l-4.7,4.7-31.6-31.6,4.7-4.7,31.6,31.6ZM231.9,296.8c1.9,1.9,1.9,3.9,0,5.8l-9.9,9.9c-1.9,1.9-3.8,1.8-5.7,0l-25.8-25.8c-1.9-1.9-2-3.8-.1-5.7l9.9-9.9c1.9-1.9,3.9-1.9,5.8,0l7.4,7.4-4.7,4.7-6.2-6.2-6.1,6.1,23.5,23.5,6.1-6.1-6.6-6.6,4.7-4.7,7.8,7.8ZM254.4,280l-5.2,5.2-20.1-8.1,14.1,14.1-4.7,4.7-31.6-31.6,4.7-4.7,13.4,13.4-8.1-18.6,5.2-5.2.2.2,8.6,21.4,23.6,9.2ZM269.5,265l-13.1,13.1-31.6-31.6,13-13,4.2,4.2-8.3,8.3,9.2,9.2,7.1-7.1,4.1,4.1-7.1,7.1,9.9,9.9,8.4-8.4,4.2,4.2ZM259,220.6l-5.2,5.2,27.4,27.4-4.7,4.7-27.4-27.4-5.2,5.2-4.2-4.2,15.1-15.1,4.2,4.2Z';
 
-const GRADE_COLORS = {
-  BRONZE: { c1: '#C68250', c2: '#8B5A2B', icon: 'rgba(255,255,255,0.95)' },
-  SILVER: { c1: '#D8D8D8', c2: '#999999', icon: 'rgba(50,50,50,0.75)' },
-  GOLD: { c1: '#FFD93B', c2: '#E6A800', icon: 'rgba(255,255,255,0.95)' },
-  EVENT: { c1: '#C9AAFF', c2: '#845EEE', icon: 'rgba(255,255,255,0.95)' },
+/* 티켓 단일화 — 브론즈·실버·골드가 「티켓」 하나로 합쳐졌다. 티켓은 종전 골드 티켓의
+   아이콘·색을 그대로 쓴다. 단일화 전 값(BRONZE·SILVER·GOLD·EVENT)이 와도 같은 모양으로 적는다. */
+type ITicketDisplayKind = 'TICKET' | 'EVENT_TICKET' | 'RANDOM';
+
+const TICKET_DISPLAY_KIND: Record<TicketGrade, ITicketDisplayKind> = {
+  TICKET: 'TICKET',
+  BRONZE: 'TICKET',
+  SILVER: 'TICKET',
+  GOLD: 'TICKET',
+  EVENT_TICKET: 'EVENT_TICKET',
+  EVENT: 'EVENT_TICKET',
+  RANDOM: 'RANDOM',
+};
+
+const KIND_COLORS: Record<ITicketDisplayKind, { c1: string; c2: string; icon: string }> = {
+  TICKET: { c1: '#FFD93B', c2: '#E6A800', icon: 'rgba(255,255,255,0.95)' },
+  EVENT_TICKET: { c1: '#C9AAFF', c2: '#845EEE', icon: 'rgba(255,255,255,0.95)' },
   RANDOM: { c1: '#FF6B55', c2: '#C8200A', icon: 'rgba(255,255,255,0.95)' },
+};
+
+// tk-chip 의 색 클래스 — 티켓은 종전 gold 클래스를 그대로 쓴다
+const KIND_CLASS: Record<ITicketDisplayKind, string> = {
+  TICKET: 'gold',
+  EVENT_TICKET: 'event',
+  RANDOM: 'random',
+};
+
+const KIND_NAME: Record<ITicketDisplayKind, string> = {
+  TICKET: '티켓',
+  EVENT_TICKET: '이벤트 티켓',
+  RANDOM: '랜덤',
+};
+
+const toKind = (grade: TicketGrade): ITicketDisplayKind =>
+  TICKET_DISPLAY_KIND[String(grade).toUpperCase() as TicketGrade] ?? 'TICKET';
+
+// 화면에 적는 티켓 이름 — 「티켓」 / 「이벤트 티켓」 / 「랜덤」
+export const ticketDisplayName = (grade: TicketGrade): string => KIND_NAME[toKind(grade)];
+
+const sizes = {
+  small: { width: 28, height: 28 },
+  large: { width: 60, height: 60 },
+};
+
+const TicketIcon: React.FC<{ kind: ITicketDisplayKind; size: 'small' | 'large' }> = ({
+  kind,
+  size,
+}) => {
+  const colors = KIND_COLORS[kind];
+  const uid = React.useId();
+  const { width, height } = sizes[size];
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 512 512"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ display: 'block', flexShrink: 0 }}
+    >
+      <defs>
+        <linearGradient id={`g${uid}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor={colors.c1} />
+          <stop offset="100%" stopColor={colors.c2} />
+        </linearGradient>
+      </defs>
+      <path d={TK_P1} fill={`url(#g${uid})`} />
+      <path d={TK_P2} fill={colors.icon} />
+      <path d={TK_P3} fill={colors.icon} />
+    </svg>
+  );
 };
 
 export const TicketChip: React.FC<TicketChipProps> = ({
@@ -49,92 +114,19 @@ export const TicketChip: React.FC<TicketChipProps> = ({
   prefix = '',
   prefixAfter = '',
 }) => {
-  const colors = GRADE_COLORS[grade];
-  const uid = React.useId();
-
-  // Size mapping
-  const sizes = {
-    small: { width: 28, height: 28 },
-    large: { width: 60, height: 60 },
-  };
-
-  const { width, height } = sizes[size];
-
-  // Render SVG icon
-  const renderIcon = () => {
-    // Random ticket có thêm dấu ?
-    const questionMark =
-      grade === 'RANDOM'
-        ? `<text x="220" y="370" font-family="Arial Black, Arial" font-size="270" font-weight="900" fill="rgba(255,255,255,0.5)" text-anchor="middle">?</text>`
-        : '';
-
-    return (
-      <svg
-        width={width}
-        height={height}
-        viewBox="0 0 512 512"
-        xmlns="http://www.w3.org/2000/svg"
-        style={{ display: 'block', flexShrink: 0 }}
-      >
-        <defs>
-          <linearGradient id={`g${uid}`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor={colors.c1} />
-            <stop offset="100%" stopColor={colors.c2} />
-          </linearGradient>
-        </defs>
-        <path d={TK_P1} fill={`url(#g${uid})`} />
-        <path d={TK_P2} fill={colors.icon} />
-        <path d={TK_P3} fill={colors.icon} />
-        {questionMark && (
-          <path
-            d="M220 370h0"
-            fill="none"
-            // Text sẽ được render bằng dangerouslySetInnerHTML trong span riêng
-          />
-        )}
-      </svg>
-    );
-  };
-
-  const renderNameByGrade = {
-    BRONZE: '브론즈',
-    SILVER: '실버',
-    GOLD: '골드',
-    EVENT: '이벤트',
-    RANDOM: '랜덤',
-  };
+  const kind = toKind(grade);
 
   // Nếu bare mode: chỉ hiển thị icon + số, không có background
-  if (bare) {
-    return (
-      <span className={`tk-chip bare ${grade.toLowerCase()} ${dim ? 'dim' : ''} ${className}`}>
-        {renderIcon()}
-        {showQuantity &&
-          quantity !== undefined &&
-          (showName ? (
-            <span>
-              {renderNameByGrade[grade]} {quantity}장
-            </span>
-          ) : (
-            <span>
-              {prefix}
-              {quantity}
-              {prefixAfter}
-            </span>
-          ))}
-      </span>
-    );
-  }
-
-  // Normal mode: có background và border theo grade
   return (
-    <span className={`tk-chip ${grade.toLowerCase()} ${dim ? 'dim' : ''} ${className}`}>
-      {renderIcon()}
+    <span
+      className={`tk-chip ${bare ? 'bare ' : ''}${KIND_CLASS[kind]} ${dim ? 'dim' : ''} ${className}`}
+    >
+      <TicketIcon kind={kind} size={size} />
       {showQuantity &&
         quantity !== undefined &&
         (showName ? (
           <span>
-            {renderNameByGrade[grade]} {quantity}장
+            {KIND_NAME[kind]} {quantity}장
           </span>
         ) : (
           <span>
@@ -154,75 +146,14 @@ export const TicketChipOnlyName: React.FC<TicketChipOnlyNameProps> = ({
   dim = false,
   bare = false,
 }) => {
-  const colors = GRADE_COLORS[grade];
-  const uid = React.useId();
-
-  // Size mapping
-  const sizes = {
-    small: { width: 28, height: 28 },
-    large: { width: 60, height: 60 },
-  };
-
-  const { width, height } = sizes[size];
-
-  // Render SVG icon
-  const renderIcon = () => {
-    // Random ticket có thêm dấu ?
-    const questionMark =
-      grade === 'RANDOM'
-        ? `<text x="220" y="370" font-family="Arial Black, Arial" font-size="270" font-weight="900" fill="rgba(255,255,255,0.5)" text-anchor="middle">?</text>`
-        : '';
-
-    return (
-      <svg
-        width={width}
-        height={height}
-        viewBox="0 0 512 512"
-        xmlns="http://www.w3.org/2000/svg"
-        style={{ display: 'block', flexShrink: 0 }}
-      >
-        <defs>
-          <linearGradient id={`g${uid}`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor={colors.c1} />
-            <stop offset="100%" stopColor={colors.c2} />
-          </linearGradient>
-        </defs>
-        <path d={TK_P1} fill={`url(#g${uid})`} />
-        <path d={TK_P2} fill={colors.icon} />
-        <path d={TK_P3} fill={colors.icon} />
-        {questionMark && (
-          <path
-            d="M220 370h0"
-            fill="none"
-            // Text sẽ được render bằng dangerouslySetInnerHTML trong span riêng
-          />
-        )}
-      </svg>
-    );
-  };
-
-  const renderNameByGrade = {
-    BRONZE: '브론즈',
-    SILVER: '실버',
-    GOLD: '골드',
-    EVENT: '이벤트',
-    RANDOM: '랜덤',
-  };
-
-  // Nếu bare mode: chỉ hiển thị icon + số, không có background
-  if (bare) {
-    return (
-      <span className={`tk-chip bare ${grade.toLowerCase()} ${dim ? 'dim' : ''} ${className}`}>
-        {renderIcon()}
-        <span>{renderNameByGrade[grade]}</span>
-      </span>
-    );
-  }
+  const kind = toKind(grade);
 
   return (
-    <span className={`tk-chip ${grade.toLowerCase()} ${dim ? 'dim' : ''} ${className}`}>
-      {renderIcon()}
-      <span>{renderNameByGrade[grade]}</span>
+    <span
+      className={`tk-chip ${bare ? 'bare ' : ''}${KIND_CLASS[kind]} ${dim ? 'dim' : ''} ${className}`}
+    >
+      <TicketIcon kind={kind} size={size} />
+      <span>{KIND_NAME[kind]}</span>
     </span>
   );
 };
@@ -231,16 +162,10 @@ export const TicketNameByGrade: React.FC<{ grade: TicketGrade; quantity: number 
   grade,
   quantity,
 }) => {
-  const renderNameByGrade = {
-    BRONZE: '브론즈',
-    SILVER: '실버',
-    GOLD: '골드',
-    EVENT: '이벤트',
-    RANDOM: '랜덤',
-  };
+  const kind = toKind(grade);
   return (
     <>
-      <span className={`tk-chip ${grade.toLowerCase()} bare `}>{renderNameByGrade[grade]}</span>
+      <span className={`tk-chip ${KIND_CLASS[kind]} bare `}>{KIND_NAME[kind]}</span>
       <span style={{ color: `var(--${quantity > 0 ? 'info' : 'danger'})`, fontWeight: 700 }}>
         {quantity}
       </span>

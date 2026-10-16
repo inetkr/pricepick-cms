@@ -190,7 +190,7 @@ export const useTicketAccrual = () => {
       setLogoUploadIds(new Set());
 
       const loadedApiValue = valueRes?.result?.object?.values;
-      if (loadedApiValue && typeof loadedApiValue.BRONZE === 'number') {
+      if (loadedApiValue && typeof loadedApiValue.TICKET === 'number') {
         setTicketValue(fromApiTicketValue(loadedApiValue));
       }
     } catch (error) {

@@ -9,6 +9,7 @@ import type { IGifticonOrder } from 'src/types/gifticons/gifticon_order';
 import { formatGifticonValidityDays } from 'src/utils/gifticon-products';
 import {
   getGifticonOrderMember,
+  getGifticonOrderUserId,
   getGifticonOrderProductName,
   getGifticonOrderStatusLabel,
   getGifticonOrderStatusVariant,
@@ -64,7 +65,7 @@ const columns: Column<IGifticonOrder>[] = [
     label: '닉네임 / 카카오톡 ID / 식별 아이디',
     align: 'center',
     render: (item) => (
-      <MemberIdentityCell member={getGifticonOrderMember(item)} userId={item.user.identified_id} />
+      <MemberIdentityCell member={getGifticonOrderMember(item)} userId={getGifticonOrderUserId(item)} />
     ),
   },
   {

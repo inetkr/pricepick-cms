@@ -11,6 +11,7 @@ import { useGifticonCancelledOrders } from 'src/sections/gifticon-cancel/hooks/u
 import {
   getGifticonOrderCancelReason,
   getGifticonOrderMember,
+  getGifticonOrderUserId,
   getGifticonOrderProductName,
   ticketCountsToParts,
 } from 'src/utils/gifticon-orders';
@@ -36,7 +37,7 @@ const CSV_COLUMNS: CsvColumn<IGifticonOrder>[] = [
   { header: '주문번호', accessor: (row) => row.order_no },
   { header: '닉네임', accessor: (row) => getGifticonOrderMember(row).nickname ?? '' },
   { header: '카카오톡 ID', accessor: (row) => getGifticonOrderMember(row).kakaoLoginId ?? '' },
-  { header: '식별 아이디', accessor: (row) => row.user.identified_id },
+  { header: '식별 아이디', accessor: (row) => getGifticonOrderUserId(row) },
   { header: '상품명', accessor: (row) => getGifticonOrderProductName(row) },
   { header: '상품코드', accessor: (row) => row.product_code },
   { header: '기프티콘 코드', accessor: (row) => row.voucher_code ?? '' },

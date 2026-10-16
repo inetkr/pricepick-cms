@@ -2,9 +2,13 @@ import React from 'react';
 import { TicketChipOnlyName } from 'src/components/common/ticket-chip';
 import { TicketValueDiffBadge } from 'src/components/ticket-value/ticket-value-diff-badge';
 import type { TicketValueChange } from 'src/sections/ticket-value/hooks/use-ticket-value';
+import type { TicketGrade } from 'src/types/common';
 import { isValidTicketValue } from 'src/utils/ticket-value';
 
-interface TicketValueEventTableProps {
+interface TicketValueTableCardProps {
+  title: string;
+  subtitle: string;
+  grade: TicketGrade;
   value: number;
   savedValue: number;
   changes: TicketValueChange[];
@@ -13,7 +17,11 @@ interface TicketValueEventTableProps {
   onSave: () => void;
 }
 
-export const TicketValueEventTable: React.FC<TicketValueEventTableProps> = ({
+// 티켓 가치·이벤트 티켓 가치 카드 — 종류 한 줄짜리 표에 현재값/변경할 값/변동을 적고 카드마다 따로 저장한다
+export const TicketValueTableCard: React.FC<TicketValueTableCardProps> = ({
+  title,
+  subtitle,
+  grade,
   value,
   savedValue,
   changes,
@@ -27,11 +35,8 @@ export const TicketValueEventTable: React.FC<TicketValueEventTableProps> = ({
     <div className="card">
       <div className="card-header">
         <div>
-          <div className="card-title">이벤트 티켓 가치</div>
-          <div className="card-sub">
-            이벤트 티켓은 경품 응모 전용이라 등급 체계와 별개로 관리합니다 · 등급 값을 바꿔도 이벤트
-            티켓 가치는 움직이지 않습니다
-          </div>
+          <div className="card-title">{title}</div>
+          <div className="card-sub">{subtitle}</div>
         </div>
         <button
           type="button"
@@ -57,7 +62,7 @@ export const TicketValueEventTable: React.FC<TicketValueEventTableProps> = ({
         >
           저장하지 않은 변경 {changes.length}건 —{' '}
           {changes.map((c) => (
-            <span key={c.grade}>
+            <span key={c.kind}>
               {c.label}: {c.from.toLocaleString()}원 → {c.to.toLocaleString()}원
             </span>
           ))}
@@ -77,7 +82,7 @@ export const TicketValueEventTable: React.FC<TicketValueEventTableProps> = ({
         <tbody>
           <tr>
             <td>
-              <TicketChipOnlyName grade="EVENT" />
+              <TicketChipOnlyName grade={grade} />
             </td>
             <td>{savedValue.toLocaleString()}원</td>
             <td>

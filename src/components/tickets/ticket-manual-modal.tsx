@@ -3,13 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { userAPI } from 'src/api';
 import { useDebounce } from 'src/hooks/use-debounce';
+import type { IAdminTicketType } from 'src/types/common';
 import type { IUser } from 'src/types/users/user';
 
 export interface TicketManualActionData {
   user_identifier: string; // 닉네임 또는 UID
   action: 'ADMIN_ADD' | 'ADMIN_SUB';
   tickets: {
-    ticket_type: 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT';
+    ticket_type: IAdminTicketType;
     amount: number;
   }[];
   description: string;
@@ -21,25 +22,22 @@ interface TicketManualModalProps {
   onSubmit: (data: TicketManualActionData) => void;
 }
 
-type TicketGrade = 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT';
+type TicketGrade = IAdminTicketType;
 
 const ADMIN_ACTIONS = [
   { value: 'ADMIN_ADD', label: '지급' },
   { value: 'ADMIN_SUB', label: '회수' },
 ];
 
+// 티켓 단일화 — 등급 없이 티켓·이벤트 티켓 두 가지만 지급/회수한다
 const TICKET_GRADES: { value: TicketGrade; label: string }[] = [
-  { value: 'BRONZE', label: '브론즈' },
-  { value: 'SILVER', label: '실버' },
-  { value: 'GOLD', label: '골드' },
-  { value: 'EVENT', label: '이벤트' },
+  { value: 'TICKET', label: '티켓' },
+  { value: 'EVENT_TICKET', label: '이벤트 티켓' },
 ];
 
 const INITIAL_QUANTITIES: Record<TicketGrade, number> = {
-  BRONZE: 0,
-  SILVER: 0,
-  GOLD: 0,
-  EVENT: 0,
+  TICKET: 0,
+  EVENT_TICKET: 0,
 };
 
 export const TicketManualModal: React.FC<TicketManualModalProps> = ({
@@ -135,7 +133,7 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
   const userIdentifierError =
     attempted && userIdentifier.trim() === '' ? '대상 회원을 검색해서 선택해주세요.' : null;
   const quantityError =
-    attempted && !hasQuantity ? '하나 이상의 등급에 수량을 입력해주세요.' : null;
+    attempted && !hasQuantity ? '하나 이상의 티켓에 수량을 입력해주세요.' : null;
   const descriptionError =
     attempted && description.trim() === '' ? '처리 사유를 입력해주세요.' : null;
 
@@ -292,7 +290,7 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
             </select>
           </div>
           <div className="form-group">
-            <div className="form-label">티켓 수량 (등급별, 0보다 큰 것만 처리)</div>
+            <div className="form-label">티켓 수량 (0보다 큰 것만 처리)</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {TICKET_GRADES.map((g) => (
                 <div key={g.value} className="tm-grade-row">

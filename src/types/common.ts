@@ -21,7 +21,18 @@ export type IUsageStatus = 'HOLDING' | 'USED' | 'EXPIRED' | 'PENDING' | 'REVOKED
 
 export type ITicketType = 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT';
 
-export type TicketGrade = 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT' | 'RANDOM';
+// 티켓 단일화 — 브론즈·실버·골드가 「티켓」(TICKET) 하나로 합쳐졌다. 이벤트 티켓은 EVENT_TICKET.
+// BRONZE·SILVER·GOLD·EVENT 는 단일화 전 데이터를 읽을 때만 남겨 두고, 화면에는 TICKET 으로 적는다.
+export type IAdminTicketType = 'TICKET' | 'EVENT_TICKET';
+
+export type TicketGrade =
+  | 'TICKET'
+  | 'EVENT_TICKET'
+  | 'RANDOM'
+  | 'BRONZE'
+  | 'SILVER'
+  | 'GOLD'
+  | 'EVENT';
 
 export type IPrizeType = 'EVENT_TICKET' | 'NO_WIN' | 'POINT';
 

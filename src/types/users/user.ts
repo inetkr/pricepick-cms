@@ -17,14 +17,11 @@ export type IUser = IBase & {
   last_online: string | number | null;
   total_points: number;
   pending_random_tickets: number;
-  pending_bronze: number;
-  pending_silver: number;
-  pending_gold: number;
-  pending_event_tickets: number;
-  ticket_bronze_total: number;
-  ticket_silver_total: number;
-  ticket_gold_total: number;
-  ticket_event_total: number;
+  // 티켓 단일화 — 등급별 보유·전환예정 수가 티켓 하나로 합쳐졌다
+  pending_ticket: number;
+  pending_event_ticket: number;
+  ticket_total: number;
+  event_ticket_total: number;
   user_setting: IUserSetting;
 }
 

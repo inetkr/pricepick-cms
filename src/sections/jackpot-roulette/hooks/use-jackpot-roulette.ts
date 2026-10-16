@@ -25,12 +25,17 @@ const DEFAULT_EVENT_TICKET_MONTHLY_CAP = 30;
 // 구매로 발급된 티켓(등급 티켓·이벤트 티켓 모두)은 승인 대기 상태로 발급되고 카카오 연동 D+7 /
 // 미연동 D+30 경과 또는 구매 확정 시 승인되므로, "돌리고 환불" 악용은 티켓 승인 단계에서 이미
 // 차단된다 — 별도 설정 항목을 두지 않는다.
-export const useJackpotRoulette = () => {
+// pointWonValue — 포인트 1P의 원화 가치(포인트 정책 환율). 서버도 이 환율로 won_value를 계산한다.
+export const useJackpotRoulette = (pointWonValue?: number) => {
   const [slots, setSlots] = useState<IRouletteSlot[]>(DEFAULT_JACKPOT_ROULETTE_SLOTS);
   const [savedSlots, setSavedSlots] = useState<IRouletteSlot[]>(DEFAULT_JACKPOT_ROULETTE_SLOTS);
   const [defaultSlots, setDefaultSlots] = useState<IRouletteSlot[]>(DEFAULT_JACKPOT_ROULETTE_SLOTS);
   const [stats, setStats] = useState<ILuckySpinStats>(DEFAULT_STATS);
-  const [valueOverrides, setValueOverrides] = useState<RouletteValueOverrides>();
+  const [ticketValueOverrides, setValueOverrides] = useState<RouletteValueOverrides>();
+  const valueOverrides = useMemo<RouletteValueOverrides>(
+    () => ({ ...ticketValueOverrides, ...(pointWonValue !== undefined && { POINT: pointWonValue }) }),
+    [ticketValueOverrides, pointWonValue]
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [hasSavedConfig, setHasSavedConfig] = useState(false);
@@ -97,10 +102,8 @@ export const useJackpotRoulette = () => {
       const values = responseData?.result?.object?.values;
       if (values) {
         setValueOverrides({
-          BRONZE_TICKET: values.BRONZE,
-          SILVER_TICKET: values.SILVER,
-          GOLD_TICKET: values.GOLD,
-          EVENT_TICKET: values.EVENT,
+          TICKET: values.TICKET,
+          EVENT_TICKET: values.EVENT_TICKET,
         });
       }
     } catch (error) {

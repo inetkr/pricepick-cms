@@ -1,7 +1,8 @@
 import React from 'react';
 import { PolicyItem } from 'src/components/common/policy-item';
 import type { ITicketValueConfigValue } from 'src/types/config/ticket_value_config';
-import type { IConversionRateItem, IConversionRates } from 'src/types/points/conversion_rate';
+import { ticketDisplayName } from 'src/components/common/ticket-chip';
+import type { IConversionRates } from 'src/types/points/conversion_rate';
 import { convertTicketToPoint } from 'src/utils/ticket-value';
 
 interface TicketValueImpactCardProps {
@@ -11,14 +12,6 @@ interface TicketValueImpactCardProps {
   pointsPerWon: number;
   conversionRates: IConversionRates | null;
 }
-
-const gradeLabels: Record<IConversionRateItem['ticket_type'], string> = {
-  BRONZE: '브론즈',
-  SILVER: '실버',
-  GOLD: '골드',
-};
-
-const gradeOrder: IConversionRateItem['ticket_type'][] = ['BRONZE', 'SILVER', 'GOLD'];
 
 const simLineStyle: React.CSSProperties = {
   fontSize: '12px',
@@ -39,10 +32,11 @@ export const TicketValueImpactCard: React.FC<TicketValueImpactCardProps> = ({
   pointsPerWon,
   conversionRates,
 }) => {
-  const exchangeRatioText = conversionRates
-    ? [...conversionRates.rates]
-        .sort((a, b) => gradeOrder.indexOf(a.ticket_type) - gradeOrder.indexOf(b.ticket_type))
-        .map((rate) => `${gradeLabels[rate.ticket_type]} ${rate.point_amount.toLocaleString()}P`)
+  const exchangeRatioText = conversionRates?.rates.length
+    ? conversionRates.rates
+        .map(
+          (rate) => `${ticketDisplayName(rate.ticket_type)} ${rate.point_amount.toLocaleString()}P`
+        )
         .join(' / ')
     : '—';
 
@@ -64,25 +58,25 @@ export const TicketValueImpactCard: React.FC<TicketValueImpactCardProps> = ({
         label="매일 선물 상자 열기 보상 구성"
         value={
           <>
-            보상 슬롯별 티켓 종류·수량{' '}
+            보상칸별 티켓 종류·수량{' '}
             <span className="badge badge-gray" style={{ marginLeft: '8px' }}>
               티켓 · 보상 &gt; 매일 선물 상자 열기
             </span>
           </>
         }
-        description="선물 상자 보상 슬롯은 운영자가 CMS에서 직접 정하는 값입니다(자동 계산 대상 아님). 티켓 가치를 바꾸면 슬롯 구성도 다시 정해야 합니다."
+        description="선물 상자 보상칸은 운영자가 CMS에서 직접 정하는 값입니다(자동 계산 대상 아님). 티켓 가치를 바꾸면 보상칸 구성도 다시 정해야 합니다."
       />
       <PolicyItem
         label="랜덤 선물 상자 열기 보상 구성"
         value={
           <>
-            당첨 보상·확률 테이블{' '}
+            보상칸별 보상·확률 테이블{' '}
             <span className="badge badge-gray" style={{ marginLeft: '8px' }}>
               티켓 · 보상 &gt; 랜덤 선물 상자 열기
             </span>
           </>
         }
-        description="랜덤 선물 상자 보상 슬롯도 운영자가 CMS에서 직접 정하는 값입니다(자동 계산 대상 아님). 티켓 가치를 바꾸면 슬롯 구성도 다시 정해야 합니다."
+        description="랜덤 선물 상자 보상칸도 운영자가 CMS에서 직접 정하는 값입니다(자동 계산 대상 아님). 티켓 가치를 바꾸면 보상칸 구성도 다시 정해야 합니다."
       />
       <PolicyItem
         label="포인트 → 티켓 교환 비율"
@@ -94,21 +88,17 @@ export const TicketValueImpactCard: React.FC<TicketValueImpactCardProps> = ({
             </span>
           </>
         }
-        description={`현재 비율은 브론즈 ${pointsPerWon}원 기준(${pointsPerWon}P = 1원)으로 잡혀 있습니다. 티켓 가치가 바뀌면 포인트 환산도 어긋납니다.`}
+        description={`현재 비율은 티켓 ${savedValues.ticket.toLocaleString()}원 기준(${pointsPerWon}P = 1원)으로 잡혀 있습니다. 티켓 가치가 바뀌면 포인트 환산도 어긋납니다.`}
       />
       {isDirty && (
         <div style={{ ...simLineStyle, marginBottom: '14px' }}>
-          브론즈 {convertTicketToPoint(savedValues.bronze, pointsPerWon).toLocaleString()}P →{' '}
-          <strong>{convertTicketToPoint(values.bronze, pointsPerWon).toLocaleString()}P</strong>
-          {' · '}실버 {convertTicketToPoint(savedValues.silver, pointsPerWon).toLocaleString()}P →{' '}
-          <strong>{convertTicketToPoint(values.silver, pointsPerWon).toLocaleString()}P</strong>
-          {' · '}골드 {convertTicketToPoint(savedValues.gold, pointsPerWon).toLocaleString()}P →{' '}
-          <strong>{convertTicketToPoint(values.gold, pointsPerWon).toLocaleString()}P</strong>
+          티켓 {convertTicketToPoint(savedValues.ticket, pointsPerWon).toLocaleString()}P →{' '}
+          <strong>{convertTicketToPoint(values.ticket, pointsPerWon).toLocaleString()}P</strong>
           {` (${pointsPerWon}P = 1원 고정)`}
         </div>
       )}
       <PolicyItem
-        label="등급별 적립 기준"
+        label="적립 기준"
         value={
           <>
             구매금액 × 제휴몰별 적립률{' '}

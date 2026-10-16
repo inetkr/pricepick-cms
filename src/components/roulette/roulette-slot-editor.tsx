@@ -1,7 +1,12 @@
 import React from 'react';
 import type { IRouletteRewardType, IRouletteSlot } from 'src/types/tickets/roulette';
 import type { RouletteValueOverrides } from 'src/utils/roulette';
-import { REWARD_TYPE_META, getSlotExpectedValue, getSlotValue } from 'src/utils/roulette';
+import {
+  REWARD_TYPE_META,
+  getRewardTypeMeta,
+  getSlotExpectedValue,
+  getSlotValue,
+} from 'src/utils/roulette';
 
 interface RouletteSlotEditorProps {
   tableId: string;
@@ -93,7 +98,7 @@ export const RouletteSlotEditor: React.FC<RouletteSlotEditorProps> = ({
                           onChange(index, { qty: Math.max(0, Number(e.target.value) || 0) })
                         }
                       />
-                      <span className="rlt-unit">{REWARD_TYPE_META[slot.type].unit}</span>
+                      <span className="rlt-unit">{getRewardTypeMeta(slot.type).unit}</span>
                     </>
                   )}
                 </div>

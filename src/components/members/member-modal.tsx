@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import type { IAccountStatus } from 'src/types/common';
+import type { IAccountStatus, IAdminTicketType } from 'src/types/common';
 import type { IUser } from 'src/types/users/user';
-import { formatDate, parseTimestamp } from 'src/utils/helper';
 import { MemberReceivedNotifications } from './member-received-notifications';
 
 interface MemberModalProps {
@@ -14,7 +13,7 @@ interface MemberModalProps {
   onTicketGrant?: (data: {
     user_identifier: string; // 닉네임 또는 UID
     action: 'ADMIN_ADD' | 'ADMIN_SUB';
-    ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+    ticket_type: IAdminTicketType;
     amount: number;
     description: string;
   }) => void;
@@ -27,11 +26,10 @@ const MEMBER_STATUS_OPTIONS = [
   { value: 'DELETE', label: '탈퇴' },
 ];
 
-const TICKET_GRADE_OPTIONS = [
-  { value: 'BRONZE', label: '브론즈' },
-  { value: 'SILVER', label: '실버' },
-  { value: 'GOLD', label: '골드' },
-  { value: 'EVENT', label: '이벤트' },
+// 티켓 단일화 — 등급 없이 티켓·이벤트 티켓 두 가지만 지급/회수한다
+const TICKET_GRADE_OPTIONS: { value: IAdminTicketType; label: string }[] = [
+  { value: 'TICKET', label: '티켓' },
+  { value: 'EVENT_TICKET', label: '이벤트 티켓' },
 ];
 
 export const MemberModal: React.FC<MemberModalProps> = ({
@@ -43,12 +41,15 @@ export const MemberModal: React.FC<MemberModalProps> = ({
   isEditable = true,
 }) => {
   const [formData, setFormData] = useState<Partial<IUser>>({});
-  const [ticketGrade, setTicketGrade] = useState<'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD'>('BRONZE');
-  const [ticketQty, setTicketQty] = useState(1);
+  const [ticketGrade, setTicketGrade] = useState<IAdminTicketType>('TICKET');
+  // 수량은 빈 칸으로 시작한다 — 「수량」 안내 문구가 보이도록
+  const [ticketQty, setTicketQty] = useState('');
 
   useEffect(() => {
     if (member) {
       setFormData(member);
+      setTicketGrade('TICKET');
+      setTicketQty('');
     }
   }, [member]);
 
@@ -71,14 +72,17 @@ export const MemberModal: React.FC<MemberModalProps> = ({
     onClose();
   };
 
-  const handleTicketGrant = (action: 'ADMIN_ADD' | 'ADMIN_SUB') => {
+  // 회원 상세에서는 지급만 한다 — 회수는 티켓 관리 화면의 수동 지급/회수에서 한다
+  const handleTicketGrant = () => {
+    const amount = Math.floor(Number(ticketQty));
+    if (!Number.isFinite(amount) || amount <= 0) return;
     if (onTicketGrant && member) {
       onTicketGrant({
         user_identifier: member.id,
-        action,
-        ticket_type: ticketGrade as 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD',
-        amount: ticketQty,
-        description: action === 'ADMIN_ADD' ? '관리자 지급' : '관리자 회수',
+        action: 'ADMIN_ADD',
+        ticket_type: ticketGrade,
+        amount,
+        description: '관리자 지급',
       });
     }
     onClose();
@@ -215,28 +219,6 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                 style={{ fontFamily: 'monospace', fontSize: '12px' }}
               />
             </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="m-total-points">
-                보유 포인트
-              </label>
-              <input
-                className="form-input"
-                id="m-total-points"
-                disabled
-                value={`${(member.total_points ?? 0).toLocaleString('ko-KR')}P`}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="m-last-online">
-                최근 접속
-              </label>
-              <input
-                className="form-input"
-                id="m-last-online"
-                disabled
-                value={formatDate(parseTimestamp(member.last_online)?.toISOString(), 'YYYY/MM/DD')}
-              />
-            </div>
           </div>
           <div className="form-group">
             <div className="form-label">티켓 보유 현황</div>
@@ -271,21 +253,19 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   id="m-conv-preview"
                   style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '0px 4px' }}
                 >
-                  {(member.pending_bronze > 0 ||
-                    member.pending_silver > 0 ||
-                    member.pending_gold > 0) && (
+                  {member.pending_ticket > 0 && (
                     <>
                       <span style={{ fontSize: '10px', color: 'var(--text-3)' }}>전환예정</span>
                       <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-2)' }}>
-                        브+{member.pending_bronze}·실+{member.pending_silver}·골+
-                        {member.pending_gold}
+                        티켓 +{member.pending_ticket}
                       </span>
                     </>
                   )}
                 </div>
               </div>
+              {/* 티켓 단일화 — 등급 없이 티켓 하나만 적는다 */}
               <div
-                id="m-bronze-wrap"
+                id="m-ticket-wrap"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -298,60 +278,13 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                 }}
               >
                 <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bronze)' }}>
-                  브론즈
+                  티켓
                 </span>
                 <span
-                  id="m-bronze-count"
+                  id="m-ticket-count"
                   style={{ fontSize: '15px', fontWeight: 800, color: 'var(--bronze)' }}
                 >
-                  {member.ticket_bronze_total}
-                </span>
-              </div>
-
-              <div
-                id="m-silver-wrap"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  background: 'rgba(192,192,192,.1)',
-                  border: '1px solid rgba(192,192,192,.3)',
-                  borderRadius: '6px',
-                  padding: '6px 10px',
-                  opacity: 1,
-                }}
-              >
-                <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--silver)' }}>
-                  실버
-                </span>
-                <span
-                  id="m-silver-count"
-                  style={{ fontSize: '15px', fontWeight: 800, color: 'var(--silver)' }}
-                >
-                  {member.ticket_silver_total}
-                </span>
-              </div>
-              <div
-                id="m-gold-wrap"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  background: 'rgba(255, 215, 0, 0.1)',
-                  border: '1px solid rgba(255, 215, 0, 0.3)',
-                  borderRadius: '6px',
-                  padding: '6px 10px',
-                  opacity: 1,
-                }}
-              >
-                <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--gold)' }}>
-                  골드
-                </span>
-                <span
-                  id="m-gold-count"
-                  style={{ fontSize: '15px', fontWeight: 800, color: 'var(--gold)' }}
-                >
-                  {member.ticket_gold_total}
+                  {member.ticket_total ?? 0}
                 </span>
               </div>
               <div
@@ -367,18 +300,19 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   opacity: 1,
                 }}
               >
-                <span style={{ fontSize: '10px', fontWeight: 700, color: '#c084fc' }}>이벤트</span>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: '#c084fc' }}>
+                  이벤트 티켓
+                </span>
                 <span
                   id="m-event-count"
                   style={{ fontSize: '15px', fontWeight: 800, color: '#c084fc' }}
                 >
-                  {member.ticket_event_total}
+                  {member.event_ticket_total ?? 0}
                 </span>
               </div>
             </div>
             <div style={{ marginTop: '6px', fontSize: '11px', color: 'var(--text3)' }}>
-              랜덤 티켓: 구매 후 연동 D+7 / 미연동 D+30 확정 시 등급 티켓으로 전환. 취소 시 자동
-              환수.
+              랜덤 티켓: 구매 후 전환 대기일 수가 지나면 티켓으로 전환. 취소 시 자동 환수.
             </div>
           </div>
 
@@ -387,7 +321,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
           {canEditTickets && (
             <div className="form-group">
               <label className="form-label" htmlFor="member-ticket-grade">
-                티켓 수동 지급 / 회수
+                티켓 수동 지급
               </label>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <select
@@ -395,9 +329,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   className="form-select"
                   style={{ width: '120px' }}
                   value={ticketGrade}
-                  onChange={(e) =>
-                    setTicketGrade(e.target.value as 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD')
-                  }
+                  onChange={(e) => setTicketGrade(e.target.value as IAdminTicketType)}
                 >
                   {TICKET_GRADE_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -411,26 +343,15 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   type="number"
                   style={{ width: '100px' }}
                   value={ticketQty}
-                  onChange={(e) => setTicketQty(Number(e.target.value))}
+                  onChange={(e) => setTicketQty(e.target.value)}
                   min={1}
                 />
-                <button
-                  type="button"
-                  className="btn btn-success"
-                  onClick={() => handleTicketGrant('ADMIN_ADD')}
-                >
+                <button type="button" className="btn btn-success" onClick={handleTicketGrant}>
                   지급
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={() => handleTicketGrant('ADMIN_SUB')}
-                >
-                  회수
                 </button>
               </div>
               <div className="form-hint">
-                이력은 티켓 내역에 &apos;관리자 지급&apos; / &apos;관리자 회수&apos;로 기록됩니다.
+                지급 이력은 티켓 내역에 &apos;관리자 지급&apos;으로 기록됩니다.
               </div>
             </div>
           )}

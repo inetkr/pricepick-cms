@@ -18,12 +18,17 @@ const DEFAULT_STATS: ILuckySpinStats = {
   expected_value_per_spin: 0,
 };
 
-export const useDailyLuckyRoulette = () => {
+// pointWonValue — 포인트 1P의 원화 가치(포인트 정책 환율). 서버도 이 환율로 won_value를 계산한다.
+export const useDailyLuckyRoulette = (pointWonValue?: number) => {
   const [slots, setSlots] = useState<IRouletteSlot[]>(DEFAULT_DAILY_ROULETTE_SLOTS);
   const [savedSlots, setSavedSlots] = useState<IRouletteSlot[]>(DEFAULT_DAILY_ROULETTE_SLOTS);
   const [defaultSlots, setDefaultSlots] = useState<IRouletteSlot[]>(DEFAULT_DAILY_ROULETTE_SLOTS);
   const [stats, setStats] = useState<ILuckySpinStats>(DEFAULT_STATS);
-  const [valueOverrides, setValueOverrides] = useState<RouletteValueOverrides>();
+  const [ticketValueOverrides, setValueOverrides] = useState<RouletteValueOverrides>();
+  const valueOverrides = useMemo<RouletteValueOverrides>(
+    () => ({ ...ticketValueOverrides, ...(pointWonValue !== undefined && { POINT: pointWonValue }) }),
+    [ticketValueOverrides, pointWonValue]
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [hasSavedConfig, setHasSavedConfig] = useState(false);
@@ -82,10 +87,8 @@ export const useDailyLuckyRoulette = () => {
       const values = responseData?.result?.object?.values;
       if (values) {
         setValueOverrides({
-          BRONZE_TICKET: values.BRONZE,
-          SILVER_TICKET: values.SILVER,
-          GOLD_TICKET: values.GOLD,
-          EVENT_TICKET: values.EVENT,
+          TICKET: values.TICKET,
+          EVENT_TICKET: values.EVENT_TICKET,
         });
       }
     } catch (error) {

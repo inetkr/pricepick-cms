@@ -1,6 +1,7 @@
 import axios from 'src/utils/axios';
 import BaseAPI from './base-api';
 import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
+import type { IAdminTicketType } from 'src/types/common';
 import type { ITicketStat } from 'src/types/tickets/ticket_stat';
 import type { ITicket, ITicketHistoryCategory } from 'src/types/tickets/ticket';
 import type {
@@ -79,7 +80,7 @@ export default class TicketAPI extends BaseAPI {
   addSubTicket = async (subTicketData: {
     user_identifier: string; // 닉네임 또는 UID
     action: 'ADMIN_ADD' | 'ADMIN_SUB';
-    ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+    ticket_type: IAdminTicketType;
     amount: number;
     description: string;
   }): Promise<ApiResponse<any>> => {
@@ -99,7 +100,7 @@ export default class TicketAPI extends BaseAPI {
     user_id: string; // 닉네임 또는 UID
     action: 'ADMIN_ADD' | 'ADMIN_SUB';
     tickets: {
-      ticket_type: 'EVENT' | 'BRONZE' | 'SILVER' | 'GOLD';
+      ticket_type: IAdminTicketType;
       amount: number;
     }[];
     description: string;

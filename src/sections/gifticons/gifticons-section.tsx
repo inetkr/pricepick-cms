@@ -10,6 +10,7 @@ import type { IGifticonOrder } from 'src/types/gifticons/gifticon_order';
 import { useGifticonOrders } from 'src/sections/gifticons/hooks/use-gifticons';
 import {
   getGifticonOrderMember,
+  getGifticonOrderUserId,
   getGifticonOrderProductName,
   getGifticonOrderStatusLabel,
   ticketCountsToParts,
@@ -30,7 +31,7 @@ const CSV_COLUMNS: CsvColumn<IGifticonOrder>[] = [
   { header: '주문번호', accessor: (row) => row.order_no },
   { header: '닉네임', accessor: (row) => getGifticonOrderMember(row).nickname ?? '' },
   { header: '카카오톡 ID', accessor: (row) => getGifticonOrderMember(row).kakaoLoginId ?? '' },
-  { header: '식별 아이디', accessor: (row) => row.user.identified_id },
+  { header: '식별 아이디', accessor: (row) => getGifticonOrderUserId(row) },
   { header: '상품명', accessor: (row) => getGifticonOrderProductName(row) },
   { header: '상품코드', accessor: (row) => row.product_code },
   { header: '기프티콘 코드', accessor: (row) => row.voucher_code ?? '' },

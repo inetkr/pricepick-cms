@@ -1,22 +1,13 @@
 import type { IMemberIdentitySummary } from 'src/components/common/member-identity-cell';
-import type {
-  IGifticonOrder,
-  IGifticonOrderTicketCounts,
-} from 'src/types/gifticons/gifticon_order';
+import type { IGifticonOrder } from 'src/types/gifticons/gifticon_order';
 import { formatBrandedProductName, type IGifticonTicketPart } from 'src/utils/gifticon-products';
 
 // ----------------------------------------------------------------------
 
-const TICKET_GRADE_ORDER: Array<'GOLD' | 'SILVER' | 'BRONZE'> = ['GOLD', 'SILVER', 'BRONZE'];
-
-// tickets_used/refunded_tickets/tickets_after는 키가 아예 없을 수도 있다({}) — 없는 등급은
-// 0으로 본다.
-export const ticketCountsToParts = (
-  counts: IGifticonOrderTicketCounts | null | undefined
-): IGifticonTicketPart[] =>
-  TICKET_GRADE_ORDER.map((grade) => ({ grade, quantity: counts?.[grade] ?? 0 })).filter(
-    (p) => p.quantity > 0
-  );
+// tickets_used/refunded_tickets/tickets_after는 티켓 장수 하나로 온다(티켓 단일화) — 표의
+// 티켓 칸(UsedTicketCell)이 쓰는 조각 배열로 바꾼다. 0장이면 빈 배열(「—」로 보인다).
+export const ticketCountsToParts = (count: number | null | undefined): IGifticonTicketPart[] =>
+  count && count > 0 ? [{ grade: 'TICKET', quantity: count }] : [];
 
 // 상품명 칸 — 브랜드명이 상품명에 이미 들어 있으면 겹쳐 붙이지 않는다.
 export const getGifticonOrderProductName = (order: IGifticonOrder): string =>
@@ -25,11 +16,15 @@ export const getGifticonOrderProductName = (order: IGifticonOrder): string =>
 // 「닉네임 / 카카오톡 ID / 식별 아이디」 칸 — 식별 아이디는 identified_id다. 카카오톡 ID
 // 칸에는 kakao_id(내부 숫자 ID)가 아니라 kakao_email을 보여준다. 연동 여부 자체는 kakao_id
 // 유무로 판단한다 — 연동돼 있어도 이메일 수집 동의가 없으면 비어 보일 수 있다.
+// 탈퇴 등으로 user 가 null 이면 빈 칸으로 둔다.
 export const getGifticonOrderMember = (order: IGifticonOrder): IMemberIdentitySummary => ({
-  nickname: order.user.nickname,
-  linkedKakao: !!order.user.kakao_id,
-  kakaoLoginId: order.user.kakao_email,
+  nickname: order.user?.nickname ?? null,
+  linkedKakao: !!order.user?.kakao_id,
+  kakaoLoginId: order.user?.kakao_email ?? null,
 });
+
+export const getGifticonOrderUserId = (order: IGifticonOrder): string =>
+  order.user?.identified_id ?? '';
 
 export type IGifticonOrderStatusVariant = 'info' | 'success' | 'warning' | 'danger' | 'neutral';
 

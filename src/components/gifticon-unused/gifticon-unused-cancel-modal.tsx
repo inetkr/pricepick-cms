@@ -5,7 +5,11 @@ import dayjs from 'dayjs';
 import { Modal } from 'src/components/common/modal';
 import { MemberIdentityCell } from 'src/components/common/member-identity-cell';
 import type { IGifticonOrder } from 'src/types/gifticons/gifticon_order';
-import { getGifticonOrderMember, getGifticonOrderProductName } from 'src/utils/gifticon-orders';
+import {
+  getGifticonOrderMember,
+  getGifticonOrderProductName,
+  getGifticonOrderUserId,
+} from 'src/utils/gifticon-orders';
 
 // ----------------------------------------------------------------------
 
@@ -70,7 +74,7 @@ export const GifticonUnusedCancelModal: React.FC<GifticonUnusedCancelModalProps>
           <div style={{ fontSize: '12px', color: 'var(--text-2)' }}>
             구매일 {dayjs(order.created_at).format('YYYY/MM/DD HH:mm:ss')} · 주문번호 {order.order_no}
           </div>
-          <MemberIdentityCell member={getGifticonOrderMember(order)} userId={order.user.identified_id} />
+          <MemberIdentityCell member={getGifticonOrderMember(order)} userId={getGifticonOrderUserId(order)} />
         </div>
 
         <div style={{ fontSize: '14px', fontWeight: 600, marginTop: '18px' }}>

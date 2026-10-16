@@ -37,7 +37,7 @@ export const JackpotRouletteSection: React.FC = () => {
     isLoadingLimits,
     isSavingLimits,
     saveLimits,
-  } = useJackpotRoulette();
+  } = useJackpotRoulette(pointsPerWon > 0 ? 1 / pointsPerWon : undefined);
 
   // 티켓 환산가치는 티켓 가치 설정 화면 값을 그대로 따른다 — valueOverrides가 아직 로딩 전이면
   // 옛 값을 추측해 보여주지 않고 "—"로 비워 둔다(getSlotValue와 같은 기준).
@@ -157,11 +157,9 @@ export const JackpotRouletteSection: React.FC = () => {
           {statusText}
         </div>
         <div style={{ padding: '0 16px 14px', fontSize: '12px', color: 'var(--text-3)' }}>
-          가치 환산 기준 — 포인트 {pointsPerWon}P = 1원 · 이벤트 티켓{' '}
-          {fmtTicketValue(valueOverrides?.EVENT_TICKET)} · 브론즈 티켓{' '}
-          {fmtTicketValue(valueOverrides?.BRONZE_TICKET)} · 실버 티켓{' '}
-          {fmtTicketValue(valueOverrides?.SILVER_TICKET)} · 골드 티켓{' '}
-          {fmtTicketValue(valueOverrides?.GOLD_TICKET)}. 기대값 기여 = 가치 × 확률.
+          가치 환산 기준 — 포인트 {pointsPerWon}P = 1원 · 티켓{' '}
+          {fmtTicketValue(valueOverrides?.TICKET)} · 이벤트 티켓{' '}
+          {fmtTicketValue(valueOverrides?.EVENT_TICKET)}. 기대값 기여 = 가치 × 확률.
         </div>
         <div style={{ padding: '0 16px 16px', fontSize: '12px', color: 'var(--text-3)' }}>
           여기서 저장한 보상칸 구성·보상·확률과 아래 참여 제한 정책을 앱 랜덤 선물 상자 열기 화면이

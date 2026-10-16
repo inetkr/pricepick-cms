@@ -29,7 +29,8 @@ export const TicketAccrualSimulatorModal: React.FC<TicketAccrualSimulatorModalPr
 
   const revenue = Math.floor((amount * mall.feeRate) / 100);
   const budget = Math.floor((amount * mall.accrualRate) / 100);
-  const breakdown = calcGreedyBreakdown(budget, ticketValue);
+  // 티켓 단일화 — 등급이 없으므로 적립액 전부를 티켓 한 종류(종전 브론즈 칸)로 나눈다
+  const breakdown = calcGreedyBreakdown(budget, { gold: 0, silver: 0, bronze: ticketValue.ticket });
   const margin = revenue - breakdown.reward;
   const marginPct =
     revenue > 0 ? Math.round(((margin / revenue) * 100 + Number.EPSILON) * 10) / 10 : 0;

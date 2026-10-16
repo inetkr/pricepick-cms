@@ -70,8 +70,9 @@ const GIFTICON_TICKET_GRADE_KO: Record<'GOLD' | 'SILVER' | 'BRONZE', string> = {
   BRONZE: '브론즈',
 };
 
+// 티켓 단일화 후에는 TICKET 이 온다 — 「티켓 50」처럼 적는다
 export const formatGifticonTicketPartText = (part: IGifticonTicketPart): string =>
-  `${GIFTICON_TICKET_GRADE_KO[part.grade as 'GOLD' | 'SILVER' | 'BRONZE'] ?? part.grade} ${part.quantity}`;
+  `${part.grade === 'TICKET' ? '티켓' : (GIFTICON_TICKET_GRADE_KO[part.grade as 'GOLD' | 'SILVER' | 'BRONZE'] ?? part.grade)} ${part.quantity.toLocaleString('ko-KR')}`;
 
 export const formatGifticonTicketComboText = (parts: IGifticonTicketPart[]): string =>
   parts.map(formatGifticonTicketPartText).join(' + ');
