@@ -46,10 +46,14 @@ export const OpPolicyEventTab: React.FC = () => (
     </table>
 
     <div className="info-box" style={{ marginTop: '12px' }}>
-      이벤트 티켓은 <strong>경품 응모 전용</strong>(상품 교환 불가)이며, 만료는{' '}
-      <strong>발급일+100일 고정 소멸</strong> 방식입니다 — 이월은 없으며 미응모해도 다음 회차로
-      넘어가지 않고 만료됩니다. 추첨 응모 마감 후 획득분은 다음 회차가 당회.{' '}
+      이벤트 티켓은 <strong>랜덤 선물 상자 열기</strong>(1회당 1장)와{' '}
+      <strong>이벤트 티켓 1장 → 티켓 2장 전환</strong>(단방향)에 쓰이며(상품 교환 불가), 만료는{' '}
+      <strong>발급일+100일 고정 소멸</strong> 방식입니다.{' '}
       <span style={{ color: 'var(--text-3)' }}>(친구초대·광고시청은 포인트 경로로 이동)</span>
+      <div style={{ marginTop: '6px', color: 'var(--text-3)' }}>
+        추첨·경품 Hold 중 — 부활 시 적용 이월은 없으며 미응모해도 다음 회차로 넘어가지 않고
+        만료됩니다. 추첨 응모 마감 후 획득분은 다음 회차가 당회.
+      </div>
     </div>
 
     <div className="card-header" style={{ marginTop: '18px' }}>
@@ -73,12 +77,12 @@ export const OpPolicyEventTab: React.FC = () => (
       </div>
       <div className="policy-item">
         <div className="policy-label">초대자 보상</div>
-        <div className="policy-value">성사 건당 500P (포인트)</div>
+        <div className="policy-value">성사 건당 50P (포인트)</div>
         <div className="policy-desc">성사 시점에 지급. (이벤트 티켓 → 포인트로 변경)</div>
       </div>
       <div className="policy-item">
         <div className="policy-label">피초대자 보상</div>
-        <div className="policy-value">500P (포인트)</div>
+        <div className="policy-value">50P (포인트)</div>
         <div className="policy-desc">성사(첫 구매 완료) 시점에 지급 — 가입 즉시 아님.</div>
       </div>
     </div>
@@ -120,26 +124,26 @@ export const OpPolicyEventTab: React.FC = () => (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
       <div className="policy-item">
         <div className="policy-label">가입 즉시</div>
-        <div className="policy-value">이벤트 티켓 1장 + 200P</div>
+        <div className="policy-value">이벤트 티켓 1장 + 20P</div>
         <div className="policy-desc">
-          어뷰징 방지 — 이벤트 티켓·실버 보너스는 카카오 연동 후 지급.
+          어뷰징 방지 — 티켓·이벤트 티켓 보너스는 카카오 연동 후 지급.
         </div>
       </div>
       <div className="policy-item">
         <div className="policy-label">첫 쿠팡 구경하기</div>
-        <div className="policy-value">100P</div>
+        <div className="policy-value">10P</div>
         <div className="policy-desc">최초 쿠팡 경유 방문 시 지급.</div>
       </div>
       <div className="policy-item">
         <div className="policy-label">첫 경유 구매 (가입 7일 내)</div>
-        <div className="policy-value">실버 티켓 1장</div>
+        <div className="policy-value">티켓 10장</div>
         <div className="policy-desc">
           구매 확정 후 지급 (쿠팡 기준 카카오톡 연동 D+7 / 미연동 D+30 · 취소 먹튀 방지).
         </div>
       </div>
       <div className="policy-item">
         <div className="policy-label">친구초대</div>
-        <div className="policy-value">양쪽 각 500P</div>
+        <div className="policy-value">양쪽 각 50P</div>
         <div className="policy-desc">피초대자 첫 구매 성사 시 양쪽 지급.</div>
       </div>
     </div>
