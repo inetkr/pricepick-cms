@@ -19,7 +19,7 @@ export const WithdrawalPolicyCard: React.FC = () => {
           <div className="policy-item">
             <div className="policy-label">처리 방식</div>
             <div className="policy-value">즉시 처리 (유예·철회 없음)</div>
-            <div className="policy-desc">확인 즉시 status=&apos;withdrawn&apos; 전환, 재로그인·복구 불가</div>
+            <div className="policy-desc">확인 즉시 회원 상태가 &apos;탈퇴&apos;로 전환, 재로그인·복구 불가</div>
           </div>
           <div className="policy-item">
             <div className="policy-label">PII 스크랩 항목</div>
