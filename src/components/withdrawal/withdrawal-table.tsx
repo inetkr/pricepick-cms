@@ -8,16 +8,11 @@ interface WithdrawalTableProps {
   pagination?: PaginationProps;
 }
 
+// 탈퇴 회원은 닉네임·카카오 정보를 보여 주지 않고 식별 아이디만 남긴다
 const renderMemberInfo = (member: IUser) => (
-  <>
-    <div style={{ fontWeight: 500 }}>{member.nickname}</div>
-    <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
-      {member.kakao_info ? (member.kakao_info.email ?? '-') : '게스트(비연동)'}
-    </div>
-    <div style={{ fontSize: '11px', color: 'var(--text-3)', fontFamily: 'monospace' }}>
-      {member.identified_id}
-    </div>
-  </>
+  <div style={{ fontSize: '12px', color: 'var(--text-2)', fontFamily: 'monospace' }}>
+    {member.identified_id || '-'}
+  </div>
 );
 
 const renderJoinType = (member: IUser) => {
@@ -67,7 +62,7 @@ export const WithdrawalTable: React.FC<WithdrawalTableProps> = ({ members, pagin
     <table>
       <thead>
         <tr>
-          <th>닉네임 / 카카오톡 ID / 식별 아이디</th>
+          <th>식별 아이디</th>
           <th style={{ textAlign: 'center' }}>가입 유형(탈퇴 전)</th>
           <th style={{ textAlign: 'center' }}>탈퇴일시</th>
           <th style={{ textAlign: 'center' }}>상태</th>
