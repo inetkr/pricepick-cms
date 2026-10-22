@@ -77,12 +77,12 @@ export const OpPolicyEventTab: React.FC = () => (
       </div>
       <div className="policy-item">
         <div className="policy-label">초대자 보상</div>
-        <div className="policy-value">성사 건당 50P (포인트)</div>
+        <div className="policy-value">성사 건당 500P (포인트)</div>
         <div className="policy-desc">성사 시점에 지급. (이벤트 티켓 → 포인트로 변경)</div>
       </div>
       <div className="policy-item">
         <div className="policy-label">피초대자 보상</div>
-        <div className="policy-value">50P (포인트)</div>
+        <div className="policy-value">500P (포인트)</div>
         <div className="policy-desc">성사(첫 구매 완료) 시점에 지급 — 가입 즉시 아님.</div>
       </div>
     </div>
@@ -143,7 +143,7 @@ export const OpPolicyEventTab: React.FC = () => (
       </div>
       <div className="policy-item">
         <div className="policy-label">친구초대</div>
-        <div className="policy-value">양쪽 각 50P</div>
+        <div className="policy-value">양쪽 각 500P</div>
         <div className="policy-desc">피초대자 첫 구매 성사 시 양쪽 지급.</div>
       </div>
     </div>

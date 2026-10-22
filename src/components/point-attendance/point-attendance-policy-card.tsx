@@ -46,7 +46,7 @@ export const AttendancePolicyCard: React.FC<AttendancePolicyCardProps> = ({
         />
         <PolicyItem
           label="연속 보너스"
-          value={`${config.streak_milestone_days ?? 5}일 연속 → 보너스 포인트`}
+          value={`${config.streak_milestone_days ?? 5}일 연속 → 이벤트 티켓 ${config.streak_reward_event_ticket_amount}장`}
         />
         <PolicyItem label="초기화" value={`매일 ${config.reset_time} 자동 초기화`} />
       </div>

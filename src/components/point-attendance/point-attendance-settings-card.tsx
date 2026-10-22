@@ -19,10 +19,11 @@ interface AttendanceSettingsCardProps {
 const LINKED_STORE = 'COUPANG';
 const linkedStoreOptions = [{ value: LINKED_STORE, label: '쿠팡' }];
 
-// 연속 보너스는 「보너스 포인트」 하나뿐이다. 서버 설정에는 아직 보너스 종류를 고르는 값이 없어
-// 이 칸은 표시만 하고, 저장할 때 streak_reward_event_ticket_amount는 받은 값을 그대로 돌려보낸다.
-const STREAK_BONUS_POINT = 'BONUS_POINT';
-const streakBonusOptions = [{ value: STREAK_BONUS_POINT, label: '보너스 포인트' }];
+// 연속 보너스 = 이벤트 티켓 장수(streak_reward_event_ticket_amount)
+const streakBonusOptions = [
+  { value: '1', label: '이벤트 티켓 1장' },
+  { value: '2', label: '이벤트 티켓 2장' },
+];
 
 export const AttendanceSettingsCard: React.FC<AttendanceSettingsCardProps> = ({
   config,
@@ -91,8 +92,10 @@ export const AttendanceSettingsCard: React.FC<AttendanceSettingsCardProps> = ({
           <FormSelect
             label={`${form.streak_milestone_days ?? 5}일 연속 보너스`}
             options={streakBonusOptions}
-            value={STREAK_BONUS_POINT}
-            onChange={() => undefined}
+            value={String(form.streak_reward_event_ticket_amount)}
+            onChange={(e) =>
+              handleChange('streak_reward_event_ticket_amount', Number(e.target.value) as 1 | 2)
+            }
             style={{ maxWidth: '200px' }}
           />
 

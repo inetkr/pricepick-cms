@@ -22,7 +22,7 @@ const DEFAULT_DAILY_SPIN_CAP = 10;
 const DEFAULT_EVENT_TICKET_DAILY_CAP = 5;
 const DEFAULT_EVENT_TICKET_MONTHLY_CAP = 30;
 
-// 구매로 발급된 티켓(등급 티켓·이벤트 티켓 모두)은 승인 대기 상태로 발급되고 카카오 연동 D+7 /
+// 구매로 발급된 티켓(티켓·이벤트 티켓 모두)은 승인 대기 상태로 발급되고 카카오 연동 D+7 /
 // 미연동 D+30 경과 또는 구매 확정 시 승인되므로, "돌리고 환불" 악용은 티켓 승인 단계에서 이미
 // 차단된다 — 별도 설정 항목을 두지 않는다.
 // pointWonValue — 포인트 1P의 원화 가치(포인트 정책 환율). 서버도 이 환율로 won_value를 계산한다.

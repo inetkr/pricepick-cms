@@ -422,28 +422,36 @@ export const useTicketAccrual = () => {
 
   const isDirty = dirtyMallIds.size > 0;
 
-  const invalidPrimaryIds = useMemo(
+  // 저장할 때 보내는 건 바뀐 줄(dirty)뿐이라 검사도 바뀐 줄만 한다 — 손대지 않은 다른 몰의
+  // 기존 값(예: 링크프라이스가 커미션을 내려 적립률이 커미션을 넘게 된 몰) 때문에
+  // 방금 바꾼 줄까지 저장이 막히지 않게 한다.
+  const invalidPrimaryMalls = useMemo(
     () =>
-      new Set(
-        primaryMalls
-          .filter((m) => !isValidFeeRate(m.feeRate) || !isValidAccrualRate(m.accrualRate))
-          .map((m) => m.id)
+      primaryMalls.filter(
+        (m) =>
+          primaryDirtyIds.has(m.id) &&
+          (!isValidFeeRate(m.feeRate) || !isValidAccrualRate(m.accrualRate))
       ),
-    [primaryMalls]
+    [primaryMalls, primaryDirtyIds]
+  );
+  const invalidCatalogMalls = useMemo(
+    () =>
+      catalogMalls.filter(
+        // 적립률 상한은 그 몰의 커미션이다 — 커미션보다 많이 돌려주면 역마진이라 저장을 막는다.
+        (m) =>
+          catalogDirtyIds.has(m.id) &&
+          (!isValidFeeRate(m.feeRate) ||
+            !isValidAccrualRate(m.accrualRate, accrualRateCap(m.feeRate)))
+      ),
+    [catalogMalls, catalogDirtyIds]
+  );
+  const invalidPrimaryIds = useMemo(
+    () => new Set(invalidPrimaryMalls.map((m) => m.id)),
+    [invalidPrimaryMalls]
   );
   const invalidCatalogIds = useMemo(
-    () =>
-      new Set(
-        catalogMalls
-          // 적립률 상한은 그 몰의 커미션이다 — 커미션보다 많이 돌려주면 역마진이라 저장을 막는다.
-          .filter(
-            (m) =>
-              !isValidFeeRate(m.feeRate) ||
-              !isValidAccrualRate(m.accrualRate, accrualRateCap(m.feeRate))
-          )
-          .map((m) => m.id)
-      ),
-    [catalogMalls]
+    () => new Set(invalidCatalogMalls.map((m) => m.id)),
+    [invalidCatalogMalls]
   );
   const invalidMallIds = useMemo(
     () => new Set(Array.from(invalidPrimaryIds).concat(Array.from(invalidCatalogIds))),
@@ -488,8 +496,12 @@ export const useTicketAccrual = () => {
 
   // 제휴몰(링크프라이스)만 저장한다 — 대표 제휴몰 쪽 미저장 변경은 그대로 dirty로 남겨 둔다.
   const saveCatalogMalls = useCallback(async () => {
-    if (invalidCatalogIds.size > 0) {
-      toast.error('적립률은 0 이상이고 그 몰의 커미션(모바일)을 넘을 수 없습니다.');
+    if (invalidCatalogMalls.length > 0) {
+      // 어느 몰이 걸렸는지 적어 줘야 긴 목록에서 찾아 고칠 수 있다
+      const names = invalidCatalogMalls
+        .map((m) => `${m.name}(적립률 ${m.accrualRate}% / 커미션 ${m.feeRate}%)`)
+        .join(', ');
+      toast.error(`적립률은 0 이상이고 그 몰의 커미션(모바일)을 넘을 수 없습니다: ${names}`);
       return;
     }
     if (catalogDirtyIds.size === 0) {
@@ -522,7 +534,7 @@ export const useTicketAccrual = () => {
     } finally {
       setIsSavingCatalog(false);
     }
-  }, [catalogDirtyIds, catalogMalls, invalidCatalogIds, savedCatalogMalls, logoUploadIds]);
+  }, [catalogDirtyIds, catalogMalls, invalidCatalogMalls, savedCatalogMalls, logoUploadIds]);
 
   // 링크프라이스 쪽에 저장 안 한 변경이 있으면 그대로 갱신을 돌리지 않는다 — searchCatalogMalls가
   // 끝에서 목록을 통째로 새로 받아오므로, 확인 없이 실행하면 편집 중이던 값이 조용히 사라진다.
