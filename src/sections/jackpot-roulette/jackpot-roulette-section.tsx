@@ -198,7 +198,7 @@ export const JackpotRouletteSection: React.FC = () => {
               <span style={{ color: 'var(--text-2)', fontSize: '13px' }}>회 / 1일</span>
             </div>
             <div style={{ fontSize: '12px', color: 'var(--text-3)', marginTop: '4px' }}>
-              매크로로 무제한 돌리는 것을 막는 상한입니다.
+              매크로로 무제한 여는 것을 막는 상한입니다.
             </div>
           </div>
           <InfoBox type="info">
