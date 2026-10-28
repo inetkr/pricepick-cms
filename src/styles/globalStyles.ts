@@ -398,6 +398,9 @@ export const globalStyles = css`
     font-family: var(--font);
     position: relative;
     white-space: nowrap;
+    /* 메뉴가 <a>(next/link)라 밑줄·방문색이 붙지 않게 한다 */
+    text-decoration: none;
+    box-sizing: border-box;
   }
   .sb-item:hover {
     background: var(--sb-hover);
@@ -3696,5 +3699,36 @@ export const globalStyles = css`
   }
   .tgl input:checked + .tgl-sl::before {
     transform: translateX(18px);
+  }
+
+  /* ── 페이지 이동 중 뼈대 화면 (app/(home)/loading.tsx) ── */
+  .pg-skel-card {
+    padding: 18px 20px;
+  }
+  .pg-skel-row {
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+  }
+  .pg-skel {
+    height: 14px;
+    border-radius: 6px;
+    background: linear-gradient(
+      90deg,
+      var(--surface-2) 25%,
+      var(--border) 37%,
+      var(--surface-2) 63%
+    );
+    background-size: 400% 100%;
+    animation: pgSkelShimmer 1.2s ease-in-out infinite;
+  }
+  @keyframes pgSkelShimmer {
+    0% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0 50%;
+    }
   }
 `;

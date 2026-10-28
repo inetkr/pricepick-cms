@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import {
@@ -286,6 +287,8 @@ export default function SidebarSection() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
+  // 방금 누른 메뉴 — 다음 페이지가 다 받아질 때까지 기다리지 않고 바로 선택 표시를 옮긴다
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
   const [isMini, setIsMini] = useState(false);
   const [user, setUser] = useState({
     role: admin?.role === 'SUPERADMIN' ? '슈퍼어드민' : '관리자',
@@ -303,6 +306,11 @@ export default function SidebarSection() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  // 주소가 실제로 바뀌면 임시 선택 표시를 거둔다
+  useEffect(() => {
+    setPendingHref(null);
+  }, [pathname]);
 
   useEffect(() => {
     setUser({
@@ -391,21 +399,27 @@ export default function SidebarSection() {
               {group.items
                 .filter((item) => !item.disabled)
                 .map((item) => {
-                  const isActive = pathname.replace(/\/$/, '') === item.href.replace(/\/$/, '');
+                  const current = (pendingHref ?? pathname).replace(/\/$/, '');
+                  const isActive = current === item.href.replace(/\/$/, '');
+                  // <Link>는 화면에 보이는 메뉴의 다음 페이지를 미리 받아 두고(prefetch),
+                  // Ctrl/Cmd+클릭으로 새 탭 열기도 그대로 된다
                   return (
-                    <button
-                      type="button"
+                    <Link
                       key={item.id}
+                      href={item.href}
                       className={`sb-item ${isActive ? 'active' : ''}`}
                       data-label={item.label}
-                      onClick={() => router.push(item.href)}
+                      onClick={(e) => {
+                        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+                        setPendingHref(item.href);
+                      }}
                     >
                       <span className="sb-item-ico">{item.icon}</span>
                       <span className="sb-item-lbl">{item.label}</span>
                       {item.badge !== undefined && item.badge > 0 && (
                         <span className="sb-item-badge">{item.badge}</span>
                       )}
-                    </button>
+                    </Link>
                   );
                 })}
             </div>
