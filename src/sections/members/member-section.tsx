@@ -110,18 +110,18 @@ export const MembersSection: React.FC = () => {
         <span className="ds-tag calc">집계 · 티켓 보유량, 가입일, 마지막 접속</span>
       </div> */}
 
-      {/* <div className="info-box">
+      <div className="info-box">
         <strong>회원 가입 안내</strong>
         <br />
-        카카오 연동 회원과 미연동 회원이 모두 존재(로그인 정책 변경). 미연동 회원은 적립 확정 대기{' '}
-        <strong>D+30</strong> 적용.
+        카카오 연동 회원과 미연동(게스트) 회원이 모두 존재(로그인 정책 변경). 미연동 회원은 적립
+        확정 대기 <strong>D+30</strong> 적용.
         <br />
-        가입 경로: <strong>카카오 직접</strong> · <strong>Apple → 카카오</strong> ·{' '}
-        <strong>Google → 카카오</strong> — 모든 경로 동일하게 적용
+        계정 모델: <strong>게스트(닉네임)로 시작</strong> → 앱 내 <strong>카카오 연동</strong>{' '}
+        (애플·구글 로그인 폐지). 게스트는 적립만 누적, 사용·교환은 연동 후 가능.
         <br />
         구매 즉시 <strong>가지급 티켓(랜덤)</strong> 지급 → 포스트백 수신 후{' '}
-        <strong>연동 D+7 / 미연동 D+30 확정</strong> 시 등급 티켓(브론즈/실버/골드)으로 전환
-      </div> */}
+        <strong>확정</strong> 시 티켓으로 전환
+      </div>
 
       <div className="toolbar">
         <MemberFilters
