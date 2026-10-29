@@ -4,6 +4,7 @@ import { ticketAPI, userAPI } from 'src/api';
 import type { IAdminTicketType } from 'src/types/common';
 import type { IUser } from 'src/types/users/user';
 import type { IUserStat } from 'src/types/users/user_stat';
+import type { IUpdateUserStatusPayload } from 'src/types/users/user_status_history';
 
 type IFilters = {
   search: string;
@@ -19,6 +20,8 @@ const MEMBER_UPDATE_ERROR_MESSAGE: Record<string, string> = {
   account_status_unchanged: '이미 같은 상태입니다.',
   nickname_already_exists: '이미 사용 중인 닉네임입니다.',
   nickname_required: '닉네임을 입력해 주세요.',
+  block_duration_required: '차단 기간을 선택해 주세요.',
+  block_duration_only_on_block: '차단 기간은 차단으로 바꿀 때만 지정할 수 있습니다.',
 };
 
 const getMemberUpdateErrorMessage = (error: unknown): string => {
@@ -89,24 +92,21 @@ export const useMembers = () => {
 
   // 닉네임은 admin/update, 계정 상태는 admin/update_status(사유 필수·이력 기록)로 나눠 보낸다 —
   // admin/update 는 account_status가 들어오면 400을 낸다. 바뀐 것만 보내고, 성공하면 true.
+  // statusUpdate는 모달이 만든 update_status 요청(사유·차단 기간 포함) — 상태를 바꾸지 않으면 null
   const updateMember = async (
     original: IUser,
     updated: IUser,
-    statusReason: string
+    statusUpdate: IUpdateUserStatusPayload | null
   ): Promise<boolean> => {
     const nicknameChanged = updated.nickname !== original.nickname;
-    const statusChanged = updated.account_status !== original.account_status;
-    if (!nicknameChanged && !statusChanged) return true;
+    if (!nicknameChanged && !statusUpdate) return true;
 
     try {
       if (nicknameChanged) {
         await userAPI.update(updated.id, { nickname: updated.nickname });
       }
-      if (statusChanged) {
-        await userAPI.updateStatus(updated.id, {
-          account_status: updated.account_status,
-          reason: statusReason.trim(),
-        });
+      if (statusUpdate) {
+        await userAPI.updateStatus(updated.id, statusUpdate);
       }
       toast.success('회원 정보가 업데이트되었습니다.');
       return true;

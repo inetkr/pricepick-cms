@@ -3,7 +3,7 @@
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { userAPI } from 'src/api';
-import type { IUserStatusHistory } from 'src/types/users/user_status_history';
+import type { IBlockDuration, IUserStatusHistory } from 'src/types/users/user_status_history';
 
 // 회원 상세의 「상태 변경 이력」 목록 — 최신순. 사유 입력칸은 회원 상세 모달이 가진다.
 
@@ -18,7 +18,21 @@ const STATUS_LABEL: Record<string, string> = {
   DELETE: '탈퇴',
 };
 
+export const BLOCK_DURATION_LABEL: Record<IBlockDuration, string> = {
+  PERMANENT: '영구',
+  DAYS_7: '7일',
+  DAYS_30: '30일',
+};
+
 const renderStatus = (status: string | null) => (status ? (STATUS_LABEL[status] ?? status) : '-');
+
+// 차단으로 바뀐 줄에는 기간을 붙인다 — 예: 「(7일 · ~2026/11/05)」, 「(영구)」
+const renderBlockDuration = (row: IUserStatusHistory) => {
+  if (row.to_status !== 'BLOCK' || !row.block_duration) return null;
+  const label = BLOCK_DURATION_LABEL[row.block_duration] ?? row.block_duration;
+  const until = row.blocked_until ? dayjs(row.blocked_until) : null;
+  return ` (${label}${until?.isValid() ? ` · ~${until.format('YYYY/MM/DD')}` : ''})`;
+};
 
 const messageStyle: React.CSSProperties = {
   padding: '12px',
@@ -81,6 +95,7 @@ export const MemberStatusHistory: React.FC<MemberStatusHistoryProps> = ({ userId
         <div style={{ minWidth: 0 }}>
           <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text)' }}>
             {renderStatus(row.from_status)} → {renderStatus(row.to_status)}
+            {renderBlockDuration(row)}
           </div>
           {row.reason && (
             <div

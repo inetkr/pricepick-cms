@@ -4,18 +4,26 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import type { IAccountStatus, IAdminTicketType } from 'src/types/common';
 import type { IUser } from 'src/types/users/user';
+import type {
+  IBlockDuration,
+  IUpdateUserStatusPayload,
+} from 'src/types/users/user_status_history';
+import dayjs from 'dayjs';
 import { MemberReceivedNotifications } from './member-received-notifications';
-import { MemberStatusHistory } from './member-status-history';
+import { BLOCK_DURATION_LABEL, MemberStatusHistory } from './member-status-history';
 
 // 서버(update_status)의 사유 최대 길이
 const STATUS_REASON_MAX_LENGTH = 500;
+
+const BLOCK_DURATION_OPTIONS: IBlockDuration[] = ['PERMANENT', 'DAYS_7', 'DAYS_30'];
 
 interface MemberModalProps {
   isOpen: boolean;
   member: IUser | null;
   onClose: () => void;
-  // 저장이 끝나면 성공 여부를 돌려준다 — 실패하면 모달을 닫지 않고 입력값을 그대로 둔다
-  onSave?: (member: IUser, statusReason: string) => Promise<boolean>;
+  // 저장이 끝나면 성공 여부를 돌려준다 — 실패하면 모달을 닫지 않고 입력값을 그대로 둔다.
+  // statusUpdate는 상태(또는 차단 기간)를 바꿀 때만 채워진다.
+  onSave?: (member: IUser, statusUpdate: IUpdateUserStatusPayload | null) => Promise<boolean>;
   onTicketGrant?: (data: {
     user_identifier: string; // 닉네임 또는 UID
     action: 'ADMIN_ADD' | 'ADMIN_SUB';
@@ -53,6 +61,9 @@ export const MemberModal: React.FC<MemberModalProps> = ({
   const [ticketReason, setTicketReason] = useState('');
   // 상태를 바꿀 때 함께 보내는 사유 — update_status API에서 필수
   const [statusReason, setStatusReason] = useState('');
+  // 차단으로 바꿀 때 고르는 기간. 이미 차단된 회원은 ''(변경 안 함)으로 시작하고,
+  // 기간을 고르면 지금부터 다시 계산해 차단한다(차단 → 차단 허용)
+  const [blockDuration, setBlockDuration] = useState<IBlockDuration | ''>('PERMANENT');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -62,6 +73,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
       setTicketQty('');
       setTicketReason('');
       setStatusReason('');
+      setBlockDuration(member.account_status === 'BLOCK' ? '' : 'PERMANENT');
     }
   }, [member]);
 
@@ -77,16 +89,42 @@ export const MemberModal: React.FC<MemberModalProps> = ({
     setFormData({ ...formData, account_status: newStatus });
   };
 
+  const isBlocking = formData.account_status === 'BLOCK';
+
+  // 이미 차단된 회원의 현재 차단 기간 안내
+  const renderCurrentBlock = () => {
+    if (!isSuspendedMember) return null;
+    const until = member.blocked_until ? dayjs(member.blocked_until) : null;
+    return until?.isValid()
+      ? `현재 ${until.format('YYYY/MM/DD')}까지 차단 중입니다.`
+      : '현재 영구 차단 중입니다.';
+  };
+
   const handleSave = async () => {
     if (!onSave || isSaving) return;
     const statusChanged = formData.account_status !== member.account_status;
-    if (statusChanged && !statusReason.trim()) {
+    const durationChanged = isBlocking && !statusChanged && blockDuration !== '';
+    const needsStatusUpdate = statusChanged || durationChanged;
+    const reason = statusReason.trim();
+    if (needsStatusUpdate && !reason) {
       toast.error('상태를 바꿀 때는 사유를 입력해 주세요.');
       return;
     }
+    if (needsStatusUpdate && isBlocking && !blockDuration) {
+      toast.error('차단 기간을 선택해 주세요.');
+      return;
+    }
+    // block_duration은 차단으로 바꿀 때만 보낸다 — 다른 상태에 보내면 서버가 거절한다
+    const statusUpdate: IUpdateUserStatusPayload | null = needsStatusUpdate
+      ? {
+          account_status: formData.account_status as IAccountStatus,
+          reason,
+          ...(isBlocking && blockDuration ? { block_duration: blockDuration } : {}),
+        }
+      : null;
     setIsSaving(true);
     try {
-      const ok = await onSave(formData as IUser, statusReason);
+      const ok = await onSave(formData as IUser, statusUpdate);
       if (ok) onClose();
     } finally {
       setIsSaving(false);
@@ -365,6 +403,29 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               maxLength={STATUS_REASON_MAX_LENGTH}
               disabled={!canEdit}
             />
+            {canEdit && isBlocking && (
+              <>
+                <select
+                  id="member-block-duration"
+                  className="form-select"
+                  style={{ marginTop: '8px' }}
+                  value={blockDuration}
+                  onChange={(e) => setBlockDuration(e.target.value as IBlockDuration | '')}
+                >
+                  {isSuspendedMember && <option value="">차단 기간 · 변경 안 함</option>}
+                  {BLOCK_DURATION_OPTIONS.map((duration) => (
+                    <option key={duration} value={duration}>
+                      차단 기간 · {BLOCK_DURATION_LABEL[duration]}
+                    </option>
+                  ))}
+                </select>
+                {isSuspendedMember && (
+                  <div className="form-hint">
+                    {renderCurrentBlock()} 기간을 고르면 지금부터 다시 계산합니다.
+                  </div>
+                )}
+              </>
+            )}
             <MemberStatusHistory userId={member.id} />
           </div>
 

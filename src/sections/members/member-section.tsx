@@ -11,6 +11,7 @@ import { MemberTable } from 'src/components/members/member-table';
 import { useMembers } from 'src/sections/members/hooks/use-member';
 import type { IAdminTicketType } from 'src/types/common';
 import type { IUser } from 'src/types/users/user';
+import type { IUpdateUserStatusPayload } from 'src/types/users/user_status_history';
 import { formatDate } from 'src/utils/helper';
 
 const accountStatusLabels: Record<string, string> = {
@@ -72,9 +73,12 @@ export const MembersSection: React.FC = () => {
     setSelectedMember(null);
   };
 
-  const handleSaveMember = (updatedMember: IUser, statusReason: string) =>
+  const handleSaveMember = (
+    updatedMember: IUser,
+    statusUpdate: IUpdateUserStatusPayload | null
+  ) =>
     selectedMember
-      ? updateMember(selectedMember, updatedMember, statusReason)
+      ? updateMember(selectedMember, updatedMember, statusUpdate)
       : Promise.resolve(false);
 
   const handleGrantTicket = (data: {

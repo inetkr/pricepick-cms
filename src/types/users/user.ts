@@ -12,6 +12,8 @@ export type IUser = IBase & {
   // 연동 여부는 kakao_info 로 본다 — 미연동이면 null
   kakao_info: IKakaoUserInfo | null;
   account_status: IAccountStatus;
+  // 기간 차단의 마지막 날(KST, YYYY-MM-DD) — 영구 차단이거나 차단이 아니면 null
+  blocked_until?: string | null;
   last_ip: string;
   // epoch 밀리초를 문자열로 준다 — parseTimestamp로 읽는다
   last_online: string | number | null;
