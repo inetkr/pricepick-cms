@@ -4,7 +4,7 @@ import React from 'react';
 const acquisitionRows = [
   { path: '출석 체크', reward: '이벤트티켓 1장', condition: '5일 연속 출석 달성 시' },
   {
-    path: '매일 행운 룰렛',
+    path: '매일 선물 상자',
     reward: '포인트·이벤트티켓(확률 미정)',
     condition: '하루 1회 / 확률 지급',
   },
@@ -123,11 +123,14 @@ export const OpPolicyEventTab: React.FC = () => (
     </div>
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
       <div className="policy-item">
-        <div className="policy-label">가입 즉시</div>
-        <div className="policy-value">이벤트 티켓 1장 + 20P</div>
-        <div className="policy-desc">
-          어뷰징 방지 — 티켓·이벤트 티켓 보너스는 카카오 연동 후 지급.
-        </div>
+        <div className="policy-label">가입 완료 시</div>
+        <div className="policy-value">20P</div>
+        <div className="policy-desc">닉네임 가입 즉시 지급 — 카카오 미연동 회원 포함.</div>
+      </div>
+      <div className="policy-item">
+        <div className="policy-label">카카오 연동 시</div>
+        <div className="policy-value">이벤트 티켓 1장</div>
+        <div className="policy-desc">어뷰징 방지 — 이벤트 티켓은 카카오 연동 후 지급.</div>
       </div>
       <div className="policy-item">
         <div className="policy-label">첫 쿠팡 구경하기</div>

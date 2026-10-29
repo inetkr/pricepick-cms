@@ -78,19 +78,21 @@ export const DashboardSection: React.FC = () => {
   const formatCount = (value?: number) => (value ?? 0).toLocaleString('ko-KR');
   const formatWon = (value?: number) => `${formatCount(value)}원`;
 
-  // 티켓은 등급마다 가치가 달라 합계만으로는 읽을 수 없다 — 등급별 수를 함께 적는다
+  // 티켓과 이벤트 티켓은 쓰임이 달라 합계 대신 나눠 적는다
   const breakdown = summary?.issued_ticket_breakdown;
-  const issuedBreakdown = breakdown
-    ? [
-        ['브론즈', breakdown.BRONZE],
-        ['실버', breakdown.SILVER],
-        ['골드', breakdown.GOLD],
-        ['이벤트', breakdown.EVENT],
-      ]
-        .filter(([, n]) => n !== undefined)
-        .map(([name, n]) => `${name} ${formatCount(n as number)}`)
-        .join(' · ')
-    : null;
+  const issuedTickets = (
+    <div style={{ display: 'flex', gap: '18px' }}>
+      {[
+        ['티켓', breakdown?.TICKET],
+        ['이벤트 티켓', breakdown?.EVENT_TICKET],
+      ].map(([name, n]) => (
+        <div key={name}>
+          <div style={{ fontSize: '11px', fontWeight: 500, color: 'var(--text-2)' }}>{name}</div>
+          <div>{formatCount(n as number | undefined)}</div>
+        </div>
+      ))}
+    </div>
+  );
 
   // 기프티콘은 회원이 보유 포인트로 교환하는 구조라 매출이 아니다 — 매출 카드에서 뺀다(QA #1)
   const statsRow1 = [
@@ -112,8 +114,8 @@ export const DashboardSection: React.FC = () => {
     { label: '활성 회원', value: formatCount(summary?.member_count), color: 'purple' as const },
     {
       label: '발행 티켓 (누적 적립)',
-      value: formatCount(summary?.issued_ticket_count),
-      change: issuedBreakdown ? { type: 'neutral' as const, text: issuedBreakdown } : undefined,
+      value: issuedTickets,
+      change: { type: 'neutral' as const, text: '적립 확정 기준' },
       color: 'green' as const,
     },
     {

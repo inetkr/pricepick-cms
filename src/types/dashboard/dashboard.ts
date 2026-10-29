@@ -1,4 +1,4 @@
-export type IDashboardTicketType = 'BRONZE' | 'SILVER' | 'GOLD' | 'EVENT';
+export type IDashboardTicketType = 'TICKET' | 'EVENT_TICKET';
 
 export type IDashboardSummary = {
   profit_amount: number;
@@ -7,7 +7,7 @@ export type IDashboardSummary = {
   member_count: number;
   new_member_this_month_count: number;
   issued_ticket_count: number;
-  // 등급별 발행 수 — 오늘 발행 티켓 카드에 함께 보여 준다
+  // 티켓·이벤트 티켓별 발행 수 — 발행 티켓 카드에 나눠 보여 준다
   issued_ticket_breakdown?: Partial<Record<IDashboardTicketType, number>>;
   qna_pending_count: number;
 };
