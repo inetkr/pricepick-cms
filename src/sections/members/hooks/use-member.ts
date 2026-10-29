@@ -35,6 +35,9 @@ export const useMembers = () => {
   const [members, setMembers] = useState<IUser[]>([]);
   const [stats, setStats] = useState<IUserStat>({
     total_users: 0,
+    total_normal_users: 0,
+    total_blocked_users: 0,
+    total_deleted_users: 0,
     total_kakao_linked: 0,
     total_kakao_not_linked: 0,
     total_marketing_consent: 0,

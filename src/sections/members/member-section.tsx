@@ -104,11 +104,11 @@ export const MembersSection: React.FC = () => {
 
   return (
     <div className="section active" id="sec-members">
-      {/* <div className="data-source-bar">
+      <div className="data-source-bar">
         <span className="ds-label">데이터 출처</span>
-        <span className="ds-tag ours">우리 DB · users 테이블 (PII 포함, 보안 1순위)</span>
+        <span className="ds-tag ours">우리 DB · 회원 정보 (개인정보 포함, 보안 1순위)</span>
         <span className="ds-tag calc">집계 · 티켓 보유량, 가입일, 마지막 접속</span>
-      </div> */}
+      </div>
 
       <div className="info-box">
         <strong>회원 가입 안내</strong>
