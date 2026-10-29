@@ -37,6 +37,9 @@ export type IPoint = {
   group?: 'EARN' | 'USE' | null;
   group_label?: string | null;
   description: string;
+  // 수동 지급·회수(ADMIN_ADD / ADMIN_SUB)를 처리한 관리자 — 자동 처리 건은 null
+  employee_id?: string | null;
+  employee?: { id: string; username: string; fullname: string | null } | null;
   amount: number;
   balance_after: number;
   created_at: string;

@@ -27,6 +27,14 @@ export const PbMoney: React.FC<{ value: number | string | null | undefined }> = 
   return <>{pbMoneyText(value)}</>;
 };
 
+// 회원 칸 — 포스트백을 우리 회원과 이어 붙였으면 그 닉네임(user_nickname), 못 이었으면 「미연결」
+export const PbMemberCell: React.FC<{ row: IPostbackLog }> = ({ row }) =>
+  row.user_nickname ? (
+    <span style={{ fontWeight: 500 }}>{row.user_nickname}</span>
+  ) : (
+    <span className="pb-dim">미연결</span>
+  );
+
 // 줄 오른쪽 끝의 펼침 표시. 실제로는 행 전체가 눌린다.
 export const PbCaret: React.FC = () => (
   <td className="pb-caret">

@@ -31,7 +31,7 @@ export const MemberToolbar: React.FC<MemberToolbarProps> = ({
   statusOptions = [
     { value: '', label: '전체 상태' },
     { value: 'active', label: '정상' },
-    { value: 'blocked', label: '정지' },
+    { value: 'blocked', label: '차단' },
     { value: 'withdrawn', label: '탈퇴' },
   ],
   marketingOptions = [

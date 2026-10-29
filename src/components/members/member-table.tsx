@@ -156,7 +156,7 @@ const getMemberStatus: (accountStatus: IAccountStatus) => { label: string; class
     case 'NORMAL':
       return { label: '정상', className: 'badge-green' };
     case 'BLOCK':
-      return { label: '정지', className: 'badge-red' };
+      return { label: '차단', className: 'badge-red' };
     case 'DELETE':
       return { label: '탈퇴', className: 'badge-gray' };
     default:

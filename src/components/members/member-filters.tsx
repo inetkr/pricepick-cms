@@ -19,7 +19,7 @@ const kakaoStatusOptions = [
 const accountStatusOptions = [
   { value: '', label: '전체 상태' },
   { value: 'NORMAL', label: '정상' },
-  { value: 'BLOCK', label: '정지' },
+  { value: 'BLOCK', label: '차단' },
   { value: 'DELETE', label: '탈퇴' },
 ];
 

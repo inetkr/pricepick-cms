@@ -1,6 +1,6 @@
 import React from 'react';
 
-type MemberStatus = '정상' | '정지' | '탈퇴';
+type MemberStatus = '정상' | '차단' | '탈퇴';
 
 interface MemberStatusBadgeProps {
   status: MemberStatus;
@@ -9,7 +9,7 @@ interface MemberStatusBadgeProps {
 export const MemberStatusBadge: React.FC<MemberStatusBadgeProps> = ({ status }) => {
   const statusMap = {
     정상: { className: 'badge-green', label: '정상' },
-    정지: { className: 'badge-red', label: '정지' },
+    차단: { className: 'badge-red', label: '차단' },
     탈퇴: { className: 'badge-gray', label: '탈퇴' },
   };
 

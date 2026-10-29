@@ -1,15 +1,21 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import type { IAccountStatus, IAdminTicketType } from 'src/types/common';
 import type { IUser } from 'src/types/users/user';
 import { MemberReceivedNotifications } from './member-received-notifications';
+import { MemberStatusHistory } from './member-status-history';
+
+// 서버(update_status)의 사유 최대 길이
+const STATUS_REASON_MAX_LENGTH = 500;
 
 interface MemberModalProps {
   isOpen: boolean;
   member: IUser | null;
   onClose: () => void;
-  onSave?: (member: IUser) => void;
+  // 저장이 끝나면 성공 여부를 돌려준다 — 실패하면 모달을 닫지 않고 입력값을 그대로 둔다
+  onSave?: (member: IUser, statusReason: string) => Promise<boolean>;
   onTicketGrant?: (data: {
     user_identifier: string; // 닉네임 또는 UID
     action: 'ADMIN_ADD' | 'ADMIN_SUB';
@@ -22,7 +28,7 @@ interface MemberModalProps {
 
 const MEMBER_STATUS_OPTIONS = [
   { value: 'NORMAL', label: '정상' },
-  { value: 'BLOCK', label: '정지' },
+  { value: 'BLOCK', label: '차단' },
   { value: 'DELETE', label: '탈퇴' },
 ];
 
@@ -44,12 +50,18 @@ export const MemberModal: React.FC<MemberModalProps> = ({
   const [ticketGrade, setTicketGrade] = useState<IAdminTicketType>('TICKET');
   // 수량은 빈 칸으로 시작한다 — 「수량」 안내 문구가 보이도록
   const [ticketQty, setTicketQty] = useState('');
+  const [ticketReason, setTicketReason] = useState('');
+  // 상태를 바꿀 때 함께 보내는 사유 — update_status API에서 필수
+  const [statusReason, setStatusReason] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (member) {
       setFormData(member);
       setTicketGrade('TICKET');
       setTicketQty('');
+      setTicketReason('');
+      setStatusReason('');
     }
   }, [member]);
 
@@ -65,24 +77,41 @@ export const MemberModal: React.FC<MemberModalProps> = ({
     setFormData({ ...formData, account_status: newStatus });
   };
 
-  const handleSave = () => {
-    if (onSave && formData) {
-      onSave(formData as IUser);
+  const handleSave = async () => {
+    if (!onSave || isSaving) return;
+    const statusChanged = formData.account_status !== member.account_status;
+    if (statusChanged && !statusReason.trim()) {
+      toast.error('상태를 바꿀 때는 사유를 입력해 주세요.');
+      return;
     }
-    onClose();
+    setIsSaving(true);
+    try {
+      const ok = await onSave(formData as IUser, statusReason);
+      if (ok) onClose();
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  // 회원 상세에서는 지급만 한다 — 회수는 티켓 관리 화면의 수동 지급/회수에서 한다
-  const handleTicketGrant = () => {
+  // 지급·차감 모두 사유가 있어야 보낸다 — 사유는 티켓 내역의 설명으로 남는다
+  const handleTicketSubmit = (action: 'ADMIN_ADD' | 'ADMIN_SUB') => {
     const amount = Math.floor(Number(ticketQty));
-    if (!Number.isFinite(amount) || amount <= 0) return;
+    const reason = ticketReason.trim();
+    if (!Number.isFinite(amount) || amount <= 0) {
+      toast.error('수량을 입력해 주세요.');
+      return;
+    }
+    if (!reason) {
+      toast.error('사유를 입력해 주세요.');
+      return;
+    }
     if (onTicketGrant && member) {
       onTicketGrant({
         user_identifier: member.id,
-        action: 'ADMIN_ADD',
+        action,
         ticket_type: ticketGrade,
         amount,
-        description: '관리자 지급',
+        description: reason,
       });
     }
     onClose();
@@ -118,7 +147,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
             <div className="warn-box">탈퇴한 회원입니다. 정보를 수정할 수 없습니다.</div>
           )}
           {isSuspendedMember && (
-            <div className="amber-box">정지된 회원입니다. 닉네임과 상태만 변경할 수 있습니다.</div>
+            <div className="amber-box">차단된 회원입니다. 닉네임과 상태만 변경할 수 있습니다.</div>
           )}
           <div className="form-row">
             <div className="form-group">
@@ -160,21 +189,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                     </span>
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span
-                      style={{
-                        fontSize: '11px',
-                        fontWeight: 700,
-                        color: '#d97a17',
-                        background: '#fdf1e3',
-                        border: '1px solid #f3d2a0',
-                        borderRadius: '10px',
-                        padding: '1px 7px',
-                      }}
-                    >
-                      게스트(미연동)
-                    </span>
-                  </div>
+                  <span style={{ fontSize: '12px', color: 'var(--text-3)' }}>게스트(비연동)</span>
                 )}
               </div>
             </div>
@@ -203,7 +218,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               <input
                 id="member-join-type"
                 className="form-input"
-                value={member.kakao_info ? '카카오 연동' : '게스트 (미연동)'}
+                value={member.kakao_info ? '카카오 연동' : '게스트'}
                 disabled
               />
             </div>
@@ -310,10 +325,47 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   {member.event_ticket_total ?? 0}
                 </span>
               </div>
+              {/* total_points는 문자열("200")로 온다 */}
+              <div
+                id="m-point-wrap"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  background: 'rgba(99, 102, 241, 0.1)',
+                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                  borderRadius: '6px',
+                  padding: '6px 10px',
+                }}
+              >
+                <span style={{ fontSize: '10px', fontWeight: 700, color: '#4f46e5' }}>포인트</span>
+                <span
+                  id="m-point-count"
+                  style={{ fontSize: '15px', fontWeight: 800, color: '#4f46e5' }}
+                >
+                  {(Number(member.total_points) || 0).toLocaleString()}P
+                </span>
+              </div>
             </div>
             <div style={{ marginTop: '6px', fontSize: '11px', color: 'var(--text3)' }}>
               랜덤 티켓: 구매 후 전환 대기일 수가 지나면 티켓으로 전환. 취소 시 자동 환수.
             </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="member-status-reason">
+              상태 변경 이력
+            </label>
+            <input
+              id="member-status-reason"
+              className="form-input"
+              placeholder="상태를 바꿀 때 사유 (필수)"
+              value={statusReason}
+              onChange={(e) => setStatusReason(e.target.value)}
+              maxLength={STATUS_REASON_MAX_LENGTH}
+              disabled={!canEdit}
+            />
+            <MemberStatusHistory userId={member.id} />
           </div>
 
           <MemberReceivedNotifications userId={member.id} />
@@ -321,7 +373,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
           {canEditTickets && (
             <div className="form-group">
               <label className="form-label" htmlFor="member-ticket-grade">
-                티켓 수동 지급
+                티켓 수동 지급 · 차감
               </label>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <select
@@ -346,8 +398,26 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   onChange={(e) => setTicketQty(e.target.value)}
                   min={1}
                 />
-                <button type="button" className="btn btn-success" onClick={handleTicketGrant}>
+                <input
+                  className="form-input"
+                  placeholder="사유 (필수)"
+                  style={{ width: '100px' }}
+                  value={ticketReason}
+                  onChange={(e) => setTicketReason(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={() => handleTicketSubmit('ADMIN_ADD')}
+                >
                   지급
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => handleTicketSubmit('ADMIN_SUB')}
+                >
+                  차감
                 </button>
               </div>
               <div className="form-hint">
@@ -361,7 +431,12 @@ export const MemberModal: React.FC<MemberModalProps> = ({
             닫기
           </button>
           {canEdit && (
-            <button type="button" className="btn btn-primary" onClick={handleSave}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleSave}
+              disabled={isSaving}
+            >
               저장
             </button>
           )}

@@ -4,6 +4,10 @@ import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
 import type { IUserStat } from 'src/types/users/user_stat';
 import type { IWithdrawalStat } from 'src/types/users/withdrawal_stat';
 import type { IUser } from 'src/types/users/user';
+import type {
+  IUpdateUserStatusPayload,
+  IUserStatusHistory,
+} from 'src/types/users/user_status_history';
 
 const tableName = 'user';
 export default class UserAPI extends BaseAPI {
@@ -90,6 +94,40 @@ export default class UserAPI extends BaseAPI {
       return response.data;
     } catch (error) {
       console.error('Error fetching withdrawn user list:', error);
+      throw error;
+    }
+  };
+
+  // 계정 상태 변경은 이 API로만 한다 — admin/update/:id 는 account_status를 거부한다. 사유 필수(최대 500자).
+  updateStatus = async (
+    id: string,
+    payload: IUpdateUserStatusPayload
+  ): Promise<ApiResponse<{ status: boolean; status_history: IUserStatusHistory }>> => {
+    try {
+      const response = await axios.axiosInstanceWithLoading.put(
+        `/${tableName}/admin/update_status/${id}`,
+        payload
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error updating user status:', error);
+      throw error;
+    }
+  };
+
+  // 최신순으로 내려온다
+  getStatusHistory = async (
+    id: string,
+    page: number = 1,
+    limit: number = 50
+  ): Promise<ApiPaginatedResponse<IUserStatusHistory>> => {
+    try {
+      const response = await axios.axiosInstance.get(`/${tableName}/admin/status_history/${id}`, {
+        params: { page, limit },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user status history:', error);
       throw error;
     }
   };

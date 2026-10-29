@@ -5,6 +5,7 @@ import {
   PbCancelSeenCell,
   PbCaret,
   PbLinesTable,
+  PbMemberCell,
   PbMoney,
   PbNone,
   PbRaw,
@@ -15,7 +16,7 @@ import { PostbackPagination } from 'src/components/postback/postback-pagination'
 import type { IPostbackCoupangFilters, IPostbackLog } from 'src/types/postback/postback';
 import { PB_KIND_BADGE, pbCoupangPidKey, pbField, pbN, pbPayloadEntries } from 'src/utils/postback';
 
-const COL_SPAN = 9;
+const COL_SPAN = 10;
 
 interface PostbackCoupangTableProps {
   rows: IPostbackLog[];
@@ -106,8 +107,12 @@ export const PostbackCoupangTable: React.FC<PostbackCoupangTableProps> = ({
                 <span className="fk">purchase_cancel</span>
               </th>
               <th>
-                회원
+                외부 ID
                 <span className="fk">subid</span>
+              </th>
+              <th>
+                회원
+                <span className="fk">연결</span>
               </th>
               <th>
                 주문번호
@@ -184,6 +189,9 @@ export const PostbackCoupangTable: React.FC<PostbackCoupangTableProps> = ({
                         <div className="pb-uid" title={r.sub_id ?? ''}>
                           <PbRaw value={r.sub_id} />
                         </div>
+                      </td>
+                      <td>
+                        <PbMemberCell row={r} />
                       </td>
                       <td>
                         <div className="pb-ord" title={r.order_code ?? ''}>

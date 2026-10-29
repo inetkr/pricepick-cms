@@ -15,7 +15,7 @@ import { formatDate } from 'src/utils/helper';
 
 const accountStatusLabels: Record<string, string> = {
   NORMAL: '정상',
-  BLOCK: '정지',
+  BLOCK: '차단',
   DELETE: '탈퇴',
 };
 
@@ -72,9 +72,10 @@ export const MembersSection: React.FC = () => {
     setSelectedMember(null);
   };
 
-  const handleSaveMember = (updatedMember: IUser) => {
-    updateMember(updatedMember);
-  };
+  const handleSaveMember = (updatedMember: IUser, statusReason: string) =>
+    selectedMember
+      ? updateMember(selectedMember, updatedMember, statusReason)
+      : Promise.resolve(false);
 
   const handleGrantTicket = (data: {
     user_identifier: string; // 닉네임 또는 UID

@@ -70,7 +70,7 @@ export const MemberReceivedNotifications: React.FC<MemberReceivedNotificationsPr
       >
         <div style={{ minWidth: 0 }}>
           <div style={{ fontWeight: 600, fontSize: '12px' }}>
-            {row.title}
+            {row.title || '(제목 없음)'}
             {row.is_test && (
               <span className="badge badge-gray" style={{ marginLeft: '6px' }}>
                 테스트

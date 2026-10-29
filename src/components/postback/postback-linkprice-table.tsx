@@ -5,6 +5,7 @@ import {
   PbCancelSeenCell,
   PbCaret,
   PbLinesTable,
+  PbMemberCell,
   PbMoney,
   PbRaw,
   PbRawFields,
@@ -18,7 +19,7 @@ import type {
 } from 'src/types/postback/postback';
 import { pbN, pbPayloadEntries } from 'src/utils/postback';
 
-const COL_SPAN = 10;
+const COL_SPAN = 11;
 
 interface PostbackLinkpriceTableProps {
   rows: IPostbackLog[];
@@ -113,8 +114,12 @@ export const PostbackLinkpriceTable: React.FC<PostbackLinkpriceTableProps> = ({
                 <span className="fk">merchant_id</span>
               </th>
               <th>
-                회원
+                외부 ID
                 <span className="fk">affiliate_user_id</span>
+              </th>
+              <th>
+                회원
+                <span className="fk">연결</span>
               </th>
               <th>
                 주문코드
@@ -182,6 +187,9 @@ export const PostbackLinkpriceTable: React.FC<PostbackLinkpriceTableProps> = ({
                         <div className="pb-uid" title={r.user_id ?? ''}>
                           <PbRaw value={r.user_id} />
                         </div>
+                      </td>
+                      <td>
+                        <PbMemberCell row={r} />
                       </td>
                       <td>
                         <div className="pb-ord" title={r.order_code ?? ''}>

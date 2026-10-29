@@ -25,6 +25,17 @@ const transactionColor = (point: IPoint) =>
 
 const transactionLabel = (point: IPoint) => point.transaction_type_label || point.transaction_type;
 
+const MANUAL_TRANSACTION_TYPES: IPointTransactionType[] = ['ADMIN_ADD', 'ADMIN_SUB'];
+
+const transactionReason = (point: IPoint) => point.description || '—';
+
+// 처리자 — 서버가 처리한 관리자(employee)를 주면 그 이름(없으면 아이디), 없으면
+// 수동 지급·회수는 「관리자」, 그 밖의 유형은 「자동」
+const transactionHandler = (point: IPoint) => {
+  if (point.employee) return point.employee.fullname || point.employee.username;
+  return MANUAL_TRANSACTION_TYPES.includes(point.transaction_type) ? '관리자' : '자동';
+};
+
 const renderPoints = (amount: number) => {
   const isPositive = amount > 0;
   const isNegative = amount < 0;
@@ -66,8 +77,10 @@ export const PointsTable: React.FC<PointsTableProps> = ({ points, pagination }) 
           <tr>
             <th>닉네임 / 카카오톡 ID / 식별 아이디</th>
             <th>유형</th>
+            <th>사유</th>
             <th>포인트</th>
             <th>교환 후 잔액</th>
+            <th>처리자</th>
             <th>일시</th>
           </tr>
         </thead>
@@ -75,7 +88,7 @@ export const PointsTable: React.FC<PointsTableProps> = ({ points, pagination }) 
           {points.length === 0 ? (
             <tr>
               <td
-                colSpan={5}
+                colSpan={7}
                 style={{ textAlign: 'center', padding: '30px', color: 'var(--text-2)' }}
               >
                 조회된 포인트 이력이 없습니다.
@@ -98,9 +111,22 @@ export const PointsTable: React.FC<PointsTableProps> = ({ points, pagination }) 
                 <td style={{ textAlign: 'center' }}>
                   <span style={{ color: transactionColor(point) }}>{transactionLabel(point)}</span>
                 </td>
+                <td
+                  style={{
+                    textAlign: 'center',
+                    maxWidth: '240px',
+                    wordBreak: 'break-word',
+                    color: 'var(--text-2)',
+                  }}
+                >
+                  {transactionReason(point)}
+                </td>
                 <td style={{ textAlign: 'center' }}>{renderPoints(point.amount)}</td>
                 <td style={{ textAlign: 'center', fontWeight: 600 }}>
                   {point.balance_after.toLocaleString()}P
+                </td>
+                <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                  {transactionHandler(point)}
                 </td>
                 <td style={{ textAlign: 'center', fontSize: '12px', whiteSpace: 'nowrap' }}>
                   {renderDateTime(point.created_at)}
