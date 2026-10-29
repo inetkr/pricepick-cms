@@ -17,6 +17,7 @@ const PAGE_META: Record<string, { title: string; bc: string }> = {
   // '/clawback': { title: '환수 이력', bc: '티켓 · 보상' },
   '/giftbox-daily': { title: '매일 선물 상자 열기', bc: '티켓 · 보상' },
   '/giftbox-random': { title: '랜덤 선물 상자 열기', bc: '티켓 · 보상' },
+  '/streak-mission': { title: '연속구매 미션', bc: '티켓 · 보상' },
   '/points': { title: '포인트 내역', bc: '포인트 관리' },
   '/point-attendance': { title: '출석체크 설정', bc: '포인트 관리' },
   '/point-policy': { title: '포인트 정책', bc: '포인트 관리' },

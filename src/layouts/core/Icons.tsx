@@ -568,6 +568,21 @@ export const RandomGiftBoxIcon = ({ className = '' }: { className?: string }) =>
   </svg>
 );
 
+export const StreakMissionIcon = ({ className = '' }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+  >
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="12" cy="12" r="5" />
+    <circle cx="12" cy="12" r="1" />
+  </svg>
+);
+
 export const TicketValueIcon = ({ className = '' }: { className?: string }) => (
   <svg
     className={className}
