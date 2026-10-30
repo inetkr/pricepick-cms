@@ -14,8 +14,20 @@ interface RateInputCellProps {
   onChange: (value: number) => void;
 }
 
+// 입력 중인 글자는 칸이 따로 들고 있다 — 다 지우면 「0」을 다시 채우지 않고 빈칸으로 둬서 새 값을
+// 바로 칠 수 있게 한다. 빈칸인 동안 값은 0으로 넘기고, 빈칸인 채로 칸을 벗어나면 0을 다시 적는다.
 const RateInputCell: React.FC<RateInputCellProps> = ({ value, max, onChange }) => {
+  const [text, setText] = React.useState(String(value));
   const invalid = value < 0 || value > max || Number.isNaN(value);
+
+  // 바깥에서 값이 바뀌면(저장·되돌리기 등) 따라가되, 지금 적힌 글자와 같은 값이면 그대로 둔다
+  React.useEffect(() => {
+    setText((prev) => {
+      if (prev === '' && value === 0) return prev;
+      return Number(prev) === value ? prev : String(value);
+    });
+  }, [value]);
+
   return (
     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
       <input
@@ -24,9 +36,15 @@ const RateInputCell: React.FC<RateInputCellProps> = ({ value, max, onChange }) =
         min={0}
         max={max}
         step={0.1}
-        value={value}
+        value={text}
         style={{ width: '80px', height: '32px', padding: '4px 8px', textAlign: 'right' }}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onChange={(e) => {
+          setText(e.target.value);
+          onChange(e.target.value === '' ? 0 : Number(e.target.value));
+        }}
+        onBlur={() => {
+          if (text === '') setText(String(value));
+        }}
       />
       <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>%</span>
     </div>

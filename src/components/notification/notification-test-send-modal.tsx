@@ -6,7 +6,6 @@ import { useDebounce } from 'src/hooks/use-debounce';
 import type { IUser } from 'src/types/users/user';
 import type { INotificationTestUser } from 'src/types/notification';
 import { Modal } from '../common/modal';
-import { Pagination } from '../common/pagination';
 import { InfoBox } from '../stats/info-box';
 
 // DEVQA 23 · 알림 테스트 발송 대상 선택
@@ -100,19 +99,17 @@ export const NotificationTestSendModal: React.FC<NotificationTestSendModalProps>
     setPage(1);
   }, [debouncedKeyword]);
 
+  // 검색어가 없으면 정상 회원 전체를 최근 가입순으로 보여 준다 — 회원 검색 API는 빈 검색어에 빈 목록을 준다
   useEffect(() => {
     if (!open) return undefined;
     const trimmed = debouncedKeyword.trim();
-    if (!trimmed) {
-      setResults([]);
-      setTotalItems(0);
-      return undefined;
-    }
 
     let cancelled = false;
     setIsSearching(true);
-    userAPI
-      .searchUserByKeyword(trimmed, page, PAGE_SIZE)
+    const request = trimmed
+      ? userAPI.searchUserByKeyword(trimmed, page, PAGE_SIZE)
+      : userAPI.getUserList(page, PAGE_SIZE, { account_status: 'NORMAL' });
+    request
       .then((res) => {
         if (cancelled) return;
         setResults(res.result.object.rows || []);
@@ -152,12 +149,9 @@ export const NotificationTestSendModal: React.FC<NotificationTestSendModalProps>
     if (ok) onClose();
   };
 
-  const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
 
   const renderResults = () => {
-    if (!debouncedKeyword.trim()) {
-      return <div style={emptyStyle}>닉네임 또는 식별 아이디로 검색하세요.</div>;
-    }
     if (isSearching && !results.length) {
       return <div style={emptyStyle}>검색 중...</div>;
     }
@@ -187,7 +181,7 @@ export const NotificationTestSendModal: React.FC<NotificationTestSendModalProps>
       open={open}
       onClose={onClose}
       title="테스트 발송 대상 선택"
-      width="760px"
+      width="520px"
       footer={
         <>
           <button type="button" className="btn btn-ghost" onClick={onClose}>
@@ -245,21 +239,34 @@ export const NotificationTestSendModal: React.FC<NotificationTestSendModalProps>
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '14px' }}>
           <div style={{ minWidth: 0 }}>
             <div className="form-label">검색 결과</div>
             <div style={listBoxStyle}>{renderResults()}</div>
-            {totalPages > 1 && (
-              <Pagination
-                currentPage={page}
-                totalPages={totalPages}
-                totalItems={totalItems}
-                itemsPerPage={PAGE_SIZE}
-                onPageChange={setPage}
-                showSizeChanger={false}
-                showTotal={false}
-                maxVisiblePages={5}
-              />
+            {totalItems > 0 && (
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '10px' }}
+              >
+                <span style={{ fontSize: '12px', color: 'var(--text-2)', marginRight: 'auto' }}>
+                  {page} / {totalPages} 페이지
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  disabled={page <= 1 || isSearching}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                >
+                  이전
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  disabled={page >= totalPages || isSearching}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                >
+                  다음
+                </button>
+              </div>
             )}
           </div>
           <div style={{ minWidth: 0 }}>

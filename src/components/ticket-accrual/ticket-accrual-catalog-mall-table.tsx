@@ -476,6 +476,7 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
         >
           엑셀 내려받기
         </a>
+        <span style={{ marginLeft: 'auto' }}>미적용으로 두면 회원에게 노출되지 않습니다.</span>
       </div>
       <div
         className="ta-scroll-table"

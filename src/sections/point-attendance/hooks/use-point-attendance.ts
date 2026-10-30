@@ -9,6 +9,11 @@ import type { IAttendanceStat } from 'src/types/points/attendance_stat';
 
 const CONFIG_KEY = 'ATTENDANCE_CONFIG';
 
+// 연결 제휴몰이 쿠팡 하나뿐이라 서버 라벨(「제휴몰 방문 후 …」) 대신 「쿠팡」으로 적는다 — 모르는 코드는 서버 라벨 그대로
+const RECOGNITION_CONDITION_LABEL: Record<string, string> = {
+  RETURN_FROM_STORE: '쿠팡 방문 후 복귀 시 인정',
+};
+
 const defaultConfig: IAttendanceConfigValue = {
   daily_points: 100,
   linked_store: 'COUPANG',
@@ -38,7 +43,12 @@ export const usePointAttendance = () => {
       const responseData = await configAPI.getConfig<IAttendanceConfig>(CONFIG_KEY);
       if (responseData && responseData.result && responseData.result.object && responseData.result.object.value) {
         setConfig(responseData.result.object.value);
-        setRecognitionConditionOptions(responseData.result.object.recognition_condition_options ?? []);
+        setRecognitionConditionOptions(
+          (responseData.result.object.recognition_condition_options ?? []).map((option) => ({
+            ...option,
+            label: RECOGNITION_CONDITION_LABEL[option.code] ?? option.label,
+          }))
+        );
       }
     } catch (error) {
       console.error('Failed to load attendance config:', error);

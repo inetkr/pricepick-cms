@@ -12,6 +12,11 @@ interface AttendancePolicyCardProps {
   wonPerPoint: number;
 }
 
+// 일일 지급 설명 — 인정 조건을 「…시 지급」으로 적는다. 모르는 코드는 인정 조건 라벨을 그대로 쓴다
+const dailyGrantDescriptions: Record<string, string> = {
+  RETURN_FROM_STORE: '쿠팡 방문 후 복귀 시 지급',
+};
+
 const linkedStoreLabels: Record<string, string> = {
   COUPANG: '쿠팡',
   COUPANG_11ST: '쿠팡 + 11번가',
@@ -37,7 +42,7 @@ export const AttendancePolicyCard: React.FC<AttendancePolicyCardProps> = ({
         <PolicyItem
           label="일일 지급"
           value={`${config.daily_points.toLocaleString()}P (${(config.daily_points * wonPerPoint).toLocaleString()}원 상당)`}
-          description={`1일 1회, ${conditionLabel}`}
+          description={`1일 1회, ${dailyGrantDescriptions[config.recognition_condition] ?? conditionLabel}`}
         />
         <PolicyItem
           label="연결 제휴몰"

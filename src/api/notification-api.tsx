@@ -73,6 +73,17 @@ export default class NotificationAPI {
     }
   };
 
+  // 예약 건 취소 — 발송 내역에서 지운다(soft delete). 지운 건은 예약 시각이 와도 발송되지 않는다.
+  deleteNotification = async (id: string): Promise<ApiResponse<any>> => {
+    try {
+      const res = await axios.axiosInstanceWithLoading.delete(`/${tableName}/${id}`);
+      return res.data;
+    } catch (error) {
+      console.error('Failed to delete push campaign:', error);
+      throw error;
+    }
+  };
+
   // DEVQA 24 · 발송 건의 수신자 목록 (검색·페이징)
   getNotificationRecipients = async (
     id: string,

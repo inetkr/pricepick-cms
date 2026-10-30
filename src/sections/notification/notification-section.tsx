@@ -38,6 +38,7 @@ export const NotificationSection: React.FC = () => {
     totalItems,
     sendNotification,
     sendTestNotification,
+    cancelScheduledNotification,
   } = useNotification();
 
   const [searchTitle, setSearchTitle] = useState(filters.title);
@@ -48,6 +49,13 @@ export const NotificationSection: React.FC = () => {
 
   const handleOpenTestFromScheduled = (notification: INotification) => {
     setTestSource({ title: notification.title, content: notification.content });
+  };
+
+  const handleCancelScheduled = (notification: INotification) => {
+    const ok = window.confirm(
+      `예약 발송을 취소하시겠습니까?\n${notification.title}\n취소한 건은 발송 내역에서 삭제되고 발송되지 않습니다.`
+    );
+    if (ok) cancelScheduledNotification(notification);
   };
 
   const handleSendTest = (users: INotificationTestUser[]) => {
@@ -138,6 +146,7 @@ export const NotificationSection: React.FC = () => {
           pagination={paginationProps}
           onRowClick={setRecipientsTarget}
           onSendTest={handleOpenTestFromScheduled}
+          onCancelScheduled={handleCancelScheduled}
         />
       )}
 

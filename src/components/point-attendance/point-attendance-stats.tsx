@@ -14,7 +14,7 @@ export const PointAttendanceStats: React.FC<PointAttendanceStatsProps> = ({
   return (
     <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
       <StatCard
-        label="오늘 출석 인원"
+        label="오늘 출석 회원"
         value={isLoading ? '—' : `${stats.checked_in_today.toLocaleString()}명`}
         change={{ type: 'neutral', text: '오늘 기준' }}
         color="purple"

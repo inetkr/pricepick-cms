@@ -15,6 +15,8 @@ interface NotificationTableProps {
   onRowClick?: (notification: INotification) => void;
   // 예약 건의 「테스트 발송」 (DEVQA 23)
   onSendTest?: (notification: INotification) => void;
+  // 예약 건의 「취소」 — 발송 전 예약을 지운다
+  onCancelScheduled?: (notification: INotification) => void;
 }
 
 const STATUS_BADGE_CLASS: Record<INotificationStatusValue, string> = {
@@ -82,6 +84,7 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
   pagination,
   onRowClick,
   onSendTest,
+  onCancelScheduled,
 }) => (
   <div className="card">
     <div className="card-header">
@@ -167,6 +170,19 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
                       }}
                     >
                       테스트 발송
+                    </button>
+                  )}
+                  {isScheduled && onCancelScheduled && (
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm"
+                      style={{ marginLeft: '4px', color: 'var(--danger)' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onCancelScheduled(notification);
+                      }}
+                    >
+                      취소
                     </button>
                   )}
                 </td>

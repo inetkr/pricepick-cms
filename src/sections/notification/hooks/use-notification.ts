@@ -158,6 +158,21 @@ export const useNotification = () => {
     }
   };
 
+  // 예약 건 취소 — 발송 전인 예약 건만 지운다
+  const cancelScheduledNotification = async (notification: INotification) => {
+    if (notification.status !== 'SCHEDULED') return false;
+    try {
+      await notificationAPI.deleteNotification(notification.id);
+      toast.success('예약 발송이 취소되었습니다.');
+      reload();
+      return true;
+    } catch (error) {
+      console.error('Failed to cancel scheduled notification:', error);
+      toast.error(getNotificationErrorMessage(error, '예약 취소에 실패했습니다.'));
+      return false;
+    }
+  };
+
   const handleSetFilters = (newFilters: IFilters) => {
     setPage(1);
     setFilters(newFilters);
@@ -184,5 +199,6 @@ export const useNotification = () => {
     totalItems,
     sendNotification,
     sendTestNotification,
+    cancelScheduledNotification,
   };
 };
