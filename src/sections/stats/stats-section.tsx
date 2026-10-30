@@ -55,7 +55,7 @@ export const StatsSection: React.FC = () => {
       <InfoBox type="info">
         <strong>수익 구조</strong> — 수익원은 둘입니다. ① <strong>제휴 수수료</strong>(회원이
         제휴몰에서 구매할 때 발생) ② <strong>기프티콘 판매 수익</strong>(회원이 티켓을 기프티콘으로
-        교환할 때 발생하는 마진). 두 수익에서 회원에게 적립해준 티켓의 환산가치(적립 비용)를 차감한
+        구매할 때 발생하는 마진). 두 수익에서 회원에게 적립해준 티켓의 환산가치(적립 비용)를 차감한
         것이 <strong>순수익</strong>입니다. 정산은 제휴몰별 D+30 확정.
       </InfoBox>
 
@@ -86,13 +86,13 @@ export const StatsSection: React.FC = () => {
         <div className="card">
           <div className="card-header">
             <div className="card-title">기프티콘 판매 수익</div>
-            <span style={{ fontSize: '11px', color: 'var(--text-3)' }}>티켓 교환 시 발생 마진</span>
+            <span style={{ fontSize: '11px', color: 'var(--text-3)' }}>티켓 구매 시 발생 마진</span>
           </div>
           <table>
             <tbody>
               <tr>
                 <td>
-                  교환 기프티콘 환산가치
+                  구매 기프티콘 환산가치
                   <span style={{ fontSize: '11px', color: 'var(--text-3)' }}> (유저 티켓 소진)</span>
                 </td>
                 <td style={{ textAlign: 'right', fontWeight: 600 }}>
@@ -126,7 +126,7 @@ export const StatsSection: React.FC = () => {
               lineHeight: '1.6',
             }}
           >
-            기프티콘 교환가는 티켓 환산가치 기준으로 책정되고, 실제 매입은 도매가로 이루어져 그
+            기프티콘 구매가는 티켓 환산가치 기준으로 책정되고, 실제 매입은 도매가로 이루어져 그
             차액이 추가 수익이 됩니다.
           </div>
         </div>

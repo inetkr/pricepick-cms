@@ -121,7 +121,7 @@ const gifticonColumns: {
       </>
     ),
   },
-  { key: 'exchange_price', label: '교환가(실가)', render: (item) => won(item.exchange_price) },
+  { key: 'exchange_price', label: '구매가(실가)', render: (item) => won(item.exchange_price) },
   { key: 'wholesale_cost', label: '도매 원가', render: (item) => won(item.wholesale_cost) },
   {
     key: 'margin',
@@ -192,7 +192,7 @@ export const RevenueSection: React.FC = () => {
       </div>
       <div className="info-box">
         <strong>매출 내역</strong> — 매출 발생 건별 기록입니다. <strong>제휴 수수료</strong>(제휴몰
-        D+30 정산)와 <strong>기프티콘 판매</strong>(교환 시 즉시 발생 마진)는 정산 주체·시점이 달라
+        D+30 정산)와 <strong>기프티콘 판매</strong>(구매 시 즉시 발생 마진)는 정산 주체·시점이 달라
         유형별로 분리해 관리합니다. 합산 지표는 <strong>수익 분석</strong> 페이지 참고.
       </div>
 

@@ -20,7 +20,7 @@ const usageStatusBadgeMap: Record<
   USED: { color: '#6b7280', background: '#f3f4f6', border: '#e5e7eb', label: '사용 완료' },
   EXPIRED: { color: '#9ca3af', background: '#f3f4f6', border: '#e5e7eb', label: '만료' },
   PENDING: { color: '#d97a17', background: '#fdf1e3', border: '#f3d2a0', label: '가지급(대기)' },
-  REVOKED: { color: '#ef4444', background: '#fef2f2', border: '#fcd5d5', label: '회수' },
+  REVOKED: { color: '#ef4444', background: '#fef2f2', border: '#fcd5d5', label: '환수' },
 };
 
 const renderStatusBadge = (status: IUsageStatus) => {

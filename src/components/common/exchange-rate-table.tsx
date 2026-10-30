@@ -21,7 +21,7 @@ const gradeLabels = {
 
 export const ExchangeRateTable: React.FC<ExchangeRateTableProps> = ({
   data,
-  title = '포인트 ↔ 티켓 교환 비율',
+  title = '포인트 ↔ 티켓 구매 비율',
   onEdit,
 }) => {
   return (

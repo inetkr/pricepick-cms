@@ -16,7 +16,7 @@ export const TicketStats: React.FC<TicketStatsProps> = ({ stats }) => {
         color="purple"
       />
       <StatCard
-        label="기프티콘 교환"
+        label="기프티콘 구매"
         value={`${stats.total_gifticon_purchases.toLocaleString()}`}
         change={{ type: 'neutral', text: '티켓 소모' }}
         color="green"
@@ -34,7 +34,7 @@ export const TicketStats: React.FC<TicketStatsProps> = ({ stats }) => {
         color="blue"
       />
       <StatCard
-        label="부정행위 회수"
+        label="부정행위 환수"
         value={`${stats.total_admin_sub.toLocaleString()}`}
         change={{ type: 'neutral', text: '취소·반품' }}
         color="red"

@@ -37,7 +37,7 @@ export const TicketValueSection: React.FC = () => {
   return (
     <div className="section active">
       <InfoBox type="info">
-        티켓 1장의 <strong>원화 환산가치</strong>를 정합니다. 이 값이 룰렛 잭팟 판정·포인트 교환
+        티켓 1장의 <strong>원화 환산가치</strong>를 정합니다. 이 값이 룰렛 잭팟 판정·포인트 구매
         비율의 기준이 됩니다. 저장하면 앱이 실제로 이 값을 읽어 씁니다.
       </InfoBox>
 

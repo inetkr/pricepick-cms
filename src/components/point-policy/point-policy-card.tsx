@@ -66,7 +66,7 @@ export const PointPolicyCard: React.FC<PointPolicyCardProps> = ({
           }
         />
         <PolicyItem
-          label="교환 방향"
+          label="구매 방향"
           value={directionLabels[config.conversion_direction] || config.conversion_direction}
           description="티켓 → 포인트 역방향은 2026-08 확정으로 중단 — 앱은 숨김 처리만 했고 로직은 남아 있어 필요 시 복구 가능"
         />

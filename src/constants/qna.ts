@@ -18,8 +18,8 @@ export const QNA_STATE_FILTER_OPTIONS: { value: string; label: string }[] = [
 
 export const QNA_TYPE_LABELS: Record<IQnaType, string> = {
   TICKET_EARN: '티켓 적립',
-  GIFT_EXCHANGE: '기프티콘 교환',
-  TICKET_CONVERT: '티켓 교환·환수',
+  GIFT_EXCHANGE: '기프티콘 구매',
+  TICKET_CONVERT: '티켓 구매·환수',
   ACCOUNT: '계정·로그인',
   OTHER: '기타',
 };

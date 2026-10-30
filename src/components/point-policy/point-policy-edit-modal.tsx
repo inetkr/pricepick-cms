@@ -87,7 +87,7 @@ export const PointPolicyEditModal: React.FC<PointPolicyEditModalProps> = ({
           <div className="form-row">
             <div className="form-group">
               <label className="form-label" htmlFor="pp-edit-rate-point">
-                교환 비율 (P = 원)
+                구매 비율 (P = 원)
               </label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <input
@@ -171,7 +171,7 @@ export const PointPolicyEditModal: React.FC<PointPolicyEditModalProps> = ({
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="pp-edit-direction">
-                교환 방향
+                구매 방향
               </label>
               <select
                 id="pp-edit-direction"

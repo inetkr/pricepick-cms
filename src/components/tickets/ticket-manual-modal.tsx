@@ -26,7 +26,7 @@ type TicketGrade = IAdminTicketType;
 
 const ADMIN_ACTIONS = [
   { value: 'ADMIN_ADD', label: '지급' },
-  { value: 'ADMIN_SUB', label: '회수' },
+  { value: 'ADMIN_SUB', label: '환수' },
 ];
 
 // 티켓 단일화 — 등급 없이 티켓·이벤트 티켓 두 가지만 지급/회수한다
@@ -163,7 +163,7 @@ export const TicketManualModal: React.FC<TicketManualModalProps> = ({
     >
       <div className="modal">
         <div className="modal-header">
-          <div className="modal-title">수동 티켓 지급 / 회수</div>
+          <div className="modal-title">수동 티켓 지급 / 환수</div>
           <button type="button" className="modal-close" onClick={onClose}>
             <svg
               viewBox="0 0 24 24"

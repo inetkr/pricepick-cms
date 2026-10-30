@@ -121,7 +121,7 @@ export const MembersSection: React.FC = () => {
         확정 대기 <strong>D+30</strong> 적용.
         <br />
         계정 모델: <strong>게스트(닉네임)로 시작</strong> → 앱 내 <strong>카카오 연동</strong>{' '}
-        (애플·구글 로그인 폐지). 게스트는 적립만 누적, 사용·교환은 연동 후 가능.
+        (애플·구글 로그인 폐지). 게스트는 적립만 누적, 사용·구매는 연동 후 가능.
         <br />
         구매 즉시 <strong>가지급 티켓(랜덤)</strong> 지급 → 포스트백 수신 후{' '}
         <strong>확정</strong> 시 티켓으로 전환

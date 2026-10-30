@@ -47,7 +47,7 @@ export const OpPolicyEventTab: React.FC = () => (
 
     <div className="info-box" style={{ marginTop: '12px' }}>
       이벤트 티켓은 <strong>랜덤 선물 상자 열기</strong>(1회당 1장)와{' '}
-      <strong>이벤트 티켓 1장 → 티켓 2장 전환</strong>(단방향)에 쓰이며(상품 교환 불가), 만료는{' '}
+      <strong>이벤트 티켓 1장 → 티켓 2장 전환</strong>(단방향)에 쓰이며(상품 구매 불가), 만료는{' '}
       <strong>발급일+100일 고정 소멸</strong> 방식입니다.{' '}
       <span style={{ color: 'var(--text-3)' }}>(친구초대·광고시청은 포인트 경로로 이동)</span>
       <div style={{ marginTop: '6px', color: 'var(--text-3)' }}>

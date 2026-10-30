@@ -79,7 +79,7 @@ export const PointsTable: React.FC<PointsTableProps> = ({ points, pagination }) 
             <th>유형</th>
             <th>사유</th>
             <th>포인트</th>
-            <th>교환 후 잔액</th>
+            <th>구매 후 잔액</th>
             <th>처리자</th>
             <th>일시</th>
           </tr>

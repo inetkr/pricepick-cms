@@ -8,8 +8,10 @@ import { InfoBox } from 'src/components/stats/info-box';
 import { TicketFilters } from 'src/components/tickets/ticket-filters';
 import { TicketManualModal } from 'src/components/tickets/ticket-manual-modal';
 import { TicketStats } from 'src/components/tickets/ticket-stats';
+import { TicketDebtTable } from 'src/components/tickets/ticket-debt-table';
 import { TicketTable } from 'src/components/tickets/ticket-table';
 import { useTickets } from 'src/sections/tickets/hooks/use-ticket';
+import { useTicketDebts } from 'src/sections/tickets/hooks/use-ticket-debt';
 import type { ITicket } from 'src/types/tickets/ticket';
 import { formatDate } from 'src/utils/helper';
 
@@ -17,7 +19,7 @@ const usageStatusLabels: Record<string, string> = {
   USED: '사용 완료',
   PENDING: '가지급(대기)',
   HOLDING: '지급',
-  ADMIN_SUB: '회수',
+  ADMIN_SUB: '환수',
   REJECTED: '거절',
 };
 
@@ -57,6 +59,16 @@ export const TicketsSection: React.FC = () => {
     manualTicketAction,
     exportTickets,
   } = useTickets();
+  const {
+    debts,
+    isLoading: isLoadingDebts,
+    page: debtPage,
+    setPage: setDebtPage,
+    limit: debtLimit,
+    setLimit: setDebtLimit,
+    totalPages: debtTotalPages,
+    totalItems: debtTotalItems,
+  } = useTicketDebts();
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -86,7 +98,7 @@ export const TicketsSection: React.FC = () => {
       <TicketStats stats={stats} />
 
       <InfoBox type="info">
-        <strong>티켓 원장은 절대 삭제 금지</strong> — 회계/세무/부정거래 추적의 근거. 회수 시에도
+        <strong>티켓 원장은 절대 삭제 금지</strong> — 회계/세무/부정거래 추적의 근거. 환수 시에도
         음수 레코드로 추가, 원본 보존. (추가만 가능 · 수정·삭제 불가)
       </InfoBox>
 
@@ -109,7 +121,7 @@ export const TicketsSection: React.FC = () => {
             className="btn btn-ghost btn-sm"
             onClick={() => setIsManualModalOpen(true)}
           >
-            수동 지급 / 회수
+            수동 지급 / 환수
           </button>
         </div>
       </div>
@@ -121,6 +133,21 @@ export const TicketsSection: React.FC = () => {
       ) : (
         <TicketTable tickets={tickets} pagination={paginationProps} categories={categories} />
       )}
+
+      <TicketDebtTable
+        debts={debts}
+        isLoading={isLoadingDebts}
+        pagination={{
+          currentPage: debtPage,
+          totalPages: debtTotalPages,
+          onPageChange: setDebtPage,
+          onItemsPerPageChange: setDebtLimit,
+          showSizeChanger: true,
+          showTotal: true,
+          totalItems: debtTotalItems,
+          itemsPerPage: debtLimit,
+        }}
+      />
 
       <TicketManualModal
         open={isManualModalOpen}

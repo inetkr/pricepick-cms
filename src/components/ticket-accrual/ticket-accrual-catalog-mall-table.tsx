@@ -229,7 +229,7 @@ export const TicketAccrualCatalogMallTable: React.FC<TicketAccrualCatalogMallTab
 
   columns.push({
     key: 'convert',
-    label: '등급 전환 시점',
+    label: '티켓 전환 시점',
     width: '9%',
     render: () => <LpConvertLabelCell />,
   });

@@ -110,7 +110,7 @@ export const RouletteSlotEditor: React.FC<RouletteSlotEditorProps> = ({
                     className="rlt-jackpot-badge"
                     style={{ display: index === jackpotIndex ? 'inline-block' : 'none' }}
                   >
-                    JACKPOT
+                    최고 보상
                   </span>
                 )}
               </td>

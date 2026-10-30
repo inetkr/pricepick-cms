@@ -28,7 +28,7 @@ export const PointPolicySection: React.FC = () => {
     <div className="section active">
       <div className="info-box">
         <strong>포인트 기준 환율</strong> — {config.exchange_rate.point}P ={' '}
-        {config.exchange_rate.won}원. 포인트 → 티켓 단방향 교환이며, 교환 비율은 환산가치 1:1 등가입니다. <strong>티켓 → 포인트 역방향은 2026-08 확정으로 중단</strong>했습니다 — 앱은 숨김 처리만 했고 로직은 남아 있어 필요 시 복구할 수 있습니다.
+        {config.exchange_rate.won}원. 포인트 → 티켓 단방향 구매이며, 구매 비율은 환산가치 1:1 등가입니다. <strong>티켓 → 포인트 역방향은 2026-08 확정으로 중단</strong>했습니다 — 앱은 숨김 처리만 했고 로직은 남아 있어 필요 시 복구할 수 있습니다.
       </div>
 
       <ExchangeRateCard data={conversionRates} exchangeRate={config.exchange_rate} />

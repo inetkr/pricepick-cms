@@ -48,7 +48,7 @@ export const OpPolicyExclusionTab: React.FC = () => (
     </div>
 
     <div className="info-box" style={{ marginTop: '14px' }}>
-      제외 대상 카테고리·상품은 적립 계산에서 제외되며, 앱 10e 화면에 &quot;적립 제외 상품&quot;으로
+      제외 대상 카테고리·상품은 적립 계산에서 제외되며, 앱에서 &quot;적립 제외 상품&quot;으로
       안내됩니다.
     </div>
   </div>

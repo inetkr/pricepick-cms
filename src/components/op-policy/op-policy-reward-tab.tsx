@@ -270,7 +270,7 @@ export const OpPolicyRewardTab: React.FC = () => {
               장수는 구매 금액 기준으로 <strong>내부 확정</strong> — 위 적립 기준(적립액 ÷ 티켓 1장
               값) 적용. 적립률 비공개 정책에 따라 유저 앱에는 확정 전까지 &lsquo;랜덤(미정)&rsquo;으로
               표시해 기대감 부여. 운영자는 회원 목록의 &lsquo;전환예정&rsquo; 컬럼에서 확정 장수를
-              미리 확인. 확정 시 티켓으로 전환되어 기프티콘 교환에 사용.{' '}
+              미리 확인. 확정 시 티켓으로 전환되어 기프티콘 구매에 사용.{' '}
               <span style={{ color: 'var(--text-3)' }}>(경품 응모는 별도 이벤트 티켓 전용)</span>
             </div>
           </div>
@@ -318,18 +318,18 @@ export const OpPolicyRewardTab: React.FC = () => {
 
       <div className="card" style={{ marginTop: '18px' }}>
         <div className="card-header">
-          <div className="card-title">티켓 교환 정책</div>
+          <div className="card-title">티켓 구매 정책</div>
           <div className="card-sub">조회 전용 — 2026-10-14 티켓 1종 통합</div>
         </div>
         <div style={{ padding: '18px' }}>
           <div className="info-box" style={{ marginBottom: '16px' }}>
             <strong>기프티콘은 티켓 장수로 구매</strong> — 필요 장수 = 기프티콘 가격 ÷ 티켓 1장
-            값({won(ticketValue)}). 나눠떨어지지 않으면 1장 더(올림). 등급 교환은 등급 티켓 1종
+            값({won(ticketValue)}). 나눠떨어지지 않으면 1장 더(올림). 등급 구매는 등급 티켓 1종
             통합으로 폐기했습니다.
           </div>
           <div className="info-box" style={{ marginBottom: '16px' }}>
-            <strong>포인트 → 티켓 교환은 단방향 · 등가 · 수수료 없음</strong> — 10P로 티켓 1장을
-            받을 수 있습니다. 필요 포인트가 모자라면 교환하지 않습니다.{' '}
+            <strong>포인트 → 티켓 구매는 단방향 · 등가 · 수수료 없음</strong> — 10P로 티켓 1장을
+            받을 수 있습니다. 필요 포인트가 모자라면 구매하지 않습니다.{' '}
             <strong>티켓 → 포인트 역방향은 2026-08 확정으로 중단</strong>했습니다 — 앱에서는 숨김
             처리만 했을 뿐 로직·데이터는 그대로라 필요 시 복구할 수 있습니다.
           </div>

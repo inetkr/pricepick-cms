@@ -15,8 +15,8 @@ export const RevenueStats: React.FC<RevenueStatsProps> = ({
   gifticonRevenue,
   totalRevenue,
   feeChange = '제휴몰 D+30 정산',
-  gifticonChange = '교환 마진 · 즉시',
-  totalChange = '포스트백 + 교환 마진',
+  gifticonChange = '구매 마진 · 즉시',
+  totalChange = '포스트백 + 구매 마진',
 }) => {
   return (
     <div className="stats-grid">

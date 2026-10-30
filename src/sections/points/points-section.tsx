@@ -64,7 +64,7 @@ export const PointsSection: React.FC = () => {
   return (
     <div className="section active" id="sec-points">
       <div className="info-box">
-        <strong>포인트 원장은 append-only</strong> — 적립·사용·만료·교환 모두 레코드로 누적되며 삭제
+        <strong>포인트 원장은 append-only</strong> — 적립·사용·만료·구매 모두 레코드로 누적되며 삭제
         금지. 회수도 음수 레코드로 추가합니다. (1P = 1원)
       </div>
 

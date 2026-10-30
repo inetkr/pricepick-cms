@@ -79,7 +79,7 @@ export const TicketValueImpactCard: React.FC<TicketValueImpactCardProps> = ({
         description="랜덤 선물 상자 보상칸도 운영자가 CMS에서 직접 정하는 값입니다(자동 계산 대상 아님). 티켓 가치를 바꾸면 보상칸 구성도 다시 정해야 합니다."
       />
       <PolicyItem
-        label="포인트 → 티켓 교환 비율"
+        label="포인트 → 티켓 구매 비율"
         value={
           <>
             {exchangeRatioText}

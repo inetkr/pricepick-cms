@@ -20,7 +20,7 @@ export const ExchangeRateCard: React.FC<ExchangeRateCardProps> = ({ data, exchan
   return (
     <div className="card">
       <div className="card-header">
-        <div className="card-title">포인트 ↔ 티켓 교환 비율</div>
+        <div className="card-title">포인트 ↔ 티켓 구매 비율</div>
       </div>
       <table>
         <thead>

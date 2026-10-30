@@ -4,6 +4,7 @@ import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
 import type { IAdminTicketType } from 'src/types/common';
 import type { ITicketStat } from 'src/types/tickets/ticket_stat';
 import type { ITicket, ITicketHistoryCategory } from 'src/types/tickets/ticket';
+import type { ITicketDebt } from 'src/types/tickets/ticket_debt';
 import type {
   ILuckySpinConfig,
   ILuckySpinConfigSlot,
@@ -61,6 +62,22 @@ export default class TicketAPI extends BaseAPI {
       return response.data;
     } catch (error) {
       console.error('Error fetching ticket list:', error);
+      throw error;
+    }
+  };
+
+  // 환수 부채 추적 — 아직 다 갚지 않은 티켓 부채, 최근 발생순
+  getTicketDebtList = async (
+    page: number,
+    limit: number
+  ): Promise<ApiPaginatedResponse<ITicketDebt>> => {
+    try {
+      const response = await axios.axiosInstance.get(`/${tableName}/admin/list_ticket_debt`, {
+        params: { page, limit },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching ticket debt list:', error);
       throw error;
     }
   };

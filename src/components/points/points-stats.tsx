@@ -24,7 +24,7 @@ export const PointsStats: React.FC<PointsStatsProps> = ({ stats }) => {
       <StatCard
         label="누적 사용·차감"
         value={`${stats.used_and_converted.toLocaleString()}P`}
-        change={{ type: 'neutral', text: '티켓 교환 포함' }}
+        change={{ type: 'neutral', text: '티켓 구매 포함' }}
         color="amber"
       />
       <StatCard
