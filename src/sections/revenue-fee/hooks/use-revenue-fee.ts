@@ -75,7 +75,7 @@ export const useRevenueFee = () => {
     })
   );
 
-  const [view, setView] = useState<IRevenueFeeView>('month');
+  const [view, setView] = useState<IRevenueFeeView>('day');
   const [selectedPeriod, setSelectedPeriod] = useState<IAffiliateRevenuePeriodRow | null>(null);
 
   /* ── 서버에서 받아 오는 것들 ── */

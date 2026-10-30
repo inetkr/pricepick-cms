@@ -91,7 +91,6 @@ interface RevenueFeePeriodTabProps {
   onPageChange: (page: number) => void;
   view: IRevenueFeeView;
   viewName: string;
-  onViewChange: (view: IRevenueFeeView) => void;
   selectedPeriod: IAffiliateRevenuePeriodRow | null;
   onSelect: (row: IAffiliateRevenuePeriodRow) => void;
   rowCount: number;
@@ -116,7 +115,6 @@ export const RevenueFeePeriodTab: React.FC<RevenueFeePeriodTabProps> = ({
   onPageChange,
   view,
   viewName,
-  onViewChange,
   selectedPeriod,
   onSelect,
   rowCount,
@@ -127,20 +125,8 @@ export const RevenueFeePeriodTab: React.FC<RevenueFeePeriodTabProps> = ({
 
   return (
     <>
-      {/* 월별/일별/기간별은 쿠팡·링크프라이스 두 표에 함께 걸리므로 두 표 위에 둔다 */}
-      <div className="toolbar" style={{ marginBottom: '14px' }}>
-        <select
-          className="filter-sel"
-          value={view}
-          onChange={(e) => onViewChange(e.target.value as IRevenueFeeView)}
-        >
-          <option value="month">월별</option>
-          <option value="day">일별</option>
-          <option value="range">기간별</option>
-        </select>
-      </div>
-
-      {/* 쿠팡은 따로 얹는다 — 제휴몰별 탭과 같은 결이다. 아래 표는 링크프라이스만 그린다. */}
+      {/* 월별/일별/기간별(조회 단위)은 화면 위 조회 칸에서 고른다.
+          쿠팡은 따로 얹는다 — 제휴몰별 탭과 같은 결이다. 아래 표는 링크프라이스만 그린다. */}
       <div className="card">
         <div className="card-header">
           <div>

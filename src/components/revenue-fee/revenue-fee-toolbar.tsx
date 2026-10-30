@@ -1,10 +1,17 @@
 'use client';
 
 import React from 'react';
-import type { IAffiliateRevenueRange, IRevenueFeePeriodMode } from 'src/types/revenue/revenue_fee';
+import type {
+  IAffiliateRevenueRange,
+  IRevenueFeePeriodMode,
+  IRevenueFeeView,
+} from 'src/types/revenue/revenue_fee';
 import { rfN, rfRangeLabel } from 'src/utils/revenue-fee';
 
 interface RevenueFeeToolbarProps {
+  // 조회 단위(월별·일별·기간별) — 기간별 매출 탭의 쿠팡·링크프라이스 두 표를 나누는 단위
+  view: IRevenueFeeView;
+  onViewChange: (view: IRevenueFeeView) => void;
   mode: IRevenueFeePeriodMode;
   onModeChange: (mode: IRevenueFeePeriodMode) => void;
   day: string;
@@ -25,6 +32,8 @@ interface RevenueFeeToolbarProps {
 /* 조회 기간은 탭 위에 놓여 아래쪽에 함께 걸린다 — 탭마다 따로 고르면 숫자가 어긋난다.
    칸·고르기·단추 높이는 #sec-revenue-fee 의 --rf-ctl-h 하나로 맞춰져 있다. */
 export const RevenueFeeToolbar: React.FC<RevenueFeeToolbarProps> = ({
+  view,
+  onViewChange,
   mode,
   onModeChange,
   day,
@@ -41,6 +50,17 @@ export const RevenueFeeToolbar: React.FC<RevenueFeeToolbarProps> = ({
   isLoading,
 }) => (
   <div className="toolbar">
+    <span className="rf-tb-label">조회 단위</span>
+    <select
+      className="filter-sel"
+      value={view}
+      onChange={(e) => onViewChange(e.target.value as IRevenueFeeView)}
+    >
+      <option value="month">월별</option>
+      <option value="day">일별</option>
+      <option value="range">기간별</option>
+    </select>
+
     <span className="rf-tb-label">조회 기간</span>
     <select
       className="filter-sel"

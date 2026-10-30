@@ -33,6 +33,12 @@ export const RevenueFeeSection: React.FC = () => {
       </button>
 
       <RevenueFeeToolbar
+        view={rf.view}
+        // 조회 단위는 기간별 매출 탭의 표를 나누는 값이라, 고르면 그 탭으로 넘어가 바로 보이게 한다
+        onViewChange={(next) => {
+          rf.changeView(next);
+          setTab('period');
+        }}
         mode={rf.periodMode}
         onModeChange={rf.setPeriodMode}
         day={rf.dayValue}
@@ -83,7 +89,6 @@ export const RevenueFeeSection: React.FC = () => {
           onPageChange={rf.setBucketPage}
           view={rf.view}
           viewName={rf.viewName}
-          onViewChange={rf.changeView}
           selectedPeriod={selected}
           onSelect={(row) => {
             rf.selectPeriodRow(row);
