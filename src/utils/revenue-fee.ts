@@ -29,6 +29,14 @@ export const rfWon = (n: number | null | undefined) => `${rfN(n)}원`;
 export const rfDt = (isoDate: string | null | undefined) =>
   (isoDate ?? '').slice(0, 10).replace(/-/g, '/');
 
+// created_at(ISO)에서 날짜만 — rfTm 과 같은 시간대로 읽어야 자정 무렵 건의 날짜·시각이 어긋나지 않는다
+export const rfDateOf = (isoDateTime: string | null | undefined) => {
+  if (!isoDateTime) return '';
+  const d = new Date(isoDateTime);
+  if (Number.isNaN(d.getTime())) return '';
+  return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+};
+
 // created_at(ISO)에서 시각만 — 같은 날 건이 여러 건이라 시각 없이는 실구매 기록과 못 맞춘다
 export const rfTm = (isoDateTime: string | null | undefined) => {
   if (!isoDateTime) return '';

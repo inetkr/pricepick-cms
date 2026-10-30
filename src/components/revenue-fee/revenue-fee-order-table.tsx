@@ -21,6 +21,7 @@ import {
   RF_ORDER_STATUS_LABEL,
   RF_STATUS_BADGE,
   RF_STATUS_LABEL,
+  rfDateOf,
   rfDt,
   rfIsCanceled,
   rfN,
@@ -201,7 +202,7 @@ export const RevenueFeeOrderTable: React.FC<RevenueFeeOrderTableProps> = ({
                     >
                       <td style={{ whiteSpace: 'nowrap', ...dim }}>
                         {/* 날짜 밑에 시·분·초 — 같은 날 건이 여럿이라 시각 없이는 실구매 기록과 못 맞춘다 */}
-                        <div>{rfDt(o.order_date)}</div>
+                        <div>{rfDateOf(o.created_at)}</div>
                         <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
                           {rfTm(o.created_at)}
                         </div>
