@@ -15,7 +15,7 @@ interface RateInputCellProps {
 }
 
 // 입력 중인 글자는 칸이 따로 들고 있다 — 다 지우면 「0」을 다시 채우지 않고 빈칸으로 둬서 새 값을
-// 바로 칠 수 있게 한다. 빈칸인 동안 값은 0으로 넘기고, 빈칸인 채로 칸을 벗어나면 0을 다시 적는다.
+// 바로 칠 수 있게 한다. 칸을 벗어나도 빈칸 그대로 두고, 빈칸인 동안 값은 0으로 넘긴다.
 const RateInputCell: React.FC<RateInputCellProps> = ({ value, max, onChange }) => {
   const [text, setText] = React.useState(String(value));
   const invalid = value < 0 || value > max || Number.isNaN(value);
@@ -41,9 +41,6 @@ const RateInputCell: React.FC<RateInputCellProps> = ({ value, max, onChange }) =
         onChange={(e) => {
           setText(e.target.value);
           onChange(e.target.value === '' ? 0 : Number(e.target.value));
-        }}
-        onBlur={() => {
-          if (text === '') setText(String(value));
         }}
       />
       <span style={{ fontSize: '12px', color: 'var(--text-2)' }}>%</span>
