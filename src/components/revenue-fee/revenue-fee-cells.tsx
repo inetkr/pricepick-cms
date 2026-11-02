@@ -1,5 +1,11 @@
 import React from 'react';
-import { rfN, rfRateLabel, rfWon } from 'src/utils/revenue-fee';
+import {
+  RF_NO_PRODUCT_NAME,
+  rfN,
+  rfProductName,
+  rfRateLabel,
+  rfWon,
+} from 'src/utils/revenue-fee';
 import type { IAffiliateRevenueOrderProduct } from 'src/types/revenue/revenue_fee';
 
 interface RfAmountProps {
@@ -94,8 +100,12 @@ export const RfOrderProducts: React.FC<{
                 <td className="pb-pid" style={dim}>
                   {it.product_code}
                 </td>
-                <td className="pb-pname" title={it.product_name} style={dim}>
-                  {it.product_name}
+                <td className="pb-pname" title={rfProductName(it.product_name)} style={dim}>
+                  {it.product_name?.trim() ? (
+                    it.product_name
+                  ) : (
+                    <span style={{ color: 'var(--text-3)' }}>{RF_NO_PRODUCT_NAME}</span>
+                  )}
                   {it.is_cancelled && <span className="pb-cx"> 취소</span>}
                 </td>
                 <td style={dim}>{rfN(it.quantity)}</td>

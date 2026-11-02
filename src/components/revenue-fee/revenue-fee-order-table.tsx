@@ -23,6 +23,7 @@ import {
   RF_STATUS_LABEL,
   rfDateOf,
   rfDt,
+  rfProductName,
   rfIsCanceled,
   rfN,
   rfRangeLabel,
@@ -259,9 +260,9 @@ export const RevenueFeeOrderTable: React.FC<RevenueFeeOrderTableProps> = ({
                           <div
                             className="pb-dim"
                             style={{ marginTop: '4px', maxWidth: '160px' }}
-                            title={grantedProducts.map((it) => it.product_name).join(', ')}
+                            title={grantedProducts.map((it) => rfProductName(it.product_name)).join(', ')}
                           >
-                            지급: {grantedProducts[0].product_name}
+                            지급: {rfProductName(grantedProducts[0].product_name)}
                             {grantedProducts.length > 1 && ` 외 ${grantedProducts.length - 1}건`}
                           </div>
                         )}

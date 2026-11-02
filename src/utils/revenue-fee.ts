@@ -29,6 +29,12 @@ export const rfWon = (n: number | null | undefined) => `${rfN(n)}원`;
 export const rfDt = (isoDate: string | null | undefined) =>
   (isoDate ?? '').slice(0, 10).replace(/-/g, '/');
 
+// 링크프라이스 몇몇 몰은 포스트백에 상품명을 싣지 않는다 — 빈칸 대신 「제품명 없음」으로 적는다
+export const RF_NO_PRODUCT_NAME = '제품명 없음';
+
+export const rfProductName = (name: string | null | undefined) =>
+  (name ?? '').trim() || RF_NO_PRODUCT_NAME;
+
 // created_at(ISO)에서 날짜만 — rfTm 과 같은 시간대로 읽어야 자정 무렵 건의 날짜·시각이 어긋나지 않는다
 export const rfDateOf = (isoDateTime: string | null | undefined) => {
   if (!isoDateTime) return '';
