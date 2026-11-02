@@ -30,7 +30,7 @@ export const rfDt = (isoDate: string | null | undefined) =>
   (isoDate ?? '').slice(0, 10).replace(/-/g, '/');
 
 // 링크프라이스 몇몇 몰은 포스트백에 상품명을 싣지 않는다 — 빈칸 대신 「제품명 없음」으로 적는다
-export const RF_NO_PRODUCT_NAME = '제품명 없음';
+export const RF_NO_PRODUCT_NAME = '[제품명 없음]';
 
 export const rfProductName = (name: string | null | undefined) =>
   (name ?? '').trim() || RF_NO_PRODUCT_NAME;
