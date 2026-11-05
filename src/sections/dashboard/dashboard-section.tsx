@@ -95,20 +95,29 @@ export const DashboardSection: React.FC = () => {
   );
 
   // 기프티콘은 회원이 보유 포인트로 교환하는 구조라 매출이 아니다 — 매출 카드에서 뺀다(QA #1)
+  const accrualCost = summary?.ticket_accrual_cost_amount ?? 0;
   const statsRow1 = [
-    { label: '이번달 순수익', value: formatWon(summary?.profit_amount), color: 'green' as const },
     {
-      label: '제휴 수수료 매출',
+      label: '이번달 경유 쇼핑 매출',
       value: formatWon(summary?.affiliate_commission_amount),
+      change: { type: 'neutral' as const, text: '쿠팡 + 링크프라이스 · 취소 제외' },
       color: 'purple' as const,
     },
     {
-      label: '티켓 적립 비용',
-      value: formatWon(summary?.ticket_accrual_cost_amount),
-      change: { type: 'neutral' as const, text: '차감 항목' },
+      label: '이번달 경유 쇼핑 수익',
+      value: formatWon(summary?.profit_amount),
+      change: { type: 'neutral' as const, text: '제휴 수수료 − 유저 적립' },
+      color: 'green' as const,
+    },
+    {
+      label: '이번달 경유 쇼핑 유저 적립',
+      value: accrualCost > 0 ? `− ${formatWon(accrualCost)}` : formatWon(accrualCost),
+      change: { type: 'neutral' as const, text: '수수료에서 차감한 비용' },
       color: 'amber' as const,
     },
   ];
+  // 서버가 집계한 달 그대로 — 브라우저 시계로 다시 짓지 않는다(KST 기준이라 월초에 어긋날 수 있다)
+  const baseMonth = summary?.affiliate_range?.from?.slice(0, 7) ?? '—';
 
   const statsRow2 = [
     { label: '활성 회원', value: formatCount(summary?.member_count), color: 'purple' as const },
@@ -139,11 +148,17 @@ export const DashboardSection: React.FC = () => {
 
   return (
     <div className="section active">
-      {/* Hàng 1: 4 stat cards */}
-      <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+      {/* Hàng 1: 3 thẻ 경유 쇼핑 — giữ lưới 4 cột để thẻ cùng bề rộng với hàng dưới */}
+      <div className="stats-grid" style={{ marginBottom: '10px' }}>
         {statsRow1.map((stat, idx) => (
           <StatCard key={idx} {...stat} />
         ))}
+      </div>
+      <div style={{ fontSize: '11px', color: 'var(--text-2)', marginBottom: '20px' }}>
+        경유 쇼핑 수익 = 경유 쇼핑 매출(제휴 수수료)에서 회원에게 적립해 준 티켓 비용(유저 적립)을
+        차감한 금액입니다. 기프티콘 판매 수익은 넣지 않습니다. 기준 월{' '}
+        <strong style={{ color: 'var(--text)' }}>{baseMonth}</strong> · 매출·수익 &gt; 경유 쇼핑
+        리워드 매출에서 같은 월(한 달)로 조회한 값과 같습니다.
       </div>
 
       {/* Hàng 2 */}

@@ -1,6 +1,8 @@
 export type IDashboardTicketType = 'TICKET' | 'EVENT_TICKET';
 
 export type IDashboardSummary = {
+  // 경유 쇼핑 3개 카드가 집계한 달 (KST, 'YYYY-MM-DD') — 기준 월 표시에 쓴다
+  affiliate_range?: { from: string; to: string };
   profit_amount: number;
   affiliate_commission_amount: number;
   ticket_accrual_cost_amount: number;
