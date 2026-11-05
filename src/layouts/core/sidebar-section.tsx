@@ -70,7 +70,7 @@ const MENU_GROUPS: MenuGroup[] = [
       { id: 'stats', label: '수익 분석', icon: <ChartIcon />, href: '/stats', disabled: true },
       {
         id: 'revenue-fee',
-        label: '제휴 수수료 매출',
+        label: '경유 쇼핑 리워드 매출',
         icon: <RevenueIcon />,
         href: '/revenue-fee',
       },

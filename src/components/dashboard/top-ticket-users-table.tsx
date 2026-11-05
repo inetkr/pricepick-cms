@@ -10,7 +10,7 @@ export const TopTicketUsersTable: React.FC<TopTicketUsersTableProps> = ({ data }
     <div className="card">
       <div className="card-header">
         <div className="card-title">티켓 적립 TOP 회원</div>
-        <span style={{ fontSize: '11px', color: 'var(--text-3)' }}>이번달 픽구매 적립 기준</span>
+        <span style={{ fontSize: '11px', color: 'var(--text-3)' }}>이번달 구매 적립 기준</span>
       </div>
       <table>
         <thead>
