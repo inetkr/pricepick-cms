@@ -407,7 +407,11 @@ export default function SidebarSection() {
                 .filter((item) => !item.disabled)
                 .map((item) => {
                   const current = (pendingHref ?? pathname).replace(/\/$/, '');
-                  const isActive = current === item.href.replace(/\/$/, '');
+                  const base = item.href.replace(/\/$/, '');
+                  // 메뉴 아래 탭 주소(예: /notifications/history)에서도 그 메뉴를 선택 표시한다.
+                  // 대시보드('/')는 모든 주소의 앞부분이라 정확히 같을 때만 고른다
+                  const isActive =
+                    current === base || (base !== '' && current.startsWith(`${base}/`));
                   // <Link>는 화면에 보이는 메뉴의 다음 페이지를 미리 받아 두고(prefetch),
                   // Ctrl/Cmd+클릭으로 새 탭 열기도 그대로 된다
                   return (

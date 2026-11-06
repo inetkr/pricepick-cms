@@ -11,7 +11,8 @@ export type INotificationTargetAudience =
   | 'NEW'
   | 'HAS_PURCHASE';
 
-export type INotificationTargetAudienceValue = INotificationTargetAudience | 'TEST';
+// INDIVIDUAL = 선택 개별 발송 (관리자가 고른 회원에게만 즉시 발송), TEST = 예전 테스트 발송 기록
+export type INotificationTargetAudienceValue = INotificationTargetAudience | 'INDIVIDUAL' | 'TEST';
 
 export type INotificationSendType = 'NOW' | 'SCHEDULED';
 
@@ -35,16 +36,22 @@ export type INotification = IBase & {
   open_rate?: number | null;
   // 대상 수 — 발송 시점에 대상 조건으로 집계한 인원 (테스트는 고른 회원 수)
   recipient_count?: number | null;
-  // 성공·실패 — 예약 건은 아직 발송 전이라 null
+  // 발송 결과 4칸 — 합이 대상 수와 같다. 예약 건은 아직 발송 전이라 null
   success_count?: number | null;
   fail_count?: number | null;
-  // 테스트 발송(DEVQA 23) — 실제로 보낸 회원 (get_list_cms가 테스트 건에 실어 준다)
-  sent_users?: INotificationTestUser[] | null;
+  // 미처리 — 보낼 주소가 없어 시도하지 못함 (토큰 없음·권한 거부·수신 거부)
+  skipped_count?: number | null;
+  // 확인 불가 — 결과를 알 수 없음 (응답 없음·과거 기록)
+  unknown_count?: number | null;
+  // 발송에 성공한 회원
+  sent_users?: INotificationUserRef[] | null;
+  // 선택 개별 발송 건에서 관리자가 고른 회원 (그 외 건은 null)
+  target_users?: INotificationUserRef[] | null;
 };
 
-export type INotificationTestUser = {
+export type INotificationUserRef = {
   id: string;
-  nickname: string;
+  nickname: string | null;
 };
 
 export type INotificationStat = {
@@ -63,40 +70,39 @@ export type ISendNotificationPayload = {
   is_test: boolean;
 };
 
-// DEVQA 23 · 테스트 발송 — 고른 회원에게만 즉시 발송
-export type ISendTestNotificationPayload = {
+// 선택 개별 발송 — 고른 회원에게만 즉시 발송 (예약 불가). 발송 기록에는 「개별 발송」으로 남는다
+export type ISendIndividualNotificationPayload = {
+  channel: INotificationChannel;
+  target_audience: 'INDIVIDUAL';
+  target_user_ids: string[];
   title: string;
   content: string;
-  test_user_ids: string[];
+  send_type: 'NOW';
+  is_test: false;
+};
+
+export type ISendIndividualNotificationResult = {
+  mode: 'SENT';
+  campaign: INotification;
+  sent_count: number;
+  // 존재하지 않는 회원 — 보내지 않았고 대상 수에도 들어가지 않는다
+  not_found_user_ids: string[];
 };
 
 // 수신 실패 사유
 // NOT_FOUND: (테스트) user_id 없음·삭제 — 응답에만 있고 DB에는 남지 않는다
 // NO_DEVICE: device_token이 있는 로그인 기기가 없음
+// OPTED_OUT: 마케팅 수신 미동의 (개별 발송에서 미처리로 남는다)
 // PUSH_FAILED: 기기는 있으나 FCM이 모든 토큰을 거절 (토큰 만료·앱 삭제 등)
 // NOT_NORMAL: (실발송) 큐 대기 중 계정이 정지·탈퇴됨
 // SEND_ERROR: (실발송) 묶음 전체가 FCM 호출 오류 (네트워크·구글 장애 등)
 export type INotificationFailReason =
   | 'NOT_FOUND'
   | 'NO_DEVICE'
+  | 'OPTED_OUT'
   | 'PUSH_FAILED'
   | 'NOT_NORMAL'
   | 'SEND_ERROR';
-
-export type ISendTestNotificationResultItem = {
-  user_id: string;
-  nickname: string | null;
-  identified_id: string | null;
-  // SENT | FAILED — 서버가 실패 사유 코드를 그대로 넣어 주기도 한다
-  result: 'SENT' | 'FAILED' | INotificationFailReason;
-  fail_reason?: INotificationFailReason | null;
-};
-
-export type ISendTestNotificationResult = {
-  mode: 'TEST';
-  campaign: INotification;
-  results: ISendTestNotificationResultItem[];
-};
 
 // 수신자 목록(DEVQA 24) — 수신 기록은 90일 보관 후 삭제
 export type INotificationRecipient = {

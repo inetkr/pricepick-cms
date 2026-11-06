@@ -4,9 +4,9 @@ import type {
   INotification,
   INotificationRecipientListResponse,
   INotificationStat,
+  ISendIndividualNotificationPayload,
+  ISendIndividualNotificationResult,
   ISendNotificationPayload,
-  ISendTestNotificationPayload,
-  ISendTestNotificationResult,
   IUserReceivedNotification,
 } from 'src/types/notification';
 
@@ -60,15 +60,16 @@ export default class NotificationAPI {
     }
   };
 
-  // DEVQA 23 · 테스트 발송
-  sendTestNotification = async (
-    body: ISendTestNotificationPayload
-  ): Promise<ApiResponse<ISendTestNotificationResult>> => {
+  // 선택 개별 발송 — 일반 발송과 같은 주소에 target_audience: INDIVIDUAL로 보낸다.
+  // (예전 send_test는 서버에서 막혀 있다)
+  sendIndividualNotification = async (
+    body: ISendIndividualNotificationPayload
+  ): Promise<ApiResponse<ISendIndividualNotificationResult>> => {
     try {
-      const res = await axios.axiosInstanceWithLoading.post(`/${tableName}/admin/send_test`, body);
+      const res = await axios.axiosInstanceWithLoading.post(`/${tableName}/admin/send`, body);
       return res.data;
     } catch (error) {
-      console.error('Failed to send test push campaign:', error);
+      console.error('Failed to send individual push campaign:', error);
       throw error;
     }
   };

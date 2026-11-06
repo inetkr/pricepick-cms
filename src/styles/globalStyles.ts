@@ -3731,4 +3731,132 @@ export const globalStyles = css`
       background-position: 0 50%;
     }
   }
+
+  /* ── 알림 관리 ── 탭은 주소로 넘어가는 링크라 밑줄을 지운다 */
+  #sec-notifications .terms-tab {
+    text-decoration: none;
+  }
+  /* 발송 기록 · 성공 칸 제목의 ? */
+  .ni-help-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--text-3);
+    cursor: pointer;
+  }
+  .ni-help-btn:hover {
+    color: var(--main);
+  }
+  /* 발송 결과 기준 표 */
+  .ni-guide-table th {
+    background: var(--surface-2);
+    text-align: left;
+  }
+  .ni-guide-table td {
+    font-size: 12px;
+    color: var(--text);
+    vertical-align: middle;
+  }
+  /* 선택 개별 발송 대상 선택 — 왼쪽 검색 결과 / 오른쪽 발송 내용·선택한 회원 */
+  .ni-modal-sub {
+    margin-top: 4px;
+    font-size: 11.5px;
+    font-weight: 400;
+    color: var(--text-2);
+    letter-spacing: 0;
+  }
+  .ni-pick-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .ni-pick-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .ni-pick-box {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+  .ni-pick-box .pagination-wrapper {
+    padding: 10px 12px;
+  }
+  .ni-pick-list {
+    overflow-y: auto;
+  }
+  .ni-pick-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px 7px 12px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+  }
+  .ni-pick-row:hover {
+    background: var(--surface-2);
+  }
+  /* 고른 회원은 검색 결과에서도 표시해 두고, 버튼이 빨간 「해제」로 바뀐다 */
+  .ni-pick-row.on,
+  .ni-pick-row.on:hover {
+    background: var(--main-soft);
+  }
+  .ni-pick-row .btn {
+    flex-shrink: 0;
+    min-width: 56px;
+    justify-content: center;
+  }
+  .ni-pick-row .btn-danger {
+    border: 1px solid rgba(239, 68, 68, 0.35);
+  }
+  .ni-pick-name {
+    flex-shrink: 0;
+    max-width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .ni-pick-id {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-3);
+  }
+  .ni-pick-empty {
+    padding: 16px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-3);
+  }
+  .ni-pick-preview {
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--text-2);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .ni-pick-preview-title {
+    margin-bottom: 2px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  @media (max-width: 768px) {
+    .ni-pick-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 `;

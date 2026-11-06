@@ -4,6 +4,7 @@ import type {
   INotificationSendType,
   INotificationStatus,
   INotificationTargetAudience,
+  INotificationTargetAudienceValue,
 } from 'src/types/notification';
 
 export const NOTIFICATION_CHANNEL_OPTIONS: { value: INotificationChannel; label: string }[] = [
@@ -45,6 +46,15 @@ export const NOTIFICATION_STATUS_LABEL: Record<INotificationStatus, string> = {
   FAILED: '실패',
 };
 
+// 발송 기록의 「대상」 검색 — 작성 폼에는 없는 「개별 발송」까지 고를 수 있다
+export const NOTIFICATION_HISTORY_TARGET_OPTIONS: {
+  value: INotificationTargetAudienceValue;
+  label: string;
+}[] = [...NOTIFICATION_TARGET_AUDIENCE_OPTIONS, { value: 'INDIVIDUAL', label: '개별 발송' }];
+
+// 선택 개별 발송 한 번에 고를 수 있는 최대 인원 (서버 PUSH_CAMPAIGN_INDIVIDUAL_MAX_USERS)
+export const NOTIFICATION_INDIVIDUAL_MAX_USERS = 500;
+
 export const NOTIFICATION_STATUS_OPTIONS: { value: INotificationStatus; label: string }[] = [
   { value: 'SENT', label: '발송완료' },
   { value: 'SCHEDULED', label: '예약' },
@@ -54,6 +64,7 @@ export const NOTIFICATION_STATUS_OPTIONS: { value: INotificationStatus; label: s
 export const NOTIFICATION_FAIL_REASON_LABEL: Record<INotificationFailReason, string> = {
   NOT_FOUND: '회원 없음(삭제됨)',
   NO_DEVICE: '등록된 기기 없음',
+  OPTED_OUT: '수신 거부',
   PUSH_FAILED: '푸시 거부(토큰 만료·앱 삭제)',
   NOT_NORMAL: '정지·탈퇴 회원',
   SEND_ERROR: '발송 오류',
@@ -69,5 +80,9 @@ export const NOTIFICATION_ERROR_MESSAGE: Record<string, string> = {
   invalid_target_audience: '발송 대상 값이 올바르지 않습니다.',
   invalid_scheduled_at: '예약 발송 일시 형식이 올바르지 않습니다.',
   scheduled_at_in_past: '예약 발송 일시는 현재 시간 이후로 설정해주세요.',
-  push_in_quiet_hours: '야간 시간대(22:00~08:00)에는 푸시를 예약할 수 없습니다.',
+  push_in_quiet_hours: '야간 시간대(22:00~08:00)에는 푸시를 보내거나 예약할 수 없습니다.',
+  target_user_ids_required: '발송할 회원을 선택하세요.',
+  too_many_target_user_ids: `한 번에 최대 ${NOTIFICATION_INDIVIDUAL_MAX_USERS}명까지 보낼 수 있습니다.`,
+  target_users_not_found: '선택한 회원을 찾을 수 없습니다.',
+  individual_push_not_schedulable: '선택 개별 발송은 즉시 발송만 가능합니다.',
 };

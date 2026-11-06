@@ -1,13 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { NOTIFICATION_TARGET_AUDIENCE_OPTIONS } from 'src/constants/notification';
+import {
+  NOTIFICATION_CHANNEL_OPTIONS,
+  NOTIFICATION_TARGET_AUDIENCE_OPTIONS,
+} from 'src/constants/notification';
 import type { INotificationSendType, INotificationTargetAudience } from 'src/types/notification';
 import { InfoBox } from '../stats/info-box';
 
 interface NotificationFormCardProps {
   isSaving: boolean;
-  isSendingTest: boolean;
+  isSendingIndividual: boolean;
   onSubmit: (data: {
     title: string;
     content: string;
@@ -15,19 +18,15 @@ interface NotificationFormCardProps {
     send_type: INotificationSendType;
     scheduled_at: number | null;
   }) => Promise<boolean>;
-  // 테스트 발송 대상 선택 모달을 연다 (DEVQA 23)
-  onSendTest: (data: {
-    title: string;
-    content: string;
-    target_audience: INotificationTargetAudience;
-  }) => void;
+  // 선택 개별 발송 대상 선택 모달을 연다 — 작성 중인 제목·내용을 그대로 보낸다
+  onSendIndividual: (data: { title: string; content: string }) => void;
 }
 
 export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
   isSaving,
-  isSendingTest,
+  isSendingIndividual,
   onSubmit,
-  onSendTest,
+  onSendIndividual,
 }) => {
   const [targetAudience, setTargetAudience] = useState<INotificationTargetAudience>('ALL');
   const [title, setTitle] = useState('');
@@ -81,14 +80,10 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
     if (ok) resetForm();
   };
 
-  const handleSendTest = () => {
+  const handleSendIndividual = () => {
     setAttempted(true);
-    if (title.trim().length === 0 || content.trim().length === 0 || isSendingTest) return;
-    onSendTest({
-      title: title.trim(),
-      content: content.trim(),
-      target_audience: targetAudience,
-    });
+    if (title.trim().length === 0 || content.trim().length === 0 || isSendingIndividual) return;
+    onSendIndividual({ title: title.trim(), content: content.trim() });
   };
 
   return (
@@ -99,22 +94,17 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
       <div style={{ padding: '18px' }}>
         <div className="form-row">
           <div className="form-group" style={{ flex: 1 }}>
-            <span
-              style={{
-                fontSize: '11px',
-                color: 'var(--text-2)',
-                fontWeight: 600,
-                display: 'block',
-                marginBottom: '6px',
-                textTransform: 'uppercase',
-                letterSpacing: '.4px',
-              }}
-            >
+            <label className="form-label" htmlFor="notification-channel">
               발송 채널
-            </span>
-            <div className="filter-sel" style={{ width: '100%', cursor: 'default' }}>
-              앱 푸시
-            </div>
+            </label>
+            {/* 지금은 앱 푸시 하나뿐 — 채널이 늘면 여기에 옵션만 더한다 */}
+            <select id="notification-channel" className="form-select" defaultValue="PUSH_APP">
+              {NOTIFICATION_CHANNEL_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="form-group" style={{ flex: 1 }}>
             <label className="form-label" htmlFor="notification-target">
@@ -179,26 +169,31 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
               <option value="SCHEDULED">예약 발송</option>
             </select>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <input
-              id="notification-schedule-at"
-              type="datetime-local"
-              className="search-box"
-              style={{ width: 'auto', borderColor: scheduledAtError ? 'var(--danger)' : undefined }}
-              disabled={sendType !== 'SCHEDULED'}
-              value={scheduledAt}
-              onChange={(e) => setScheduledAt(e.target.value)}
-            />
-            {scheduledAtError && <div className="field-error">{scheduledAtError}</div>}
-          </div>
+          {/* 예약 발송일 때만 일시 입력칸을 보인다 — 즉시 발송에는 쓰지 않는 칸이다 */}
+          {sendType === 'SCHEDULED' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <input
+                id="notification-schedule-at"
+                type="datetime-local"
+                className="search-box"
+                style={{
+                  width: 'auto',
+                  borderColor: scheduledAtError ? 'var(--danger)' : undefined,
+                }}
+                value={scheduledAt}
+                onChange={(e) => setScheduledAt(e.target.value)}
+              />
+              {scheduledAtError && <div className="field-error">{scheduledAtError}</div>}
+            </div>
+          )}
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
             <button
               type="button"
               className="btn btn-ghost btn-sm"
-              disabled={isSendingTest}
-              onClick={handleSendTest}
+              disabled={isSendingIndividual}
+              onClick={handleSendIndividual}
             >
-              테스트 발송
+              선택 개별 발송
             </button>
             <button
               type="button"

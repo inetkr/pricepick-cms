@@ -1,14 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { notificationAPI } from 'src/api';
-import {
-  getNotificationFailReasonLabel,
-  NOTIFICATION_ERROR_MESSAGE,
-} from 'src/constants/notification';
+import { NOTIFICATION_ERROR_MESSAGE } from 'src/constants/notification';
 import type {
   INotification,
   INotificationStat,
-  INotificationTestUser,
   ISendNotificationPayload,
 } from 'src/types/notification';
 
@@ -30,15 +26,16 @@ const getNotificationErrorMessage = (error: unknown, fallback: string): string =
   return fallback;
 };
 
-export const useNotification = () => {
+// withHistory — 발송 기록 탭에서만 목록을 불러온다 (수동 발송 탭은 통계만 쓴다)
+export const useNotification = ({ withHistory }: { withHistory: boolean }) => {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [stats, setStats] = useState<INotificationStat>({
     sent_this_month: 0,
     scheduled_pending: 0,
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(withHistory);
   const [isSaving, setIsSaving] = useState(false);
-  const [isSendingTest, setIsSendingTest] = useState(false);
+  const [isSendingIndividual, setIsSendingIndividual] = useState(false);
   const [filters, setFilters] = useState<IFilters>({ title: '', target_audience: '', status: '' });
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -46,6 +43,7 @@ export const useNotification = () => {
   const [totalItems, setTotalItems] = useState(0);
 
   const loadNotifications = useCallback(async () => {
+    if (!withHistory) return;
     setIsLoading(true);
     try {
       const filter = Object.fromEntries(
@@ -64,7 +62,7 @@ export const useNotification = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [filters, page, limit]);
+  }, [withHistory, filters, page, limit]);
 
   const loadStats = useCallback(async () => {
     try {
@@ -112,49 +110,49 @@ export const useNotification = () => {
     }
   };
 
-  // DEVQA 23 · 고른 회원에게만 즉시 발송 — 발송 내역에는 「테스트」로 남는다
-  const sendTestNotification = async (
+  // 선택 개별 발송 — 고른 회원에게만 즉시 발송, 발송 기록에는 「개별 발송」으로 남는다
+  const sendIndividualNotification = async (
     payload: { title: string; content: string },
-    users: INotificationTestUser[]
+    userIds: string[]
   ) => {
-    if (!users.length) {
-      toast.error('테스트로 보낼 회원을 선택하세요.');
+    if (!userIds.length) {
+      toast.error('발송할 회원을 선택하세요.');
       return false;
     }
-    setIsSendingTest(true);
+    setIsSendingIndividual(true);
     try {
-      const responseData = await notificationAPI.sendTestNotification({
+      const responseData = await notificationAPI.sendIndividualNotification({
+        channel: 'PUSH_APP',
+        target_audience: 'INDIVIDUAL',
+        target_user_ids: userIds,
         title: payload.title,
         content: payload.content,
-        test_user_ids: users.map((u) => u.id),
+        send_type: 'NOW',
+        // 서버는 is_test: true를 먼저 보고 테스트 발송(현재 막힘)으로 처리하므로 false로 보낸다
+        is_test: false,
       });
-      const results = responseData?.result?.object?.results || [];
-      const failed = results.filter((r) => r.result !== 'SENT');
-      const successCount = results.length - failed.length;
+      const campaign = responseData?.result?.object?.campaign;
+      const success = campaign?.success_count ?? 0;
+      const notDone =
+        (campaign?.fail_count ?? 0) + (campaign?.skipped_count ?? 0) + (campaign?.unknown_count ?? 0);
 
-      if (!failed.length) {
-        toast.success(`테스트 발송 완료 · ${successCount}명`);
+      if (!notDone) {
+        toast.success(`개별 발송 완료 · ${success.toLocaleString()}명`);
       } else {
-        // 실패한 회원과 사유를 바로 보여준다 — 예: 「SuperHero: 등록된 기기 없음」
-        const detail = failed
-          .map((r) => {
-            const reason = r.fail_reason || (r.result !== 'FAILED' ? r.result : null);
-            const name = r.nickname || r.identified_id || r.user_id;
-            return `${name}: ${getNotificationFailReasonLabel(reason) || '실패'}`;
-          })
-          .join(', ');
-        toast.warning(`테스트 발송 · 성공 ${successCount}명 / 실패 ${failed.length}명`, {
-          description: detail,
-        });
+        // 누가 왜 못 받았는지는 발송 기록에서 그 건을 눌러 수신자 목록으로 본다
+        toast.warning(
+          `개별 발송 · 성공 ${success.toLocaleString()}명 / 실패 ${(campaign?.fail_count ?? 0).toLocaleString()}명 / 미처리 ${(campaign?.skipped_count ?? 0).toLocaleString()}명`,
+          { description: '발송 기록에서 해당 건을 누르면 회원별 결과를 볼 수 있습니다.' }
+        );
       }
       reload();
       return true;
     } catch (error) {
-      console.error('Failed to send test notification:', error);
-      toast.error(getNotificationErrorMessage(error, '테스트 발송에 실패했습니다.'));
+      console.error('Failed to send individual notification:', error);
+      toast.error(getNotificationErrorMessage(error, '개별 발송에 실패했습니다.'));
       return false;
     } finally {
-      setIsSendingTest(false);
+      setIsSendingIndividual(false);
     }
   };
 
@@ -188,7 +186,7 @@ export const useNotification = () => {
     stats,
     isLoading,
     isSaving,
-    isSendingTest,
+    isSendingIndividual,
     filters,
     setFilters: handleSetFilters,
     page,
@@ -198,7 +196,7 @@ export const useNotification = () => {
     totalPages,
     totalItems,
     sendNotification,
-    sendTestNotification,
+    sendIndividualNotification,
     cancelScheduledNotification,
   };
 };

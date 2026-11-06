@@ -31,6 +31,7 @@ const PAGE_META: Record<string, { title: string; bc: string }> = {
   '/invite': { title: '친구초대 관리', bc: '콘텐츠' },
   '/announcement': { title: '공지사항 관리', bc: '콘텐츠' },
   '/notifications': { title: '알림 관리', bc: '콘텐츠' },
+  '/notifications/history': { title: '알림 관리', bc: '콘텐츠' },
   '/op-policy': { title: '운영 정책', bc: '운영' },
   '/terms': { title: '약관 관리', bc: '운영' },
   '/inquiries': { title: '1:1 문의', bc: '운영' },
