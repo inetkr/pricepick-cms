@@ -3736,6 +3736,11 @@ export const globalStyles = css`
   #sec-notifications .terms-tab {
     text-decoration: none;
   }
+  /* 막힌 단추가 눌리는 단추와 똑같아 보이지 않게 — 회원 미선택 시 「즉시 발송」 등 */
+  #sec-notifications .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
   /* 발송 기록 · 성공 칸 제목의 ? */
   .ni-help-btn {
     display: inline-flex;
@@ -3813,6 +3818,15 @@ export const globalStyles = css`
   }
   .ni-pick-row .btn-danger {
     border: 1px solid rgba(239, 68, 68, 0.35);
+  }
+  /* 마케팅 수신 거부 — 고를 수 없는 회원 */
+  .ni-pick-row.off,
+  .ni-pick-row.off:hover {
+    background: transparent;
+  }
+  .ni-pick-row.off .ni-pick-name,
+  .ni-pick-row.off .ni-pick-id {
+    opacity: 0.45;
   }
   .ni-pick-name {
     flex-shrink: 0;

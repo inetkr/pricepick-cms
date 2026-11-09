@@ -33,7 +33,9 @@ export default class UserAPI extends BaseAPI {
       kakao_status?: string;
       account_status?: string;
       marketing_consent?: string;
-    }
+    },
+    // 모달 안에서 입력할 때마다 부르는 곳은 화면 전체 로딩을 띄우지 않는다
+    { withLoading = true }: { withLoading?: boolean } = {}
   ): Promise<ApiPaginatedResponse<IUser>> => {
     try {
       const requestParam: any = {
@@ -44,7 +46,8 @@ export default class UserAPI extends BaseAPI {
       if (filter) {
         requestParam.filter = JSON.stringify(filter);
       }
-      const response = await axios.axiosInstanceWithLoading.get(
+      const client = withLoading ? axios.axiosInstanceWithLoading : axios.axiosInstance;
+      const response = await client.get(
         `/${tableName}/admin/get_list_cms`,
         {
           params: requestParam,

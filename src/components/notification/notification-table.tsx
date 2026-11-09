@@ -55,12 +55,12 @@ export const getNotificationTargetLabel = (notification: INotification) => {
   );
 };
 
-// 상태 칸 — 예약으로 나간 건은 「예약 / 발송완료」로 일반 즉시 발송과 구분한다
+// 상태 칸 — 예약으로 나간 건은 「예약 / 발송완료」로 일반 즉시 발송과 구분한다.
+// 개별 발송도 이미 나간 건이라 「발송완료」 — 개별 발송이라는 건 대상 조건 칸에 적혀 있다
 const getStatusBadge = (notification: INotification): { label: string; className: string } => {
   if (notification.status === 'SCHEDULED') return { label: '예약', className: 'badge-amber' };
   if (isTestNotification(notification)) return { label: '테스트', className: 'badge-gray' };
   if (notification.status === 'FAILED') return { label: '실패', className: 'badge-red' };
-  if (isIndividualNotification(notification)) return { label: '개별 발송', className: 'badge-gray' };
   if (notification.send_type === 'SCHEDULED') {
     return { label: '예약 / 발송완료', className: 'badge-green' };
   }

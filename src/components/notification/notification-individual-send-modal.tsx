@@ -9,8 +9,13 @@ import type { IUser } from 'src/types/users/user';
 import { Modal } from '../common/modal';
 import { Pagination } from '../common/pagination';
 
-// 선택 개별 발송 대상 선택 — 기존 회원 검색을 그대로 쓴다.
-// 고른 회원에게만 즉시 발송하고(예약 불가), 발송 기록에는 「개별 발송」으로 남는다.
+// 선택 개별 발송 대상 선택 — 고른 회원에게만 즉시 발송하고(예약 불가), 발송 기록에는 「개별 발송」으로 남는다.
+// 목록·검색 모두 회원 목록 API(get_list_cms)를 쓴다 — 회원 검색 API(admin/search)는 수신 동의(user_setting)를
+// 내려주지 않아, 받지 못할 회원을 미리 막을 수 없다.
+
+// 서버는 수신 설정이 있고 marketing_consent가 NONE이 아닌 회원에게만 보낸다 — 나머지는 미처리(수신 거부)로 남는다
+const canReceive = (user: IUser) =>
+  !!user.user_setting && user.user_setting.marketing_consent !== 'NONE';
 
 const DEFAULT_PAGE_SIZE = 25;
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
@@ -68,17 +73,20 @@ export const NotificationIndividualSendModal: React.FC<NotificationIndividualSen
     setPage(1);
   }, [debouncedKeyword]);
 
-  // 검색어가 없으면 정상 회원 전체를 최근 가입순으로 보여 준다 — 회원 검색 API는 빈 검색어에 빈 목록을 준다
+  // 정상 회원을 최근 가입순으로 — 검색어가 있으면 닉네임·아이디·식별 아이디로 좁힌다
   useEffect(() => {
     if (!open) return undefined;
     const trimmed = debouncedKeyword.trim();
 
     let cancelled = false;
     setIsSearching(true);
-    const request = trimmed
-      ? userAPI.searchUserByKeyword(trimmed, page, pageSize)
-      : userAPI.getUserList(page, pageSize, { account_status: 'NORMAL' });
-    request
+    userAPI
+      .getUserList(
+        page,
+        pageSize,
+        { account_status: 'NORMAL', ...(trimmed ? { search: trimmed } : {}) },
+        { withLoading: false }
+      )
       .then((res) => {
         if (cancelled) return;
         setResults(res.result.object.rows || []);
@@ -110,6 +118,7 @@ export const NotificationIndividualSendModal: React.FC<NotificationIndividualSen
       handleDrop(user.id);
       return;
     }
+    if (!canReceive(user)) return;
     if (picked.length >= NOTIFICATION_INDIVIDUAL_MAX_USERS) {
       toast.error(`한 번에 최대 ${NOTIFICATION_INDIVIDUAL_MAX_USERS}명까지 선택할 수 있습니다.`);
       return;
@@ -142,15 +151,22 @@ export const NotificationIndividualSendModal: React.FC<NotificationIndividualSen
     }
     return results.map((user) => {
       const on = isPicked(user.id);
+      // 마케팅 수신 거부 회원은 보내도 미처리로 끝나므로 고를 수 없게 막는다
+      const off = !on && !canReceive(user);
       return (
-        <div key={user.id} className={`ni-pick-row${on ? ' on' : ''}`}>
+        <div
+          key={user.id}
+          className={`ni-pick-row${on ? ' on' : ''}${off ? ' off' : ''}`}
+          title={off ? '마케팅 수신 거부 회원이라 선택할 수 없습니다.' : undefined}
+        >
           <UserLine nickname={user.nickname} identifiedId={user.identified_id} />
           <button
             type="button"
             className={`btn btn-sm ${on ? 'btn-danger' : 'btn-ghost'}`}
+            disabled={off}
             onClick={() => handleToggle(user)}
           >
-            {on ? '해제' : '선택'}
+            {on ? '해제' : off ? '수신 거부' : '선택'}
           </button>
         </div>
       );
