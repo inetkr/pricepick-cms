@@ -23,6 +23,16 @@ interface NotificationRecipientsModalProps {
   onClose: () => void;
 }
 
+const centerStyle: React.CSSProperties = { textAlign: 'center' };
+
+// 회원별 결과 — 미처리(SKIPPED)는 보낼 주소가 없어 시도하지 않은 회원 (사유: 푸시 토큰 없음·수신 거부 등)
+const RESULT_BADGE: Record<INotificationRecipient['result'], { label: string; className: string }> =
+  {
+    SENT: { label: '성공', className: 'badge-green' },
+    FAILED: { label: '실패', className: 'badge-red' },
+    SKIPPED: { label: '미처리', className: 'badge-amber' },
+  };
+
 const emptyCellStyle: React.CSSProperties = {
   textAlign: 'center',
   padding: '28px',
@@ -44,7 +54,12 @@ export const NotificationRecipientsModal: React.FC<NotificationRecipientsModalPr
   const debouncedKeyword = useDebounce(keyword, 400);
 
   const open = !!notification;
-  const isScheduled = notification?.status === 'SCHEDULED';
+  // 예약 대기·예약 취소 건은 나가지 않았으므로 수신 기록이 없다
+  const isScheduled = notification?.status === 'SCHEDULED' || notification?.status === 'CANCELLED';
+  const notSentMessage =
+    notification?.status === 'CANCELLED'
+      ? '예약이 취소되어 발송되지 않았습니다.'
+      : '예약 건은 아직 발송 전입니다.';
 
   useEffect(() => {
     setKeyword('');
@@ -93,16 +108,24 @@ export const NotificationRecipientsModal: React.FC<NotificationRecipientsModalPr
     campaign?.recipient_count ?? notification?.recipient_count ?? notification?.sent_count ?? 0;
   const subText = notification
     ? isScheduled
-      ? `${notification.title} · 예약 건은 아직 발송 전입니다`
+      ? `${notification.title} · ${notSentMessage}`
       : `${notification.title} · ${getNotificationTargetLabel(notification)} · 대상 ${total.toLocaleString()}명`
     : '';
+
+  // 발송 결과 4칸 — 검색어와 무관한 발송 건 전체 기준 (발송 기록 표의 성공·실패·미처리·확인 불가와 같다)
+  const summary = [
+    { label: '성공', className: 'badge-green', count: campaign?.success_count },
+    { label: '실패', className: 'badge-red', count: campaign?.fail_count },
+    { label: '미처리', className: 'badge-amber', count: campaign?.skipped_count },
+    { label: '확인 불가', className: 'badge-gray', count: campaign?.unknown_count },
+  ];
 
   const renderBody = () => {
     if (isScheduled) {
       return (
         <tr>
           <td colSpan={4} style={emptyCellStyle}>
-            예약 건은 아직 발송 전입니다.
+            {notSentMessage}
           </td>
         </tr>
       );
@@ -134,24 +157,25 @@ export const NotificationRecipientsModal: React.FC<NotificationRecipientsModalPr
         </tr>
       );
     }
-    return rows.map((row) => (
-      <tr key={row.user_id}>
-        <td>{row.nickname || '(닉네임 없음)'}</td>
-        <td style={{ fontFamily: 'monospace', fontSize: '11px', color: 'var(--text-2)' }}>
-          {row.identified_id || '-'}
-        </td>
-        <td style={{ textAlign: 'center' }}>
-          {row.result === 'SENT' ? (
-            <span className="badge badge-green">성공</span>
-          ) : (
-            <span className="badge badge-red">실패</span>
-          )}
-        </td>
-        <td style={{ color: 'var(--text-2)', fontSize: '12px' }}>
-          {row.fail_reason_label || getNotificationFailReasonLabel(row.fail_reason) || '—'}
-        </td>
-      </tr>
-    ));
+    return rows.map((row) => {
+      const badge = RESULT_BADGE[row.result] || RESULT_BADGE.FAILED;
+      return (
+        <tr key={row.user_id}>
+          <td style={centerStyle}>{row.nickname || '(닉네임 없음)'}</td>
+          <td style={{ ...centerStyle, fontSize: '12px', color: 'var(--text-2)' }}>
+            {row.identified_id || '-'}
+          </td>
+          <td style={centerStyle}>
+            <span className={`badge ${badge.className}`}>{badge.label}</span>
+          </td>
+          <td style={{ ...centerStyle, color: 'var(--text-2)', fontSize: '12px' }}>
+            {row.result === 'SENT'
+              ? '—'
+              : row.fail_reason_label || getNotificationFailReasonLabel(row.fail_reason) || '—'}
+          </td>
+        </tr>
+      );
+    });
   };
 
   return (
@@ -177,12 +201,11 @@ export const NotificationRecipientsModal: React.FC<NotificationRecipientsModalPr
       <div className="modal-body">
         {campaign && !isScheduled && (
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
-            <span className="badge badge-green">
-              성공 {(campaign.success_count ?? 0).toLocaleString()}명
-            </span>
-            <span className="badge badge-red">
-              실패 {(campaign.fail_count ?? 0).toLocaleString()}명
-            </span>
+            {summary.map((s) => (
+              <span key={s.label} className={`badge ${s.className}`}>
+                {s.label} {(s.count ?? 0).toLocaleString()}명
+              </span>
+            ))}
           </div>
         )}
         {!isScheduled && (
@@ -197,10 +220,10 @@ export const NotificationRecipientsModal: React.FC<NotificationRecipientsModalPr
         <table>
           <thead>
             <tr>
-              <th>닉네임</th>
-              <th>식별 아이디</th>
-              <th style={{ textAlign: 'center' }}>결과</th>
-              <th>실패 사유</th>
+              <th style={centerStyle}>닉네임</th>
+              <th style={centerStyle}>식별 아이디</th>
+              <th style={centerStyle}>결과</th>
+              <th style={centerStyle}>실패 사유</th>
             </tr>
           </thead>
           <tbody>{renderBody()}</tbody>

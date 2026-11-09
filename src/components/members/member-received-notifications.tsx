@@ -84,8 +84,11 @@ export const MemberReceivedNotifications: React.FC<MemberReceivedNotificationsPr
         {row.result === 'SENT' ? (
           <span className="badge badge-green">성공</span>
         ) : (
-          <span className="badge badge-red" style={{ whiteSpace: 'nowrap' }}>
-            실패
+          <span
+            className={`badge ${row.result === 'SKIPPED' ? 'badge-amber' : 'badge-red'}`}
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            {row.result === 'SKIPPED' ? '미처리' : '실패'}
             {row.fail_reason_label || row.fail_reason
               ? ` · ${row.fail_reason_label || getNotificationFailReasonLabel(row.fail_reason)}`
               : ''}

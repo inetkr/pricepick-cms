@@ -123,9 +123,10 @@ export type INotificationRecipient = {
   user_id: string;
   nickname: string | null;
   identified_id: string | null;
-  result: 'SENT' | 'FAILED';
+  // SKIPPED = 미처리 (보낼 주소가 없어 시도하지 않음 — 사유는 fail_reason)
+  result: 'SENT' | 'FAILED' | 'SKIPPED';
   fail_reason: INotificationFailReason | null;
-  // 서버가 내려주는 한글 사유 — 예: 「수신 가능한 기기 없음」
+  // 서버가 내려주는 한글 사유 — 예: 「푸시 토큰 없음」
   fail_reason_label?: string | null;
   sent_at: string | null;
 };
@@ -138,6 +139,8 @@ export type INotificationRecipientCampaign = Pick<
   recipient_count: number | null;
   success_count: number | null;
   fail_count: number | null;
+  skipped_count?: number | null;
+  unknown_count?: number | null;
 };
 
 export type INotificationRecipientListResponse = {
@@ -157,7 +160,7 @@ export type IUserReceivedNotification = {
   channel: INotificationChannel;
   target_audience: INotificationTargetAudienceValue;
   is_test: boolean;
-  result: 'SENT' | 'FAILED';
+  result: 'SENT' | 'FAILED' | 'SKIPPED';
   fail_reason: INotificationFailReason | null;
   // 서버가 내려주는 한글 사유 — 예: 「수신 가능한 기기 없음」
   fail_reason_label?: string | null;
