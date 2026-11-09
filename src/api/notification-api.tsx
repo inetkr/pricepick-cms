@@ -2,7 +2,9 @@ import axios from 'src/utils/axios';
 import type { ApiPaginatedResponse, ApiResponse } from 'src/types/api_response';
 import type {
   INotification,
+  INotificationAudienceCount,
   INotificationRecipientListResponse,
+  INotificationTargetAudience,
   INotificationStat,
   ISendIndividualNotificationPayload,
   ISendIndividualNotificationResult,
@@ -44,6 +46,21 @@ export default class NotificationAPI {
       return res.data;
     } catch (error) {
       console.error('Failed to fetch notification list:', error);
+      throw error;
+    }
+  };
+
+  // 발송 확인 팝업 — 고른 발송 대상의 수신 동의·미동의 인원 (팝업 안 표시라 전체 로딩은 띄우지 않는다)
+  getAudienceCount = async (
+    targetAudience: INotificationTargetAudience
+  ): Promise<ApiResponse<INotificationAudienceCount>> => {
+    try {
+      const res = await axios.axiosInstance.get(`/${tableName}/admin/audience_count`, {
+        params: { target_audience: targetAudience },
+      });
+      return res.data;
+    } catch (error) {
+      console.error('Failed to fetch push campaign audience count:', error);
       throw error;
     }
   };

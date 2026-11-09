@@ -7,6 +7,8 @@ import {
 } from 'src/constants/notification';
 import type { INotificationSendType, INotificationTargetAudience } from 'src/types/notification';
 import { InfoBox } from '../stats/info-box';
+import type { INotificationSendConfirmData } from './notification-send-confirm-modal';
+import { NotificationSendConfirmModal } from './notification-send-confirm-modal';
 
 interface NotificationFormCardProps {
   isSaving: boolean;
@@ -35,6 +37,7 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
   const [scheduledAt, setScheduledAt] = useState('');
   const [attempted, setAttempted] = useState(false);
   const [sendAttempted, setSendAttempted] = useState(false);
+  const [confirmData, setConfirmData] = useState<INotificationSendConfirmData | null>(null);
 
   // 예약 일시는 지금 이후여야 한다 — 지난 시각을 보내면 서버가 거절한다
   const scheduledAtMs = scheduledAt.trim() ? new Date(scheduledAt).getTime() : NaN;
@@ -65,11 +68,12 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
     setSendAttempted(false);
   };
 
-  const handleSend = async () => {
+  // 「발송」은 바로 보내지 않고 발송 확인 팝업을 연다 — 보내는 건 팝업의 「발송」
+  const handleSend = () => {
     setAttempted(true);
     setSendAttempted(true);
     if (!isValid) return;
-    const ok = await onSubmit({
+    setConfirmData({
       title: title.trim(),
       content: content.trim(),
       target_audience: targetAudience,
@@ -77,7 +81,16 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
       scheduled_at:
         sendType === 'SCHEDULED' ? Math.floor(new Date(scheduledAt).getTime() / 1000) : null,
     });
-    if (ok) resetForm();
+  };
+
+  // 실패하면 팝업을 그대로 둔다 — 오류 안내(toast)를 보고 다시 보내거나 취소할 수 있게
+  const handleConfirmSend = async () => {
+    if (!confirmData) return;
+    const ok = await onSubmit(confirmData);
+    if (ok) {
+      setConfirmData(null);
+      resetForm();
+    }
   };
 
   const handleSendIndividual = () => {
@@ -211,6 +224,13 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
           발송·경품 당첨)은 동의 여부와 무관하게 발송됩니다.
         </InfoBox>
       </div>
+
+      <NotificationSendConfirmModal
+        data={confirmData}
+        isSending={isSaving}
+        onClose={() => setConfirmData(null)}
+        onConfirm={handleConfirmSend}
+      />
     </div>
   );
 };

@@ -59,6 +59,17 @@ export type INotificationStat = {
   scheduled_pending: number;
 };
 
+// 발송 확인 팝업의 대상 인원 — 발송 대상 선택값 기준
+export type INotificationAudienceCount = {
+  target_audience: INotificationTargetAudience;
+  // 실제로 받을 회원 (수신 동의)
+  recipient_count: number;
+  // 수신 미동의라 빠지는 회원
+  excluded_count: number;
+  // 대상 조건에 맞는 전체 회원 = recipient_count + excluded_count
+  total_count: number;
+};
+
 export type ISendNotificationPayload = {
   channel: INotificationChannel;
   target_audience: INotificationTargetAudience;

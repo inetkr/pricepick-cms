@@ -3873,4 +3873,84 @@ export const globalStyles = css`
       grid-template-columns: 1fr;
     }
   }
+  /* 발송 확인 팝업 */
+  .ni-confirm-label {
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--text-3);
+  }
+  .ni-confirm-preview {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    box-shadow: 0 2px 8px rgba(30, 20, 60, 0.06);
+  }
+  .ni-confirm-app-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--main), #c2409a);
+  }
+  .ni-confirm-preview-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ni-confirm-preview-content {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--text-2);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+  .ni-confirm-audience {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-top: 22px;
+    font-size: 14px;
+    color: var(--text-2);
+  }
+  .ni-confirm-count {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--main);
+  }
+  .ni-confirm-count.muted {
+    color: var(--text-3);
+  }
+  .ni-confirm-note {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--danger);
+  }
+  .ni-confirm-when {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    font-size: 13px;
+    color: var(--text-2);
+  }
+  .ni-confirm-question {
+    margin: 22px 0 18px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
 `;
