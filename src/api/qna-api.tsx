@@ -8,7 +8,9 @@ export default class QnaAPI {
   getQnaList = async (
     page: number,
     limit: number,
-    filter?: { state?: string; type?: string }
+    filter?: { state?: string; type?: string },
+    // 제목·내용·작성자 닉네임 부분 일치 — 서버가 걸러 count까지 맞춰 준다
+    search?: string
   ): Promise<ApiPaginatedResponse<IQna>> => {
     try {
       const requestParam: any = {
@@ -19,6 +21,9 @@ export default class QnaAPI {
       };
       if (filter) {
         requestParam.filter = JSON.stringify(filter);
+      }
+      if (search) {
+        requestParam.search = search;
       }
       const res = await axios.axiosInstanceWithLoading.get(`/${tableName}/admin/get_list_cms`, {
         params: requestParam,

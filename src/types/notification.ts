@@ -44,6 +44,8 @@ export type INotification = IBase & {
   skipped_count?: number | null;
   // 확인 불가 — 결과를 알 수 없음 (응답 없음·과거 기록)
   unknown_count?: number | null;
+  // 알림을 눌러 연 회원 수 — 열람률은 opened_count / success_count로 보여 준다
+  opened_count?: number | null;
   // 발송에 성공한 회원
   sent_users?: INotificationUserRef[] | null;
   // 선택 개별 발송 건에서 관리자가 고른 회원 (그 외 건은 null)

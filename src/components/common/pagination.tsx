@@ -29,15 +29,14 @@ export const Pagination: React.FC<PaginationProps> = ({
   className = '',
   sizeOptions = [10, 25, 50, 100],
 }) => {
-  // Nếu chỉ có 1 trang hoặc 0 trang, không hiển thị
-  if (totalPages <= 0) return null;
+  // 결과가 0건이면(검색 결과 없음 포함) 페이지 줄을 통째로 숨긴다 — 「0–0 / 0」과 막힌 이전·다음은
+  // 보여 줄 게 없다. 화면마다 totalPages를 0 또는 1로 다르게 계산해도 똑같이 숨도록 totalItems로 판단한다.
+  if (totalPages <= 0 || !totalItems) return null;
 
-  // 목록이 비어 있으면 0–0 으로 표시하고 이전·다음 버튼을 모두 막는다
-  const isEmpty = !totalItems;
-  const startIndex = isEmpty ? 0 : (currentPage - 1) * itemsPerPage + 1;
-  const endIndex = Math.min(currentPage * itemsPerPage, totalItems || 0);
-  const isPrevDisabled = isEmpty || currentPage <= 1;
-  const isNextDisabled = isEmpty || currentPage >= totalPages;
+  const startIndex = (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
+  const isPrevDisabled = currentPage <= 1;
+  const isNextDisabled = currentPage >= totalPages;
 
   const handlePrev = () => {
     if (!isPrevDisabled) onPageChange(currentPage - 1);

@@ -42,7 +42,8 @@ export const useInquiries = () => {
       const responseData = await qnaAPI.getQnaList(
         page,
         limit,
-        Object.keys(filter).length ? filter : undefined
+        Object.keys(filter).length ? filter : undefined,
+        filters.search.trim() || undefined
       );
       if (responseData && responseData.result && responseData.result.object) {
         setInquiries(responseData.result.object.rows);
@@ -54,7 +55,7 @@ export const useInquiries = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, limit, filters.state, filters.type]);
+  }, [page, limit, filters.state, filters.type, filters.search]);
 
   const loadStats = useCallback(async () => {
     setIsStatsLoading(true);

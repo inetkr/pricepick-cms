@@ -239,9 +239,11 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
                   <td style={center}>
                     {notSent ? '—' : renderCount(notification.unknown_count)}
                   </td>
-                  {/* 열람률 — 0이거나 아직 없으면(null) 비워 둔다 */}
+                  {/* 열람률 — 「연 회원 / 받은 회원」. 받은 회원이 없으면(예약·취소 포함) 비워 둔다 */}
                   <td style={center}>
-                    {notification.open_rate ? `${notification.open_rate}%` : '—'}
+                    {!notSent && notification.success_count
+                      ? `${(notification.opened_count ?? 0).toLocaleString()}/${notification.success_count.toLocaleString()}`
+                      : '—'}
                   </td>
                   <td style={{ ...center, whiteSpace: 'nowrap' }}>
                     <span className={`badge ${badge.className}`}>{badge.label}</span>
