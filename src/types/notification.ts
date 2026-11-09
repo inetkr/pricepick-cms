@@ -16,7 +16,8 @@ export type INotificationTargetAudienceValue = INotificationTargetAudience | 'IN
 
 export type INotificationSendType = 'NOW' | 'SCHEDULED';
 
-export type INotificationStatus = 'SENT' | 'SCHEDULED' | 'FAILED';
+// CANCELLED — 예약했다가 발송 전에 취소한 건 (발송되지 않고 「예약 / 취소됨」으로 남는다)
+export type INotificationStatus = 'SENT' | 'SCHEDULED' | 'FAILED' | 'CANCELLED';
 
 export type INotificationStatusValue = INotificationStatus | 'TEST';
 

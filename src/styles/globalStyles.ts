@@ -3953,4 +3953,21 @@ export const globalStyles = css`
     font-weight: 700;
     color: var(--text);
   }
+  /* 예약 발송 취소 팝업 */
+  .ni-cancel-title {
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    word-break: break-word;
+  }
+  .ni-cancel-note {
+    margin: 12px 0 18px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-3);
+  }
 `;

@@ -18,8 +18,6 @@ interface NotificationTableProps {
   onRowClick?: (notification: INotification) => void;
   // 성공 칸 제목의 ? — 발송 결과 기준 안내
   onShowResultGuide?: () => void;
-  // 예약 건의 「선택 개별 발송」 — 예약 내용을 고른 회원에게 먼저 보내 본다
-  onSendIndividual?: (notification: INotification) => void;
   // 예약 건의 「취소」 — 발송 전 예약을 지운다
   onCancelScheduled?: (notification: INotification) => void;
 }
@@ -59,6 +57,9 @@ export const getNotificationTargetLabel = (notification: INotification) => {
 // 예약으로 나간 건은 「예약 / 발송완료」로 일반 즉시 발송과 구분한다
 const getStatusBadge = (notification: INotification): { label: string; className: string } => {
   if (notification.status === 'SCHEDULED') return { label: '예약', className: 'badge-amber' };
+  if (notification.status === 'CANCELLED') {
+    return { label: NOTIFICATION_STATUS_LABEL.CANCELLED, className: 'badge-gray' };
+  }
   if (isTestNotification(notification)) return { label: '테스트', className: 'badge-gray' };
   if (notification.status === 'FAILED') return { label: '실패', className: 'badge-red' };
   if (isIndividualNotification(notification)) return { label: '개별 발송', className: 'badge-gray' };
@@ -81,8 +82,12 @@ const fmtHms = (d: Date) => `${fmtHm(d)}:${pad(d.getSeconds())}`;
 
 const subLineStyle: React.CSSProperties = { color: 'var(--text-3)', fontSize: '11px' };
 
+// 아직 안 나갔거나(예약 대기) 끝내 안 나간(예약 취소) 건 — 발송 결과가 없다
+const isNotSent = (notification: INotification) =>
+  notification.status === 'SCHEDULED' || notification.status === 'CANCELLED';
+
 // 발송일시 칸
-// - 예약 대기: 「발송 예정 날짜 시각」 + 「예약 등록 월/일 시각」 (아직 안 나갔으니 흐리게)
+// - 예약 대기·예약 취소: 「발송 예정 날짜 시각」 + 「예약 등록 월/일 시각」 (나가지 않았으니 흐리게)
 // - 그 외: 실제 발송 날짜 + 시·분·초, 예약으로 나간 건은 예약 등록 시각을 한 줄 더
 const renderSendTime = (notification: INotification) => {
   const created = toDate(notification.created_at);
@@ -92,7 +97,7 @@ const renderSendTime = (notification: INotification) => {
     </div>
   );
 
-  if (notification.status === 'SCHEDULED') {
+  if (isNotSent(notification)) {
     const at = toDate(notification.scheduled_at);
     return (
       <>
@@ -152,7 +157,6 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
   pagination,
   onRowClick,
   onShowResultGuide,
-  onSendIndividual,
   onCancelScheduled,
 }) => (
   <div className="card">
@@ -204,6 +208,7 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
           ) : (
             notifications.map((notification) => {
               const isScheduled = notification.status === 'SCHEDULED';
+              const notSent = isNotSent(notification);
               const total = notification.recipient_count ?? notification.sent_count ?? null;
               const badge = getStatusBadge(notification);
               return (
@@ -221,18 +226,18 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
                   <td style={{ ...center, fontWeight: 500 }}>{notification.title}</td>
                   <td style={center}>{getNotificationTargetLabel(notification)}</td>
                   <td style={center}>{renderCount(total)}</td>
-                  {/* 예약 건은 아직 나가지 않았으므로 결과 4칸이 없다 */}
+                  {/* 예약 대기·예약 취소 건은 나가지 않았으므로 결과 4칸이 없다 */}
                   <td style={center}>
-                    {isScheduled ? '—' : renderCount(notification.success_count)}
+                    {notSent ? '—' : renderCount(notification.success_count)}
                   </td>
                   <td style={center}>
-                    {isScheduled ? '—' : renderCount(notification.fail_count, true)}
+                    {notSent ? '—' : renderCount(notification.fail_count, true)}
                   </td>
                   <td style={center}>
-                    {isScheduled ? '—' : renderCount(notification.skipped_count)}
+                    {notSent ? '—' : renderCount(notification.skipped_count)}
                   </td>
                   <td style={center}>
-                    {isScheduled ? '—' : renderCount(notification.unknown_count)}
+                    {notSent ? '—' : renderCount(notification.unknown_count)}
                   </td>
                   {/* 열람률 — 0이거나 아직 없으면(null) 비워 둔다 */}
                   <td style={center}>
@@ -240,24 +245,12 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
                   </td>
                   <td style={{ ...center, whiteSpace: 'nowrap' }}>
                     <span className={`badge ${badge.className}`}>{badge.label}</span>
-                    {isScheduled && onSendIndividual && (
-                      <button
-                        type="button"
-                        className="btn btn-ghost btn-sm"
-                        style={{ marginLeft: '6px' }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSendIndividual(notification);
-                        }}
-                      >
-                        선택 개별 발송
-                      </button>
-                    )}
+                    {/* 예약 건은 「예약」 배지 옆에 「취소」 하나만 둔다 */}
                     {isScheduled && onCancelScheduled && (
                       <button
                         type="button"
                         className="btn btn-ghost btn-sm"
-                        style={{ marginLeft: '4px', color: 'var(--danger)' }}
+                        style={{ marginLeft: '6px', color: 'var(--danger)' }}
                         onClick={(e) => {
                           e.stopPropagation();
                           onCancelScheduled(notification);

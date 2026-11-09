@@ -91,13 +91,13 @@ export default class NotificationAPI {
     }
   };
 
-  // 예약 건 취소 — 발송 내역에서 지운다(soft delete). 지운 건은 예약 시각이 와도 발송되지 않는다.
-  deleteNotification = async (id: string): Promise<ApiResponse<any>> => {
+  // 예약 건 취소 — 지우지 않고 CANCELLED로 남긴다. 발송 기록에 「예약 / 취소됨」으로 보이고 발송되지 않는다.
+  cancelScheduledNotification = async (id: string): Promise<ApiResponse<INotification>> => {
     try {
-      const res = await axios.axiosInstanceWithLoading.delete(`/${tableName}/${id}`);
+      const res = await axios.axiosInstanceWithLoading.post(`/${tableName}/admin/${id}/cancel`);
       return res.data;
     } catch (error) {
-      console.error('Failed to delete push campaign:', error);
+      console.error('Failed to cancel scheduled push campaign:', error);
       throw error;
     }
   };

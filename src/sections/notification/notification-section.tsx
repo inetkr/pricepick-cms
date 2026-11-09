@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { NotificationCancelConfirmModal } from 'src/components/notification/notification-cancel-confirm-modal';
 import { NotificationFormCard } from 'src/components/notification/notification-form-card';
 import { NotificationIndividualSendModal } from 'src/components/notification/notification-individual-send-modal';
 import { NotificationLimitPolicyCard } from 'src/components/notification/notification-limit-policy-card';
@@ -25,7 +26,7 @@ const TABS: { id: INotificationTab; label: string; href: string }[] = [
   { id: 'history', label: '발송 기록', href: '/notifications/history' },
 ];
 
-// 선택 개별 발송 내용 — 작성 중인 알림 또는 예약 건
+// 선택 개별 발송 내용 — 수동 발송 탭에서 작성 중인 알림
 type IIndividualSource = {
   title: string;
   content: string;
@@ -38,6 +39,7 @@ export const NotificationSection: React.FC<{ tab: INotificationTab }> = ({ tab }
     isLoading,
     isSaving,
     isSendingIndividual,
+    isCancelling,
     filters,
     setFilters,
     page,
@@ -57,12 +59,13 @@ export const NotificationSection: React.FC<{ tab: INotificationTab }> = ({ tab }
   const [individualSource, setIndividualSource] = useState<IIndividualSource | null>(null);
   const [recipientsTarget, setRecipientsTarget] = useState<INotification | null>(null);
   const [showResultGuide, setShowResultGuide] = useState(false);
+  const [cancelTarget, setCancelTarget] = useState<INotification | null>(null);
 
-  const handleCancelScheduled = (notification: INotification) => {
-    const ok = window.confirm(
-      `예약 발송을 취소하시겠습니까?\n${notification.title}\n취소한 건은 발송 기록에서 삭제되고 발송되지 않습니다.`
-    );
-    if (ok) cancelScheduledNotification(notification);
+  // 실패해도 팝업은 닫는다 — 이미 발송·취소된 경우라 목록을 새로 받아 실제 상태를 보여 준다
+  const handleConfirmCancel = async () => {
+    if (!cancelTarget) return;
+    await cancelScheduledNotification(cancelTarget);
+    setCancelTarget(null);
   };
 
   const handleSendIndividual = (userIds: string[]) => {
@@ -164,8 +167,7 @@ export const NotificationSection: React.FC<{ tab: INotificationTab }> = ({ tab }
           pagination={paginationProps}
           onRowClick={setRecipientsTarget}
           onShowResultGuide={() => setShowResultGuide(true)}
-          onSendIndividual={(n) => setIndividualSource({ title: n.title, content: n.content })}
-          onCancelScheduled={handleCancelScheduled}
+          onCancelScheduled={setCancelTarget}
         />
       )}
 
@@ -181,6 +183,13 @@ export const NotificationSection: React.FC<{ tab: INotificationTab }> = ({ tab }
       <NotificationRecipientsModal
         notification={recipientsTarget}
         onClose={() => setRecipientsTarget(null)}
+      />
+
+      <NotificationCancelConfirmModal
+        notification={cancelTarget}
+        isCancelling={isCancelling}
+        onClose={() => setCancelTarget(null)}
+        onConfirm={handleConfirmCancel}
       />
 
       <NotificationResultGuideModal

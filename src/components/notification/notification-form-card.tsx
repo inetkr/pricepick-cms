@@ -182,9 +182,10 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
               <option value="SCHEDULED">예약 발송</option>
             </select>
           </div>
-          {/* 예약 발송일 때만 일시 입력칸을 보인다 — 즉시 발송에는 쓰지 않는 칸이다 */}
+          {/* 예약 발송일 때만 일시 입력칸을 보인다 — 즉시 발송에는 쓰지 않는 칸이다.
+              안내 문구는 입력칸 오른쪽에 붙여 발송 시점 줄이 한 줄로 유지되게 한다 */}
           {sendType === 'SCHEDULED' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <input
                 id="notification-schedule-at"
                 type="datetime-local"
@@ -196,7 +197,11 @@ export const NotificationFormCard: React.FC<NotificationFormCardProps> = ({
                 value={scheduledAt}
                 onChange={(e) => setScheduledAt(e.target.value)}
               />
-              {scheduledAtError && <div className="field-error">{scheduledAtError}</div>}
+              {scheduledAtError && (
+                <div className="field-error" style={{ marginTop: 0, whiteSpace: 'nowrap' }}>
+                  {scheduledAtError}
+                </div>
+              )}
             </div>
           )}
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>

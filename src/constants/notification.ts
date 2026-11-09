@@ -44,6 +44,7 @@ export const NOTIFICATION_STATUS_LABEL: Record<INotificationStatus, string> = {
   SENT: '발송완료',
   SCHEDULED: '예약',
   FAILED: '실패',
+  CANCELLED: '예약 / 취소됨',
 };
 
 // 발송 기록의 「대상」 검색 — 작성 폼에는 없는 「개별 발송」까지 고를 수 있다
@@ -59,6 +60,7 @@ export const NOTIFICATION_STATUS_OPTIONS: { value: INotificationStatus; label: s
   { value: 'SENT', label: '발송완료' },
   { value: 'SCHEDULED', label: '예약' },
   { value: 'FAILED', label: '실패' },
+  { value: 'CANCELLED', label: '취소됨' },
 ];
 
 export const NOTIFICATION_FAIL_REASON_LABEL: Record<INotificationFailReason, string> = {
@@ -85,4 +87,7 @@ export const NOTIFICATION_ERROR_MESSAGE: Record<string, string> = {
   too_many_target_user_ids: `한 번에 최대 ${NOTIFICATION_INDIVIDUAL_MAX_USERS}명까지 보낼 수 있습니다.`,
   target_users_not_found: '선택한 회원을 찾을 수 없습니다.',
   individual_push_not_schedulable: '선택 개별 발송은 즉시 발송만 가능합니다.',
+  push_campaign_not_found: '알림을 찾을 수 없습니다.',
+  push_campaign_already_cancelled: '이미 취소된 예약입니다.',
+  push_campaign_not_scheduled: '이미 발송되어 취소할 수 없습니다.',
 };

@@ -36,6 +36,7 @@ export const useNotification = ({ withHistory }: { withHistory: boolean }) => {
   const [isLoading, setIsLoading] = useState(withHistory);
   const [isSaving, setIsSaving] = useState(false);
   const [isSendingIndividual, setIsSendingIndividual] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
   const [filters, setFilters] = useState<IFilters>({ title: '', target_audience: '', status: '' });
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -156,18 +157,23 @@ export const useNotification = ({ withHistory }: { withHistory: boolean }) => {
     }
   };
 
-  // 예약 건 취소 — 발송 전인 예약 건만 지운다
+  // 예약 건 취소 — 발송 전인 예약 건만. 취소한 건은 목록에 「예약 / 취소됨」으로 남는다
   const cancelScheduledNotification = async (notification: INotification) => {
     if (notification.status !== 'SCHEDULED') return false;
+    setIsCancelling(true);
     try {
-      await notificationAPI.deleteNotification(notification.id);
+      await notificationAPI.cancelScheduledNotification(notification.id);
       toast.success('예약 발송이 취소되었습니다.');
       reload();
       return true;
     } catch (error) {
       console.error('Failed to cancel scheduled notification:', error);
       toast.error(getNotificationErrorMessage(error, '예약 취소에 실패했습니다.'));
+      // 그 사이 발송됐거나 이미 취소된 경우 — 목록을 새로 받아 실제 상태를 보여 준다
+      reload();
       return false;
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -187,6 +193,7 @@ export const useNotification = ({ withHistory }: { withHistory: boolean }) => {
     isLoading,
     isSaving,
     isSendingIndividual,
+    isCancelling,
     filters,
     setFilters: handleSetFilters,
     page,
