@@ -58,7 +58,7 @@ export const NotificationRecipientsModal: React.FC<NotificationRecipientsModalPr
   const isScheduled = notification?.status === 'SCHEDULED' || notification?.status === 'CANCELLED';
   const notSentMessage =
     notification?.status === 'CANCELLED'
-      ? '예약이 취소되어 발송되지 않았습니다.'
+      ? '취소된 예약 건이라 발송되지 않았습니다.'
       : '예약 건은 아직 발송 전입니다.';
 
   useEffect(() => {

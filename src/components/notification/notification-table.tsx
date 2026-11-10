@@ -55,16 +55,34 @@ export const getNotificationTargetLabel = (notification: INotification) => {
 
 // 상태 칸 — 선택 개별 발송(target_audience = INDIVIDUAL)은 「개별 발송」, 나머지 발송 건은 「발송완료」.
 // 예약으로 나간 건은 「예약 / 발송완료」로 일반 즉시 발송과 구분한다
-const getStatusBadge = (notification: INotification): { label: string; className: string } => {
+const getStatusBadge = (
+  notification: INotification
+): { label: React.ReactNode; className: string } => {
   if (notification.status === 'SCHEDULED') return { label: '예약', className: 'badge-amber' };
+  // 「예약 / 취소됨」 — 앞의 「예약 /」는 흐리게, 「취소됨」만 진하게
   if (notification.status === 'CANCELLED') {
-    return { label: NOTIFICATION_STATUS_LABEL.CANCELLED, className: 'badge-gray' };
+    return {
+      label: (
+        <>
+          <span className="ni-badge-sub">예약 /</span>&nbsp;취소됨
+        </>
+      ),
+      className: 'badge-gray',
+    };
   }
   if (isTestNotification(notification)) return { label: '테스트', className: 'badge-gray' };
   if (notification.status === 'FAILED') return { label: '실패', className: 'badge-red' };
   if (isIndividualNotification(notification)) return { label: '개별 발송', className: 'badge-gray' };
+  // 「예약 / 발송완료」 — 앞의 「예약 /」는 흐리게, 「발송완료」만 초록
   if (notification.send_type === 'SCHEDULED') {
-    return { label: '예약 / 발송완료', className: 'badge-green' };
+    return {
+      label: (
+        <>
+          <span className="ni-badge-sub">예약 /</span>&nbsp;{NOTIFICATION_STATUS_LABEL.SENT}
+        </>
+      ),
+      className: 'badge-green',
+    };
   }
   return { label: NOTIFICATION_STATUS_LABEL.SENT, className: 'badge-green' };
 };

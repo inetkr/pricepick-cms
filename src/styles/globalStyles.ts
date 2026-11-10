@@ -3970,4 +3970,8 @@ export const globalStyles = css`
     font-size: 12px;
     color: var(--text-3);
   }
+  /* 「예약 / 취소됨」의 앞부분 「예약 /」 — 흐리게 둬서 뒤의 「취소됨」이 상태로 읽히게 */
+  .ni-badge-sub {
+    color: var(--text-3);
+  }
 `;
